@@ -99,7 +99,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
             })
           )}
         </div>
-        <div className="flex justify-between text-[10px] text-stone-500 dark:text-stone-400">
+        <div className="flex justify-between text-fluid-xs text-stone-500 dark:text-stone-400">
           <span>{startLabel}</span>
           <span>{endLabel}</span>
         </div>
@@ -128,7 +128,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
           return <Cell key={dateKey} dateKey={dateKey} count={count} level={level} />;
         })}
       </div>
-      <div className="flex justify-between text-[10px] text-stone-500 dark:text-stone-400">
+      <div className="flex justify-between text-fluid-xs text-stone-500 dark:text-stone-400">
         <span>{startLabel}</span>
         <span>{endLabel}</span>
       </div>

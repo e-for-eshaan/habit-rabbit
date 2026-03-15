@@ -3,6 +3,10 @@
 :root {
   --background: #faf9f7;
   --foreground: #1c1917;
+  --text-fluid-min: 14px;
+  --text-fluid-max: 18px;
+  --text-fluid-sm-min: 12px;
+  --text-fluid-sm-max: 14px;
   --pastel-1: #ffd6d6;
   --pastel-2: #d6e5ff;
   --pastel-3: #d6ffea;
@@ -49,10 +53,18 @@
   }
 }
 
+html {
+  font-size: clamp(var(--text-fluid-min), 0.5vw + 13px, var(--text-fluid-max));
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.text-fluid-xs {
+  font-size: clamp(var(--text-fluid-sm-min), 0.35vw + 11px, var(--text-fluid-sm-max));
 }
 
 .heat-0 {
