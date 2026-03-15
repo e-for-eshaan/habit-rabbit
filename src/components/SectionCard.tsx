@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { Section } from "@/types";
 import { getPastelStyle } from "@/constants/colors";
 import { AddUpdateForm } from "./AddUpdateForm";
@@ -11,7 +12,7 @@ import { isEmpty } from "lodash";
 type SectionCardProps = {
   section: Section;
   collapsed: boolean;
-  onToggleCollapse: () => void;
+  onToggleCollapse: (sectionId: string) => void;
   onAddUpdate: (sectionId: string, text: string) => void;
   onEditUpdate: (
     sectionId: string,
@@ -30,7 +31,7 @@ export function SectionCard({
   onDeleteUpdate,
 }: SectionCardProps) {
   const style = getPastelStyle(section.colorKey);
-  const dayGroups = groupUpdatesByDay(section.updates);
+  const dayGroups = useMemo(() => groupUpdatesByDay(section.updates), [section.updates]);
 
   return (
     <section
@@ -42,7 +43,8 @@ export function SectionCard({
     >
       <button
         type="button"
-        onClick={onToggleCollapse}
+        onClick={() => onToggleCollapse(section.id)}
+        data-testid="section-toggle"
         className={cn(
           "flex items-center justify-between gap-2 px-4 py-3 text-left font-semibold",
           style.bg,

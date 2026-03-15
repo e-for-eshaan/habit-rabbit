@@ -107,7 +107,7 @@ export default function Home() {
                 <SectionCard
                   section={section}
                   collapsed={!!collapsedBySectionId[section.id]}
-                  onToggleCollapse={() => toggleSectionCollapse(section.id)}
+                  onToggleCollapse={toggleSectionCollapse}
                   onAddUpdate={addUpdate}
                   onEditUpdate={editUpdate}
                   onDeleteUpdate={scheduleDeleteUpdate}

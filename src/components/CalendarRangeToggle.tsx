@@ -1,14 +1,8 @@
 "use client";
 
 import type { CalendarRange } from "@/store/useSectionsStore";
+import { CALENDAR_RANGE_LABELS } from "@/constants/viewOptions";
 import { cn } from "@/lib/utils";
-
-const RANGE_LABELS: Record<CalendarRange, string> = {
-  week: "Week",
-  month: "Month",
-  last7: "Last 7 days",
-  last30: "Last 30 days",
-};
 
 type CalendarRangeToggleProps = {
   range: CalendarRange;
@@ -30,7 +24,7 @@ export function CalendarRangeToggle({ range, onRangeChange }: CalendarRangeToggl
               : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
           )}
         >
-          {RANGE_LABELS[r]}
+          {CALENDAR_RANGE_LABELS[r]}
         </button>
       ))}
     </div>

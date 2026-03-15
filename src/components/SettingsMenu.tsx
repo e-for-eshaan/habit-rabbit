@@ -1,42 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import { ConfigProvider, Popover, Segmented, theme } from "antd";
-import type { ThemeConfig } from "antd";
-
-const popoverDarkTheme: ThemeConfig = {
-  algorithm: theme.darkAlgorithm,
-};
+import { ConfigProvider, Popover, Segmented } from "antd";
+import { popoverDarkTheme } from "@/constants/antdTheme";
 import { useSectionsStore, selectIsGridCollapsed } from "@/store/useSectionsStore";
 import { SORT_OPTIONS } from "@/constants/sortOptions";
-import type { ViewMode, CalendarRange, FreqRange, LayoutMode } from "@/store/useSectionsStore";
+import { VIEW_MODES, CALENDAR_RANGES, FREQ_RANGES, LAYOUT_MODES } from "@/constants/viewOptions";
+import type { ViewMode } from "@/store/useSectionsStore";
 import { cn } from "@/lib/utils";
-
-const VIEW_MODES: { value: ViewMode; label: string }[] = [
-  { value: "list", label: "List" },
-  { value: "calendar", label: "Calendar" },
-  { value: "freq", label: "Frequency" },
-];
-
-const CALENDAR_RANGES: { value: CalendarRange; label: string }[] = [
-  { value: "week", label: "Week" },
-  { value: "month", label: "Month" },
-  { value: "last7", label: "Last 7 days" },
-  { value: "last30", label: "Last 30 days" },
-];
-
-const FREQ_RANGES: { value: FreqRange; label: string }[] = [
-  { value: "1m", label: "1 month" },
-  { value: "3m", label: "3 months" },
-  { value: "6m", label: "6 months" },
-  { value: "1y", label: "1 year" },
-];
-
-const LAYOUT_MODES: { value: LayoutMode; label: string }[] = [
-  { value: "horizontal", label: "Horizontal" },
-  { value: "grid", label: "Grid" },
-];
 
 function SlidersIcon({ className }: { className?: string }) {
   return (
@@ -149,10 +121,10 @@ export function SettingsMenu() {
   const collapseAll = useSectionsStore((s) => s.collapseAll);
   const expandAll = useSectionsStore((s) => s.expandAll);
 
-  const handleCollapseAll = () => {
+  const handleCollapseAll = useCallback(() => {
     if (isGridCollapsed) expandAll();
     else collapseAll();
-  };
+  }, [isGridCollapsed, expandAll, collapseAll]);
 
   const popoverContent = (
     <ConfigProvider theme={popoverDarkTheme}>
