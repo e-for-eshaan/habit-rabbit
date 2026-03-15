@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf9f7;
+  --foreground: #1c1917;
+  --pastel-1: #ffd6d6;
+  --pastel-2: #d6e5ff;
+  --pastel-3: #d6ffea;
+  --pastel-4: #fff0d6;
+  --pastel-5: #e8d6ff;
+  --pastel-6: #ffd6f0;
+  --heat-0: #ebedf0;
+  --heat-1: #9be9a8;
+  --heat-2: #40c463;
+  --heat-3: #30a14e;
+  --heat-4: #216e39;
+  --heat-5: #0e4429;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-pastel-1: var(--pastel-1);
+  --color-pastel-2: var(--pastel-2);
+  --color-pastel-3: var(--pastel-3);
+  --color-pastel-4: var(--pastel-4);
+  --color-pastel-5: var(--pastel-5);
+  --color-pastel-6: var(--pastel-6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c1917;
+    --foreground: #faf9f7;
+    --pastel-1: #5c3a3a;
+    --pastel-2: #3a4a5c;
+    --pastel-3: #3a5c4a;
+    --pastel-4: #5c4a3a;
+    --pastel-5: #4a3a5c;
+    --pastel-6: #5c3a4a;
+    --heat-0: #21262d;
+    --heat-1: #0e4429;
+    --heat-2: #216e39;
+    --heat-3: #30a14e;
+    --heat-4: #40c463;
+    --heat-5: #9be9a8;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.heat-0 {
+  background-color: var(--heat-0);
+}
+.heat-1 {
+  background-color: var(--heat-1);
+}
+.heat-2 {
+  background-color: var(--heat-2);
+}
+.heat-3 {
+  background-color: var(--heat-3);
+}
+.heat-4 {
+  background-color: var(--heat-4);
+}
+.heat-5 {
+  background-color: var(--heat-5);
+}
