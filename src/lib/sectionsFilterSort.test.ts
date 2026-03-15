@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { filterSectionsBySearch, sortSections } from "./sectionsFilterSort";
 import type { Section } from "@/types";
-import type { SortBy, SortDir } from "@/store/useSectionsStore";
 
 const section = (
   id: string,
