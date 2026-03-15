@@ -1,0 +1,40 @@
+---
+description: Implement a GitHub issue and open a PR (agent picks up issue → implement → deploy path)
+alwaysApply: false
+---
+
+# GitHub issue → implement → PR (deploy path)
+
+When the user says they **created a new issue**, or asks to **implement issue #N**, **pick up issue #N**, **implement the latest issue**, or **deploy issue #N**:
+
+1. **Resolve the issue reference**
+   - If they give a number (e.g. "issue #5" or "issue 5"), use that.
+   - If they say "my latest issue" or "the issue I just created", fetch the most recent open issue:
+     ```bash
+     gh issue list --state open --limit 1 --json number,title,body,url
+     ```
+   - Otherwise fetch the specific issue:
+     ```bash
+     gh issue view <NUMBER> --json title,body,labels,url
+     ```
+   Use `gh` CLI from the project root (user must have `gh` installed and authenticated).
+
+2. **Implement the work**
+   - Read the issue title and body; treat them as the spec.
+   - Make the code/docs changes in this repo to satisfy the issue.
+   - Run the agentic check and fix any failures before committing:
+     ```bash
+     pnpm run agentic
+     ```
+   - Fix any remaining lint/format/console issues; re-run until the check passes.
+
+3. **Create branch, commit, push, open PR**
+   - Branch name: `issue-<number>-<short-slug>` (e.g. `issue-5-add-dark-mode`). Slug from issue title, lowercase, hyphens, no special chars.
+   - Commit message: reference the issue (e.g. `Implement #5: Add dark mode toggle`).
+   - Push the branch and create a PR with body that links the issue (e.g. `Closes #5` or `Implements #5`) so merging will close the issue.
+   - Tell the user: "PR opened. Merge it to deploy (main → Vercel)."
+
+4. **If `gh` is not available or the user has no GitHub CLI**
+   - Ask them to paste the issue title and body, or the issue URL. Then implement from that and still create branch + commit + push + PR if they have git/remote set up, or tell them to push the branch and open a PR manually.
+
+Do not merge the PR yourself unless the user explicitly asks you to merge; opening the PR is enough for the "agent picks it up and deploys" path (they merge → deploy).
