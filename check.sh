@@ -1,0 +1,59 @@
+#!/usr/bin/env sh
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+FAILED=0
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
+echo "${BOLD}=== Pre-commit checks (fingers crossed) ===${NC}\n"
+
+echo "${BOLD}[1/3] Formatting...${NC}"
+if pnpm run format:check; then
+  echo "${GREEN}  ✓ Looks tidy.${NC}\n"
+else
+  echo "${RED}  ✗ Prettier wants a word.${NC}"
+  echo "${YELLOW}  → Fix: pnpm run format${NC}\n"
+  FAILED=1
+fi
+
+echo "${BOLD}[2/3] Lint (yes, including no-console)...${NC}"
+if pnpm run lint; then
+  echo "${GREEN}  ✓ Lint's happy.${NC}\n"
+else
+  echo "${RED}  ✗ Lint said no.${NC}"
+  echo "${YELLOW}  → Fix: pnpm run lint:fix${NC}"
+  echo "${YELLOW}  → And drop any console.log—we're not debugging in prod.${NC}\n"
+  FAILED=1
+fi
+
+echo "${BOLD}[3/3] Lint-staged (staged files)...${NC}"
+if npx lint-staged; then
+  echo "${GREEN}  ✓ Staged stuff is clean.${NC}\n"
+else
+  echo "${RED}  ✗ Staged files need love.${NC}"
+  echo "${YELLOW}  → Fix: stage 'em, then run: npx lint-staged${NC}\n"
+  FAILED=1
+fi
+
+echo "${BOLD}=== Summary ===${NC}"
+if [ "$FAILED" -eq 0 ]; then
+  echo "${GREEN}All good—ship it.${NC}"
+  exit 0
+else
+  echo "${RED}Oops, a few things to fix.${NC}"
+  echo ""
+  echo "${BOLD}Try this (from project root):${NC}"
+  echo "  pnpm run format      # tidy formatting"
+  echo "  pnpm run lint:fix   # fix lint (remove console.* yourself)"
+  echo "  npx lint-staged     # fix staged files only"
+  echo ""
+  echo "Or let the script do the boring part:"
+  echo "  ./fix.sh"
+  echo "  pnpm run fix:all"
+  exit 1
+fi

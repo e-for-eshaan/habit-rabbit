@@ -16,6 +16,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "pnpm run format:check && pnpm run lint",
+    "check:precommit": "sh check.sh",
+    "fix:all": "sh fix.sh",
     "test": "vitest",
     "test:run": "vitest run",
     "prepare": "husky"
