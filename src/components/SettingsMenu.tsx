@@ -131,10 +131,6 @@ export function SettingsMenu() {
       <div className="popover-dark-theme w-[min(320px,calc(100vw-2rem))] max-h-[min(70vh,420px)] overflow-y-auto bg-transparent p-1 text-stone-100">
         <SettingsMenuSection title="Sort by">
           <div className="space-y-1 px-3">
-
-
-
-            
             {SORT_OPTIONS.map((opt) => (
               <div key={opt.value} className="flex items-center gap-2">
                 <OptionButton
