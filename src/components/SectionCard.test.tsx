@@ -15,6 +15,7 @@ const noop = () => {};
 describe("SectionCard", () => {
 
   
+
   it("renders section title", () => {
     render(
       <SectionCard
