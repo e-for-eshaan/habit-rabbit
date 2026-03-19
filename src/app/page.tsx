@@ -111,6 +111,7 @@ export default function Home() {
                   onAddUpdate={addUpdate}
                   onEditUpdate={editUpdate}
                   onDeleteUpdate={scheduleDeleteUpdate}
+                  openDashboardHref={section.id === "fitness" ? "/fitness" : undefined}
                 />
               </div>
             ))}

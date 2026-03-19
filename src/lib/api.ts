@@ -1,5 +1,6 @@
 import { get } from "lodash";
 import type { Section, Update } from "@/types";
+import type { FitnessState } from "@/types/fitness";
 
 const BASE = "";
 
@@ -67,4 +68,15 @@ export async function updateUpdate(
 
 export async function deleteUpdate(sectionId: string, updateId: string): Promise<void> {
   await fetchJson(`${BASE}/api/sections/${sectionId}/updates/${updateId}`, { method: "DELETE" });
+}
+
+export async function getFitness(): Promise<FitnessState> {
+  return fetchJson<FitnessState>(`${BASE}/api/fitness`);
+}
+
+export async function updateFitness(payload: FitnessState): Promise<FitnessState> {
+  return fetchJson<FitnessState>(`${BASE}/api/fitness`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
 }

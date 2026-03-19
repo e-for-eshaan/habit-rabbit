@@ -7,6 +7,7 @@ import {
   eachDayOfInterval,
   getDay,
 } from "date-fns";
+import { format } from "date-fns";
 
 export type CalendarRange = "week" | "month" | "last7" | "last30";
 
@@ -84,4 +85,9 @@ export function toDateKey(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+export function getWeekStartKey(refDate: Date = new Date()): string {
+  const monday = startOfWeek(refDate, { weekStartsOn: 1 });
+  return format(monday, "yyyy-MM-dd");
 }
