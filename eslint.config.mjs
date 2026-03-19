@@ -7,7 +7,12 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   eslintConfigPrettier,
-  { rules: { "no-console": "error" } },
+  {
+    rules: {
+      "no-console": "error",
+      "prefer-const": "warn",
+    },
+  },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
 

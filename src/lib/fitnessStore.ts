@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { isNil } from "lodash";
-import type { FitnessState, Exercise, WeekLog } from "@/types/fitness";
+import type { FitnessState, Exercise, DayLog } from "@/types/fitness";
 import { labelToId } from "@/lib/fitnessConstants";
 
 const DATA_DIR = join(process.cwd(), "data");
@@ -68,19 +68,51 @@ const DEFAULT_EXERCISES: Exercise[] = [
 
 const DEFAULT_STATE: FitnessState = {
   exercises: DEFAULT_EXERCISES,
-  weekLogs: [],
+  dayLogs: [],
 };
 
-function isValidWeekStart(s: unknown): s is string {
+function isValidDateKey(s: unknown): s is string {
   if (typeof s !== "string") return false;
   const d = new Date(s + "T12:00:00");
-  return !Number.isNaN(d.getTime()) && d.getDay() === 1;
+  return !Number.isNaN(d.getTime());
+}
+
+function hasValidDayLog(log: unknown): log is DayLog {
+  if (isNil(log) || typeof log !== "object") return false;
+  const l = log as Record<string, unknown>;
+  const hasSelectedGroups =
+    l.selectedGroups === undefined ||
+    (Array.isArray(l.selectedGroups) &&
+      l.selectedGroups.every((g: unknown) => typeof g === "string"));
+  return (
+    isValidDateKey(l.dateKey) &&
+    Array.isArray(l.exerciseIds) &&
+    l.exerciseIds.every((id: unknown) => typeof id === "string") &&
+    typeof l.swimmingSessions === "number" &&
+    typeof l.runningSessions === "number" &&
+    hasSelectedGroups
+  );
 }
 
 function hasValidFitnessState(data: unknown): data is FitnessState {
   if (isNil(data) || typeof data !== "object") return false;
   const o = data as Record<string, unknown>;
-  if (!Array.isArray(o.exercises) || !Array.isArray(o.weekLogs)) return false;
+  if (!Array.isArray(o.exercises)) return false;
+  const hasDayLogs = Array.isArray(o.dayLogs) && (o.dayLogs as unknown[]).every(hasValidDayLog);
+  if (hasDayLogs) {
+    for (const ex of o.exercises as unknown[]) {
+      if (
+        isNil(ex) ||
+        typeof (ex as Record<string, unknown>).id !== "string" ||
+        typeof (ex as Record<string, unknown>).label !== "string" ||
+        typeof (ex as Record<string, unknown>).group !== "string"
+      )
+        return false;
+    }
+    return true;
+  }
+  const weekLogs = o.weekLogs;
+  if (!Array.isArray(weekLogs)) return false;
   for (const ex of o.exercises as unknown[]) {
     if (
       isNil(ex) ||
@@ -90,11 +122,11 @@ function hasValidFitnessState(data: unknown): data is FitnessState {
     )
       return false;
   }
-  for (const log of o.weekLogs as unknown[]) {
+  for (const log of weekLogs as unknown[]) {
     const l = log as Record<string, unknown>;
     if (
       isNil(log) ||
-      !isValidWeekStart(l.weekStart) ||
+      typeof l.weekStart !== "string" ||
       !Array.isArray(l.exerciseIds) ||
       typeof l.swimmingSessions !== "number" ||
       typeof l.runningSessions !== "number"
@@ -104,12 +136,30 @@ function hasValidFitnessState(data: unknown): data is FitnessState {
   return true;
 }
 
+function migrateWeekLogsToDayLogs(data: Record<string, unknown>): FitnessState {
+  const exercises = data.exercises as FitnessState["exercises"];
+  const weekLogs = (data.weekLogs ?? []) as Array<{
+    weekStart: string;
+    exerciseIds: string[];
+    swimmingSessions: number;
+    runningSessions: number;
+  }>;
+  const dayLogs: DayLog[] = weekLogs.map((w) => ({
+    dateKey: w.weekStart,
+    exerciseIds: w.exerciseIds ?? [],
+    swimmingSessions: w.swimmingSessions ?? 0,
+    runningSessions: w.runningSessions ?? 0,
+  }));
+  return { exercises, dayLogs };
+}
+
 export async function readFitnessStore(): Promise<FitnessState> {
   try {
     const raw = await readFile(FITNESS_STORE_PATH, "utf-8");
-    const data = JSON.parse(raw) as unknown;
+    const data = JSON.parse(raw) as Record<string, unknown>;
     if (!hasValidFitnessState(data)) return DEFAULT_STATE;
-    return data;
+    if (Array.isArray(data.dayLogs)) return data as FitnessState;
+    return migrateWeekLogsToDayLogs(data);
   } catch {
     return DEFAULT_STATE;
   }

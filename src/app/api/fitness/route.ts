@@ -1,30 +1,35 @@
 import { NextResponse } from "next/server";
 import { isNil } from "lodash";
 import { readFitnessStore, writeFitnessStore } from "@/lib/fitnessStore";
-import type { FitnessState, WeekLog } from "@/types/fitness";
+import type { FitnessState, DayLog } from "@/types/fitness";
 
-function isValidWeekStart(s: unknown): boolean {
+function isValidDateKey(s: unknown): boolean {
   if (typeof s !== "string") return false;
   const d = new Date(s + "T12:00:00");
-  return !Number.isNaN(d.getTime()) && d.getDay() === 1;
+  return !Number.isNaN(d.getTime());
 }
 
-function validateWeekLog(log: unknown): log is WeekLog {
+function validateDayLog(log: unknown): log is DayLog {
   if (isNil(log) || typeof log !== "object") return false;
   const l = log as Record<string, unknown>;
+  const hasSelectedGroups =
+    l.selectedGroups === undefined ||
+    (Array.isArray(l.selectedGroups) &&
+      l.selectedGroups.every((g: unknown) => typeof g === "string"));
   return (
-    isValidWeekStart(l.weekStart) &&
+    isValidDateKey(l.dateKey) &&
     Array.isArray(l.exerciseIds) &&
     l.exerciseIds.every((id) => typeof id === "string") &&
     typeof l.swimmingSessions === "number" &&
-    typeof l.runningSessions === "number"
+    typeof l.runningSessions === "number" &&
+    hasSelectedGroups
   );
 }
 
 function validateState(body: unknown): body is FitnessState {
   if (isNil(body) || typeof body !== "object") return false;
   const o = body as Record<string, unknown>;
-  if (!Array.isArray(o.exercises) || !Array.isArray(o.weekLogs)) return false;
+  if (!Array.isArray(o.exercises) || !Array.isArray(o.dayLogs)) return false;
   for (const ex of o.exercises as unknown[]) {
     const e = ex as Record<string, unknown>;
     if (
@@ -35,7 +40,7 @@ function validateState(body: unknown): body is FitnessState {
     )
       return false;
   }
-  return (o.weekLogs as unknown[]).every(validateWeekLog);
+  return (o.dayLogs as unknown[]).every(validateDayLog);
 }
 
 export async function GET() {
@@ -54,7 +59,7 @@ export async function PATCH(request: Request) {
   const body = await request.json().catch(() => null);
   if (!validateState(body)) {
     return NextResponse.json(
-      { error: "Invalid fitness state: exercises and weekLogs required with valid shape" },
+      { error: "Invalid fitness state: exercises and dayLogs required with valid shape" },
       { status: 400 }
     );
   }

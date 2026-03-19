@@ -1,60 +1,55 @@
 "use client";
 
-import type { WeekLog } from "@/types/fitness";
+import type { DayLog } from "@/types/fitness";
+import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FitnessCheckbox } from "./FitnessCheckbox";
 
 type SwimRunInputProps = {
-  weekLog: WeekLog;
+  dayLog: DayLog;
   onSwimmingChange: (value: number) => void;
   onRunningChange: (value: number) => void;
+  locked?: boolean;
   className?: string;
 };
 
 export function SwimRunInput({
-  weekLog,
+  dayLog,
   onSwimmingChange,
   onRunningChange,
+  locked = false,
   className,
 }: SwimRunInputProps) {
-  const swim = Math.max(0, Math.floor(weekLog.swimmingSessions));
-  const run = Math.max(0, Math.floor(weekLog.runningSessions));
+  const swimChecked = (dayLog.swimmingSessions ?? 0) > 0;
+  const runChecked = (dayLog.runningSessions ?? 0) > 0;
 
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4 dark:border-stone-600 dark:bg-stone-800/50",
+        "flex flex-wrap items-center gap-4 rounded-lg border border-stone-200 bg-stone-50/50 p-3 dark:border-stone-600 dark:bg-stone-800/50 sm:gap-6 sm:rounded-xl sm:p-4",
         className
       )}
     >
-      <h2 className="w-full text-lg font-semibold text-stone-800 dark:text-stone-200">
-        Swimming & running
+      <h2 className="flex w-full items-center gap-2 text-base font-semibold text-stone-800 dark:text-stone-200 sm:gap-2.5 sm:text-lg">
+        <Heart size={18} className="shrink-0" aria-hidden />
+        Cardio
       </h2>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="swim-sessions" className="text-sm text-stone-600 dark:text-stone-400">
-          Swimming sessions
-        </label>
-        <input
-          id="swim-sessions"
-          type="number"
-          min={0}
-          value={swim}
-          onChange={(e) => onSwimmingChange(Math.max(0, parseInt(e.target.value, 10) || 0))}
-          className="w-24 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="run-sessions" className="text-sm text-stone-600 dark:text-stone-400">
-          Running sessions
-        </label>
-        <input
-          id="run-sessions"
-          type="number"
-          min={0}
-          value={run}
-          onChange={(e) => onRunningChange(Math.max(0, parseInt(e.target.value, 10) || 0))}
-          className="w-24 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200"
-        />
-      </div>
+      <FitnessCheckbox
+        id="swim-checkbox"
+        checked={swimChecked}
+        onChange={(checked) => onSwimmingChange(checked ? 1 : 0)}
+        disabled={locked}
+        label="Swimming"
+        labelClassName="text-stone-700 dark:text-stone-300"
+      />
+      <FitnessCheckbox
+        id="run-checkbox"
+        checked={runChecked}
+        onChange={(checked) => onRunningChange(checked ? 1 : 0)}
+        disabled={locked}
+        label="Running"
+        labelClassName="text-stone-700 dark:text-stone-300"
+      />
     </div>
   );
 }

@@ -4,7 +4,9 @@ import { useState } from "react";
 import type { FitnessState, Exercise } from "@/types/fitness";
 import { EXERCISE_GROUPS, labelToId } from "@/lib/fitnessConstants";
 import { getPastelStyle } from "@/constants/colors";
+import { getGroupIcon, GROUP_ICON_SIZE } from "@/components/fitness/groupIcons";
 import { cn } from "@/lib/utils";
+
 type ExerciseEditModeProps = {
   state: FitnessState;
   onSave: (state: FitnessState) => void;
@@ -12,128 +14,183 @@ type ExerciseEditModeProps = {
   className?: string;
 };
 
+function ensureUniqueId(exercises: Exercise[], label: string, group: string): string {
+  const base: string = labelToId(label);
+  if (!exercises.some((e) => e.id === base)) return base;
+  const withGroup = labelToId(`${label} ${group}`);
+  if (!exercises.some((e) => e.id === withGroup)) return withGroup;
+  let n = 1;
+  while (exercises.some((e) => e.id === `${withGroup}-${n}`)) n += 1;
+  return `${withGroup}-${n}`;
+}
+
 export function ExerciseEditMode({ state, onSave, onClose, className }: ExerciseEditModeProps) {
   const [exercises, setExercises] = useState<Exercise[]>(state.exercises);
+  const [addingToGroup, setAddingToGroup] = useState<string | null>(null);
   const [newLabel, setNewLabel] = useState("");
-  const [newGroup, setNewGroup] = useState<string>(EXERCISE_GROUPS[0] ?? "Shoulder");
 
-  const addExercise = () => {
+  const addExerciseToGroup = (group: string) => {
     const label = newLabel.trim();
     if (!label) return;
-    const id = labelToId(label);
-    if (exercises.some((e) => e.id === id)) return;
-    setExercises([...exercises, { id, label, group: newGroup }]);
+    const id = ensureUniqueId(exercises, label, group);
+    setExercises([...exercises, { id, label, group, muted: false }]);
     setNewLabel("");
+    setAddingToGroup(null);
   };
 
   const removeExercise = (id: string) => {
     setExercises(exercises.filter((e) => e.id !== id));
   };
 
+  const toggleMuted = (id: string) => {
+    setExercises(exercises.map((e) => (e.id === id ? { ...e, muted: !e.muted } : e)));
+  };
+
   const handleSave = () => {
-    const weekLogs = state.weekLogs.map((log) => ({
+    const dayLogs = state.dayLogs.map((log) => ({
       ...log,
       exerciseIds: log.exerciseIds.filter((id) => exercises.some((e) => e.id === id)),
     }));
-    onSave({ exercises, weekLogs });
+    onSave({ exercises, dayLogs });
     onClose();
   };
 
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-xl border-2 border-amber-200 bg-amber-50/30 p-4 dark:border-amber-800 dark:bg-amber-900/20",
+        "flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/30 p-3 dark:border-amber-800 dark:bg-amber-900/20 sm:gap-4 sm:rounded-xl sm:p-4",
         className
       )}
     >
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200">Edit exercises</h2>
-        <div className="flex gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+          Edit exercises
+        </h2>
+        <div className="flex gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700"
+            className="rounded-md px-2.5 py-1 text-xs font-medium text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-lg bg-stone-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300"
+            className="rounded-md bg-stone-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
           >
             Save
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="new-ex-label" className="text-xs text-stone-600 dark:text-stone-400">
-            New exercise
-          </label>
-          <input
-            id="new-ex-label"
-            type="text"
-            value={newLabel}
-            onChange={(e) => setNewLabel(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addExercise()}
-            placeholder="Exercise name"
-            className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="new-ex-group" className="text-xs text-stone-600 dark:text-stone-400">
-            Group
-          </label>
-          <select
-            id="new-ex-group"
-            value={newGroup}
-            onChange={(e) => setNewGroup(e.target.value)}
-            className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200"
-          >
-            {EXERCISE_GROUPS.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          type="button"
-          onClick={addExercise}
-          className="rounded-lg bg-stone-700 px-3 py-2 text-sm font-medium text-white hover:bg-stone-600 dark:bg-stone-300 dark:text-stone-800 dark:hover:bg-stone-200"
-        >
-          Add
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         {EXERCISE_GROUPS.map((group, idx) => {
           const items = exercises.filter((e) => e.group === group);
-          if (items.length === 0) return null;
           const style = getPastelStyle(idx % 6);
+          const isAdding = addingToGroup === group;
           return (
-            <div key={group} className={cn("rounded-lg border p-2", style.border, style.light)}>
-              <h3 className="mb-2 text-sm font-medium text-stone-700 dark:text-stone-300">
-                {group}
+            <div
+              key={group}
+              className={cn(
+                "rounded-md border p-2 sm:rounded-lg sm:p-3",
+                style.border,
+                style.light
+              )}
+            >
+              <h3 className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:gap-2 sm:text-sm">
+                {(() => {
+                  const Icon = getGroupIcon(group);
+                  return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
+                })()}
+                <span className="truncate">{group}</span>
               </h3>
-              <ul className="flex flex-col gap-1">
+              <ul className="flex flex-col gap-1 sm:gap-1.5">
                 {items.map((ex) => (
                   <li
                     key={ex.id}
-                    className="flex items-center justify-between gap-2 text-sm text-stone-700 dark:text-stone-300"
+                    className={cn(
+                      "flex items-center justify-between gap-1.5 text-xs sm:gap-2 sm:text-sm",
+                      ex.muted && "opacity-60"
+                    )}
                   >
-                    <span className="truncate">{ex.label}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeExercise(ex.id)}
-                      className="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30"
-                    >
-                      Remove
-                    </button>
+                    <span className="truncate text-stone-700 dark:text-stone-300">
+                      {ex.label}
+                      {ex.muted && (
+                        <span className="ml-0.5 text-[10px] text-stone-500 dark:text-stone-400 sm:ml-1 sm:text-xs">
+                          (muted)
+                        </span>
+                      )}
+                    </span>
+                    <span className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+                      <button
+                        type="button"
+                        onClick={() => toggleMuted(ex.id)}
+                        title={ex.muted ? "Show in least hit" : "Hide from least hit"}
+                        className={cn(
+                          "rounded px-1 py-0.5 text-[10px] font-medium sm:px-1.5 sm:text-xs",
+                          ex.muted
+                            ? "bg-stone-300 text-stone-600 dark:bg-stone-600 dark:text-stone-300"
+                            : "bg-stone-200 text-stone-500 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-400 dark:hover:bg-stone-600"
+                        )}
+                      >
+                        {ex.muted ? "Unmute" : "Mute"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeExercise(ex.id)}
+                        className="rounded px-1 py-0.5 text-[10px] font-medium text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30 sm:px-1.5 sm:text-xs"
+                      >
+                        Remove
+                      </button>
+                    </span>
                   </li>
                 ))}
               </ul>
+              {isAdding ? (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
+                  <input
+                    type="text"
+                    value={newLabel}
+                    onChange={(e) => setNewLabel(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") addExerciseToGroup(group);
+                      if (e.key === "Escape") {
+                        setAddingToGroup(null);
+                        setNewLabel("");
+                      }
+                    }}
+                    placeholder="Exercise name"
+                    autoFocus
+                    className="min-w-0 flex-1 rounded border border-stone-300 bg-white px-1.5 py-1 text-xs dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 sm:px-2 sm:py-1.5 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => addExerciseToGroup(group)}
+                    className="rounded bg-stone-700 px-1.5 py-1 text-[10px] font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:px-2 sm:py-1.5 sm:text-xs"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAddingToGroup(null);
+                      setNewLabel("");
+                    }}
+                    className="rounded px-1.5 py-1 text-[10px] text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700 sm:px-2 sm:py-1.5 sm:text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAddingToGroup(group)}
+                  className="mt-1.5 w-full rounded border border-dashed border-stone-300 py-1 text-[10px] font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 dark:border-stone-600 dark:text-stone-400 dark:hover:border-stone-500 dark:hover:text-stone-300 sm:mt-2 sm:py-1.5 sm:text-xs"
+                >
+                  + Add exercise
+                </button>
+              )}
             </div>
           );
         })}

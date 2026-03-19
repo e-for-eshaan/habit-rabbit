@@ -26,30 +26,60 @@ const PASTEL_VARS = [
   "var(--pastel-6)",
 ] as const;
 
+function getWeekStartFromDateKey(dateKey: string): string {
+  const d = new Date(dateKey + "T12:00:00");
+  const day = d.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() + mondayOffset);
+  const y = monday.getFullYear();
+  const m = String(monday.getMonth() + 1).padStart(2, "0");
+  const dd = String(monday.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+
 function getLeastHit(state: FitnessState, exerciseById: Map<string, Exercise>) {
+  const nonMuted = state.exercises.filter((e) => !e.muted);
   const counts = new Map<string, number>();
-  for (const ex of state.exercises) counts.set(ex.id, 0);
-  for (const log of state.weekLogs) {
+  for (const ex of nonMuted) counts.set(ex.id, 0);
+  for (const log of state.dayLogs) {
     for (const id of log.exerciseIds) {
-      if (counts.has(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
+      if (counts.has(id)) {
+        const prev = counts.get(id) ?? 0;
+        counts.set(id, prev + 1);
+      }
     }
   }
   return Array.from(counts.entries())
-    .map(([id, weeks]) => ({ id, weeks, label: exerciseById.get(id)?.label ?? id }))
-    .sort((a, b) => a.weeks - b.weeks)
+    .map(([id, days]) => ({ id, days, label: exerciseById.get(id)?.label ?? id }))
+    .sort((a, b) => a.days - b.days)
     .slice(0, LEAST_HIT_COUNT);
 }
 
 function getWeeklyVolume(state: FitnessState) {
-  return state.weekLogs
-    .map((log) => ({
-      weekStart: log.weekStart.slice(0, 10),
-      label: log.weekStart.slice(5, 10),
-      exercises: log.exerciseIds.length,
-      swimming: log.swimmingSessions,
-      running: log.runningSessions,
-      total: log.exerciseIds.length + log.swimmingSessions + log.runningSessions,
-    }))
+  const byWeek = new Map<
+    string,
+    { weekStart: string; label: string; exercises: number; swimming: number; running: number }
+  >();
+  for (const log of state.dayLogs) {
+    const weekStart = getWeekStartFromDateKey(log.dateKey);
+    const existing = byWeek.get(weekStart);
+    if (existing) {
+      existing.exercises += log.exerciseIds.length;
+      existing.swimming += log.swimmingSessions;
+      existing.running += log.runningSessions;
+    } else {
+      byWeek.set(weekStart, {
+        weekStart,
+        label: weekStart.slice(5, 10),
+        exercises: log.exerciseIds.length,
+        swimming: log.swimmingSessions,
+        running: log.runningSessions,
+      });
+    }
+  }
+  return Array.from(byWeek.values())
+    .map((w) => ({ ...w, total: w.exercises + w.swimming + w.running }))
     .sort((a, b) => a.weekStart.localeCompare(b.weekStart))
     .slice(-12);
 }
@@ -57,7 +87,7 @@ function getWeeklyVolume(state: FitnessState) {
 function getGroupFrequency(state: FitnessState) {
   const byGroup = new Map<string, number>();
   for (const ex of state.exercises) byGroup.set(ex.group, 0);
-  for (const log of state.weekLogs) {
+  for (const log of state.dayLogs) {
     for (const id of log.exerciseIds) {
       const ex = state.exercises.find((e) => e.id === id);
       if (ex) byGroup.set(ex.group, (byGroup.get(ex.group) ?? 0) + 1);
@@ -83,33 +113,35 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
   const groupFreq = useMemo(() => getGroupFrequency(state), [state]);
 
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
-      <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200">Dashboard</h2>
+    <div className={cn("flex flex-col gap-4 sm:gap-6", className)}>
+      <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+        Dashboard
+      </h2>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
         <div
           className={cn(
-            "rounded-xl border-2 p-4 shadow-sm",
+            "rounded-lg border-2 p-3 shadow-sm sm:rounded-xl sm:p-4",
             getPastelStyle(0).border,
             getPastelStyle(0).light
           )}
         >
-          <h3 className="mb-3 text-sm font-medium text-stone-700 dark:text-stone-300">
-            Least hit exercises (weeks done)
+          <h3 className="mb-2 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-3 sm:text-sm">
+            Least hit exercises (days done)
           </h3>
           {leastHit.length === 0 ? (
-            <p className="text-sm text-stone-500 dark:text-stone-400">
-              Complete exercises in a week to see stats.
+            <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
+              Complete exercises on a day to see stats.
             </p>
           ) : (
-            <ul className="flex flex-col gap-1.5">
-              {leastHit.map((item, i) => (
+            <ul className="flex flex-col gap-1 sm:gap-1.5">
+              {leastHit.map((item) => (
                 <li
                   key={item.id}
-                  className="flex items-center justify-between text-sm text-stone-700 dark:text-stone-300"
+                  className="flex items-center justify-between text-xs text-stone-700 dark:text-stone-300 sm:text-sm"
                 >
                   <span className="truncate">{item.label}</span>
-                  <span className="shrink-0 font-medium">{item.weeks}</span>
+                  <span className="shrink-0 font-medium">{item.days}</span>
                 </li>
               ))}
             </ul>
@@ -118,18 +150,18 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
         <div
           className={cn(
-            "rounded-xl border-2 p-4 shadow-sm",
+            "rounded-lg border-2 p-3 shadow-sm sm:rounded-xl sm:p-4",
             getPastelStyle(1).border,
             getPastelStyle(1).light
           )}
         >
-          <h3 className="mb-3 text-sm font-medium text-stone-700 dark:text-stone-300">
+          <h3 className="mb-2 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-3 sm:text-sm">
             By muscle group (total completions)
           </h3>
           {groupFreq.every((g) => g.count === 0) ? (
-            <p className="text-sm text-stone-500 dark:text-stone-400">No data yet.</p>
+            <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">No data yet.</p>
           ) : (
-            <div className="h-[180px] w-full">
+            <div className="h-[160px] w-full sm:h-[180px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={groupFreq}
@@ -146,7 +178,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     axisLine={false}
                   />
                   <RechartsTooltip
-                    formatter={(value: number) => [value, "Weeks"]}
+                    formatter={(value: number) => [value, "Days"]}
                     labelFormatter={(label) => label}
                   />
                   <Bar
@@ -164,18 +196,20 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
       <div
         className={cn(
-          "rounded-xl border-2 p-4 shadow-sm",
+          "rounded-lg border-2 p-3 shadow-sm sm:rounded-xl sm:p-4",
           getPastelStyle(2).border,
           getPastelStyle(2).light
         )}
       >
-        <h3 className="mb-3 text-sm font-medium text-stone-700 dark:text-stone-300">
+        <h3 className="mb-2 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-3 sm:text-sm">
           Weekly volume (last 12 weeks)
         </h3>
         {weeklyVolume.length === 0 ? (
-          <p className="text-sm text-stone-500 dark:text-stone-400">No weekly data yet.</p>
+          <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
+            No weekly data yet.
+          </p>
         ) : (
-          <div className="h-[200px] w-full">
+          <div className="h-[180px] w-full sm:h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={weeklyVolume} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
