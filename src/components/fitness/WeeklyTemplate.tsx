@@ -156,7 +156,7 @@ export function DayTemplate({
         )}
       </div>
       {byGroup.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/50 py-6 text-center text-xs text-stone-500 dark:border-stone-600 dark:bg-stone-800/50 dark:text-stone-400 sm:rounded-xl sm:py-8 sm:text-sm">
+        <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/50 px-2 py-3 text-center text-xs text-stone-500 dark:border-stone-600 dark:bg-stone-800/50 dark:text-stone-400 sm:rounded-xl sm:px-8 sm:py-10 sm:text-sm">
           No groups selected. Use &quot;Add group&quot; to choose muscle groups, or for today start
           from the welcome screen.
         </p>
