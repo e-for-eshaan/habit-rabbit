@@ -7,7 +7,6 @@ import {
   eachDayOfInterval,
   getDay,
 } from "date-fns";
-import { format } from "date-fns";
 
 export type CalendarRange = "week" | "month" | "last7" | "last30";
 
@@ -73,21 +72,9 @@ export function getCalendarGrid(days: Date[]): (Date | null)[][] {
   return grid;
 }
 
-export function getMonthGrid(refDate: Date = new Date()): (Date | null)[][] {
-  const start = startOfMonth(refDate);
-  const end = endOfMonth(refDate);
-  const days = eachDayOfInterval({ start, end });
-  return getCalendarGrid(days);
-}
-
 export function toDateKey(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
-}
-
-export function getWeekStartKey(refDate: Date = new Date()): string {
-  const monday = startOfWeek(refDate, { weekStartsOn: 1 });
-  return format(monday, "yyyy-MM-dd");
 }

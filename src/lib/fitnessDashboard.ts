@@ -33,7 +33,7 @@ function getActivityCount(log: DayLog): number {
   return log.exerciseIds.length + (log.swimmingSessions ?? 0) + (log.runningSessions ?? 0);
 }
 
-export function computeKPIs(state: FitnessState): DashboardKPIs {
+function computeKPIs(state: FitnessState): DashboardKPIs {
   const today = new Date();
   const todayKey = toDateKey(today);
   const weekStart = getWeekStartFromDateKey(todayKey);
@@ -83,7 +83,7 @@ export function computeKPIs(state: FitnessState): DashboardKPIs {
   };
 }
 
-export function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
+function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
   const byWeek = new Map<
     string,
     { weekStart: string; label: string; exercises: number; swimming: number; running: number }
@@ -111,7 +111,7 @@ export function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
     .slice(-WEEK_COUNT);
 }
 
-export function computeActivityByDay(state: FitnessState): Record<string, number> {
+function computeActivityByDay(state: FitnessState): Record<string, number> {
   const end = new Date();
   const start = subDays(end, HEATMAP_DAYS - 1);
   const days = eachDayOfInterval({ start, end });
@@ -127,7 +127,7 @@ export function computeActivityByDay(state: FitnessState): Record<string, number
   return byDay;
 }
 
-export function computeWorkoutDaysPerWeek(state: FitnessState): WorkoutDaysPerWeekItem[] {
+function computeWorkoutDaysPerWeek(state: FitnessState): WorkoutDaysPerWeekItem[] {
   const byWeek = new Map<string, Set<string>>();
   for (const log of state.dayLogs) {
     if (!hasActivity(log)) continue;
@@ -146,7 +146,7 @@ export function computeWorkoutDaysPerWeek(state: FitnessState): WorkoutDaysPerWe
     .slice(-WEEK_COUNT);
 }
 
-export function computeGroupFrequency(state: FitnessState): GroupFreqItem[] {
+function computeGroupFrequency(state: FitnessState): GroupFreqItem[] {
   const byGroup = new Map<string, number>();
   for (const ex of state.exercises) byGroup.set(ex.group, 0);
   for (const log of state.dayLogs) {
@@ -160,10 +160,7 @@ export function computeGroupFrequency(state: FitnessState): GroupFreqItem[] {
     .sort((a, b) => b.count - a.count);
 }
 
-export function computeLeastHit(
-  state: FitnessState,
-  exerciseById: Map<string, Exercise>
-): LeastHitItem[] {
+function computeLeastHit(state: FitnessState, exerciseById: Map<string, Exercise>): LeastHitItem[] {
   const nonMuted = state.exercises.filter((e) => !e.muted);
   const counts = new Map<string, number>();
   for (const ex of nonMuted) counts.set(ex.id, 0);
@@ -180,7 +177,7 @@ export function computeLeastHit(
     .slice(0, LEAST_HIT_COUNT);
 }
 
-export function computeMissedExercises(state: FitnessState): MissedExerciseItem[] {
+function computeMissedExercises(state: FitnessState): MissedExerciseItem[] {
   const today = new Date();
   const cutoff = subDays(today, MISSED_DAYS_THRESHOLD);
   const cutoffKey = toDateKey(cutoff);
@@ -228,7 +225,6 @@ export function computeFitnessDashboard(state: FitnessState): FitnessDashboardDa
   };
 }
 
-export { getHeatLevel };
 export function getActivityHeatLevel(count: number, countsByDay: Record<string, number>): number {
   return getHeatLevel(count, countsByDay);
 }

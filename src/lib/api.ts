@@ -45,20 +45,6 @@ export async function createSection(body: { title: string; colorKey?: number }):
   });
 }
 
-export async function updateSection(
-  id: string,
-  body: { title?: string; colorKey?: number }
-): Promise<Section> {
-  return fetchJson<Section>(`${BASE}/api/sections/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(body),
-  });
-}
-
-export async function deleteSection(id: string): Promise<void> {
-  await fetchJson(`${BASE}/api/sections/${id}`, { method: "DELETE" });
-}
-
 export async function createUpdate(
   sectionId: string,
   body: { text: string; createdAt?: string }

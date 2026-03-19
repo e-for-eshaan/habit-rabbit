@@ -35,31 +35,3 @@ export const useFitnessDashboardStore = create<FitnessDashboardState>((set) => (
 
   invalidate: () => set({ data: null }),
 }));
-
-export function selectKPIs(state: FitnessDashboardState) {
-  return state.data?.kpis ?? null;
-}
-
-export function selectWeeklyVolume(state: FitnessDashboardState) {
-  return state.data?.weeklyVolume ?? [];
-}
-
-export function selectActivityByDay(state: FitnessDashboardState) {
-  return state.data?.activityByDay ?? {};
-}
-
-export function selectWorkoutDaysPerWeek(state: FitnessDashboardState) {
-  return state.data?.workoutDaysPerWeek ?? [];
-}
-
-export function selectGroupFrequency(state: FitnessDashboardState) {
-  return state.data?.groupFrequency ?? [];
-}
-
-export function selectLeastHit(state: FitnessDashboardState) {
-  return state.data?.leastHit ?? [];
-}
-
-export function selectMissedExercises(state: FitnessDashboardState) {
-  return state.data?.missedExercises ?? [];
-}

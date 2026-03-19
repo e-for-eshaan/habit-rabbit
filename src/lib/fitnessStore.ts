@@ -1,11 +1,6 @@
-import { readFile, writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { isNil } from "lodash";
 import type { FitnessState, Exercise, DayLog } from "@/types/fitness";
 import { labelToId } from "@/lib/fitnessConstants";
-
-const DATA_DIR = join(process.cwd(), "data");
-const FITNESS_STORE_PATH = join(DATA_DIR, "fitness.json");
 
 function buildExercise(group: string, label: string, idOverride?: string): Exercise {
   return { id: idOverride ?? labelToId(label), label, group };
@@ -76,7 +71,7 @@ function isValidDateKey(s: unknown): s is string {
   return !Number.isNaN(d.getTime());
 }
 
-export function hasValidDayLog(log: unknown): log is DayLog {
+function hasValidDayLog(log: unknown): log is DayLog {
   if (isNil(log) || typeof log !== "object") return false;
   const l = log as Record<string, unknown>;
   const hasSelectedGroups =
@@ -150,25 +145,4 @@ export function migrateWeekLogsToDayLogs(data: Record<string, unknown>): Fitness
     runningSessions: w.runningSessions ?? 0,
   }));
   return { exercises, dayLogs };
-}
-
-export async function readFitnessStore(): Promise<FitnessState> {
-  try {
-    const raw = await readFile(FITNESS_STORE_PATH, "utf-8");
-    const data = JSON.parse(raw) as Record<string, unknown>;
-    if (!hasValidFitnessState(data)) return getDefaultFitnessState();
-    if (Array.isArray(data.dayLogs)) return data as FitnessState;
-    return migrateWeekLogsToDayLogs(data);
-  } catch {
-    return getDefaultFitnessState();
-  }
-}
-
-export async function writeFitnessStore(state: FitnessState): Promise<void> {
-  await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(FITNESS_STORE_PATH, JSON.stringify(state, null, 2), "utf-8");
-}
-
-export function getDefaultExercises(): Exercise[] {
-  return [...DEFAULT_EXERCISES];
 }

@@ -1,6 +1,6 @@
 import type { SortBy } from "@/store/useSectionsStore";
 
-export type SortOption = {
+type SortOption = {
   value: SortBy;
   label: string;
   hasDirection: boolean;

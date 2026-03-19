@@ -12,7 +12,7 @@ const dateLabel = (iso: string) =>
     day: "numeric",
   });
 
-export type DayGroup = {
+type DayGroup = {
   dateKey: string;
   dateLabel: string;
   updates: Update[];
