@@ -37,14 +37,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git push -u origin "$BRANCH"
-          gh pr create \
-            --draft \
-            --base main \
-            --head "$BRANCH" \
-            --title "${{ github.event.issue.title }}" \
-            --body "Closes #${{ github.event.issue.number }}
-
-Draft PR created from issue. Implement the changes (e.g. in Cursor: \"Implement issue #${{ github.event.issue.number }}\") and push to this branch."
+          BODY="Closes #${{ github.event.issue.number }}"
+          BODY="$BODY"$'\n\n'"Draft PR created from issue. Implement the changes (e.g. in Cursor: \"Implement issue #${{ github.event.issue.number }}\") and push to this branch."
+          gh pr create --draft --base main --head "$BRANCH" --title "${{ github.event.issue.title }}" --body "$BODY"
           PR_URL=$(gh pr view --json url -q .url)
           echo "pr_url=$PR_URL" >> $GITHUB_ENV
 
