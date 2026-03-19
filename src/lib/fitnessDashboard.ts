@@ -193,7 +193,6 @@ export function computeMissedExercises(state: FitnessState): MissedExerciseItem[
       }
     }
   }
-  const exerciseById = new Map(state.exercises.map((e) => [e.id, e]));
   const result: MissedExerciseItem[] = [];
   for (const ex of state.exercises) {
     if (ex.muted) continue;

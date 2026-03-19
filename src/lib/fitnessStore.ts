@@ -66,11 +66,6 @@ const DEFAULT_EXERCISES: Exercise[] = [
   ].map((label) => buildExercise("Abs", label)),
 ];
 
-const DEFAULT_STATE: FitnessState = {
-  exercises: DEFAULT_EXERCISES,
-  dayLogs: [],
-};
-
 export function getDefaultFitnessState(): FitnessState {
   return { exercises: [...DEFAULT_EXERCISES], dayLogs: [] };
 }

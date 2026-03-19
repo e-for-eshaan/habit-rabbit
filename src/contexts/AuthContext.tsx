@@ -38,9 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(!!auth);
 
   useEffect(() => {
-    if (!auth) return;
+    const authInstance = auth;
+    if (!authInstance) return;
     setApiGetToken(async () => {
-      const u = auth.currentUser;
+      const u = authInstance.currentUser;
       if (!u) return null;
       try {
         return await u.getIdToken(true);
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     });
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
+    const unsubscribe = onAuthStateChanged(authInstance, (u) => {
       setUser(u);
       setLoading(false);
     });

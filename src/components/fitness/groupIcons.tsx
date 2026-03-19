@@ -1,14 +1,22 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Arm, BicepsFlexed, Dumbbell, Footprints, Layers, Mountain, Target } from "lucide-react";
+import {
+  Activity,
+  BicepsFlexed,
+  Dumbbell,
+  Footprints,
+  Layers,
+  Mountain,
+  Target,
+} from "lucide-react";
 
 const GROUP_ICON_MAP: Record<string, LucideIcon> = {
   Shoulder: Mountain,
   Back: Layers,
   Chest: Dumbbell,
   "Arms Biceps": BicepsFlexed,
-  "Arms Triceps": Arm,
+  "Arms Triceps": Activity,
   Legs: Footprints,
   Abs: Target,
 };

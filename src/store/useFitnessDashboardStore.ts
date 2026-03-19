@@ -13,7 +13,7 @@ type FitnessDashboardState = {
   invalidate: () => void;
 };
 
-export const useFitnessDashboardStore = create<FitnessDashboardState>((set, get) => ({
+export const useFitnessDashboardStore = create<FitnessDashboardState>((set) => ({
   data: null,
   loading: false,
   error: null,
