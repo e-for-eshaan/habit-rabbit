@@ -1,6 +1,7 @@
 import { get } from "lodash";
 import type { Section, Update } from "@/types";
 import type { FitnessState } from "@/types/fitness";
+import type { FitnessDashboardData } from "@/types/fitnessDashboard";
 
 const BASE = "";
 
@@ -79,4 +80,8 @@ export async function updateFitness(payload: FitnessState): Promise<FitnessState
     method: "PATCH",
     body: JSON.stringify(payload),
   });
+}
+
+export async function getFitnessDashboard(): Promise<FitnessDashboardData> {
+  return fetchJson<FitnessDashboardData>(`${BASE}/api/fitness/dashboard`);
 }
