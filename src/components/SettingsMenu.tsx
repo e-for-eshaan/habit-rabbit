@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
+import { DownOutlined, LogoutOutlined, UpOutlined } from "@ant-design/icons";
 import { ConfigProvider, Popover, Segmented } from "antd";
 import { popoverDarkTheme } from "@/constants/antdTheme";
 import { useSectionsStore, selectIsGridCollapsed } from "@/store/useSectionsStore";
+import { useAuth } from "@/contexts/AuthContext";
 import { SORT_OPTIONS } from "@/constants/sortOptions";
 import { VIEW_MODES, CALENDAR_RANGES, FREQ_RANGES, LAYOUT_MODES } from "@/constants/viewOptions";
 import type { ViewMode } from "@/store/useSectionsStore";
@@ -105,6 +107,8 @@ function OptionRow({ children }: { children: React.ReactNode }) {
 
 export function SettingsMenu() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const { signOut } = useAuth();
 
   const viewMode = useSectionsStore((s) => s.viewMode);
   const setViewMode = useSectionsStore((s) => s.setViewMode);
@@ -234,6 +238,23 @@ export function SettingsMenu() {
             </OptionRow>
           </SettingsMenuSection>
         )}
+
+        <SettingsMenuSection title="Account">
+          <div className="px-3">
+            <button
+              type="button"
+              onClick={async () => {
+                setOpen(false);
+                await signOut();
+                router.replace("/login");
+              }}
+              className="flex min-h-[44px] w-full touch-manipulation items-center gap-2 rounded-lg text-left text-sm font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-700 in-[.popover-dark-theme]:text-stone-200 in-[.popover-dark-theme]:hover:bg-stone-700"
+            >
+              <LogoutOutlined />
+              Log out
+            </button>
+          </div>
+        </SettingsMenuSection>
       </div>
     </ConfigProvider>
   );

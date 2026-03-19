@@ -71,13 +71,17 @@ const DEFAULT_STATE: FitnessState = {
   dayLogs: [],
 };
 
+export function getDefaultFitnessState(): FitnessState {
+  return { exercises: [...DEFAULT_EXERCISES], dayLogs: [] };
+}
+
 function isValidDateKey(s: unknown): s is string {
   if (typeof s !== "string") return false;
   const d = new Date(s + "T12:00:00");
   return !Number.isNaN(d.getTime());
 }
 
-function hasValidDayLog(log: unknown): log is DayLog {
+export function hasValidDayLog(log: unknown): log is DayLog {
   if (isNil(log) || typeof log !== "object") return false;
   const l = log as Record<string, unknown>;
   const hasSelectedGroups =
@@ -94,7 +98,7 @@ function hasValidDayLog(log: unknown): log is DayLog {
   );
 }
 
-function hasValidFitnessState(data: unknown): data is FitnessState {
+export function hasValidFitnessState(data: unknown): data is FitnessState {
   if (isNil(data) || typeof data !== "object") return false;
   const o = data as Record<string, unknown>;
   if (!Array.isArray(o.exercises)) return false;
@@ -136,7 +140,7 @@ function hasValidFitnessState(data: unknown): data is FitnessState {
   return true;
 }
 
-function migrateWeekLogsToDayLogs(data: Record<string, unknown>): FitnessState {
+export function migrateWeekLogsToDayLogs(data: Record<string, unknown>): FitnessState {
   const exercises = data.exercises as FitnessState["exercises"];
   const weekLogs = (data.weekLogs ?? []) as Array<{
     weekStart: string;
@@ -157,11 +161,11 @@ export async function readFitnessStore(): Promise<FitnessState> {
   try {
     const raw = await readFile(FITNESS_STORE_PATH, "utf-8");
     const data = JSON.parse(raw) as Record<string, unknown>;
-    if (!hasValidFitnessState(data)) return DEFAULT_STATE;
+    if (!hasValidFitnessState(data)) return getDefaultFitnessState();
     if (Array.isArray(data.dayLogs)) return data as FitnessState;
     return migrateWeekLogsToDayLogs(data);
   } catch {
-    return DEFAULT_STATE;
+    return getDefaultFitnessState();
   }
 }
 

@@ -14,7 +14,7 @@ Habit tracker with **sections** (habits), **updates** (log entries), and multipl
   - **Calendar** – Heatmap of activity by day (week, month, last 7, last 30).
 - **Search & sort** – Filter sections by search; sort by most updates (all-time or today), recently updated, or name A–Z / Z–A.
 - **Layout** – Horizontal cards or grid. Settings (view, layout, calendar range, frequency range, sort) live in the navbar and persist in the store.
-- **API** – All data goes through Next.js API routes (`/api/sections`, `/api/sections/[id]/updates`, etc.). No external DB in the default setup; you can plug in your own backend by changing `src/lib/api.ts` and the route handlers.
+- **API** – All data goes through Next.js API routes (`/api/sections`, `/api/sections/[id]/updates`, `/api/fitness`, etc.). With Firebase configured, APIs require authentication and data is stored in Firestore per user. Without Firebase env vars, the app falls back to file-based or in-memory data.
 
 ---
 
@@ -220,7 +220,12 @@ The Cursor rule **github-issue-agent** encodes this. I don’t want the agent to
 1. **Node:** >= 20. **pnpm:** >= 9 (see `packageManager` in `package.json`).
 2. **Install:** `pnpm install`.  
    This runs `prepare`, which runs **Husky** and sets `git config core.hooksPath` to `.husky/_` so the pre-commit hook runs.
-3. **Env:** No env vars required for the default in-memory API. If you add a real backend, configure env and point `src/lib/api.ts` and the API routes at it.
+3. **Env (production):** Copy `.env.example` to `.env.local` and fill in:
+   - **Firebase (client):** `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, and optionally `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID` (from Firebase Console → Project settings → Your apps).
+   - **Firebase Admin (server):** `FIREBASE_SERVICE_ACCOUNT_KEY` (JSON string) or `GOOGLE_APPLICATION_CREDENTIALS` (path to service account JSON). From Firebase Console → Project settings → Service accounts → Generate key.
+     Without these, login and API auth are disabled and the app uses file-based or in-memory data only.
+     **Firestore rules:** In Firebase Console → Firestore → Rules, restrict `users/{userId}/data/*` to the signed-in user: `request.auth != null && request.auth.uid == userId`.  
+     **Service account IAM:** The Firebase Admin SDK service account (e.g. `firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com`) must have the **Cloud Datastore User** role so the server can read/write Firestore. In Google Cloud Console → IAM & Admin → IAM, find the service account and add the role if you see "Missing or insufficient permissions" from the API.
 4. **Dev:** `pnpm dev`.  
    **Build:** `pnpm build`. **Run prod:** `pnpm start`.
 5. **GitHub CLI (for agentic issues):** `gh auth login` so the agent can read issues and create PRs.

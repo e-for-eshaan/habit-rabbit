@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
 import { isNil } from "lodash";
-import { readFitnessStore, writeFitnessStore } from "@/lib/fitnessStore";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import { readFitnessStore, writeFitnessStore } from "@/lib/db/fitness";
+import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
 import type { FitnessState, DayLog } from "@/types/fitness";
 
 function isValidDateKey(s: unknown): boolean {
@@ -43,33 +44,31 @@ function validateState(body: unknown): body is FitnessState {
   return (o.dayLogs as unknown[]).every(validateDayLog);
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const state = await readFitnessStore();
-    return NextResponse.json(state);
+    const uid = await getAuthUserId(request);
+    if (!uid) return apiError("Unauthorized", 401);
+    const state = await readFitnessStore(uid);
+    return Response.json(state);
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to load fitness data" },
-      { status: 500 }
-    );
+    return apiErrorFromUnknown(e, "Failed to load fitness data");
   }
 }
 
 export async function PATCH(request: Request) {
-  const body = await request.json().catch(() => null);
-  if (!validateState(body)) {
-    return NextResponse.json(
-      { error: "Invalid fitness state: exercises and dayLogs required with valid shape" },
-      { status: 400 }
-    );
-  }
   try {
-    await writeFitnessStore(body);
-    return NextResponse.json(body);
+    const uid = await getAuthUserId(request);
+    if (!uid) return apiError("Unauthorized", 401);
+    const body = await request.json().catch(() => null);
+    if (!validateState(body)) {
+      return apiError(
+        "Invalid fitness state: exercises and dayLogs required with valid shape",
+        400
+      );
+    }
+    await writeFitnessStore(uid, body);
+    return Response.json(body);
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to save fitness data" },
-      { status: 500 }
-    );
+    return apiErrorFromUnknown(e, "Failed to save fitness data");
   }
 }

@@ -2,20 +2,33 @@ import { get } from "lodash";
 import type { Section, Update } from "@/types";
 import type { FitnessState } from "@/types/fitness";
 import type { FitnessDashboardData } from "@/types/fitnessDashboard";
+import { getApiToken } from "@/lib/apiAuth";
 
 const BASE = "";
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = await getApiToken();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options?.headers as Record<string, string>),
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   const res = await fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
+    headers,
   });
+  if (res.status === 401) {
+    if (typeof window !== "undefined") window.location.href = "/login";
+    throw new Error("Unauthorized");
+  }
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    const message = get(err, "error", res.statusText) as string;
+    const contentType = res.headers.get("Content-Type") ?? "";
+    let message = res.statusText;
+    if (contentType.includes("application/json")) {
+      const err = await res.json().catch(() => ({}));
+      message = (get(err, "error") as string) || message;
+    }
     throw new Error(message);
   }
   return res.json() as Promise<T>;

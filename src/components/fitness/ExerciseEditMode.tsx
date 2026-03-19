@@ -33,25 +33,37 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
     const label = newLabel.trim();
     if (!label) return;
     const id = ensureUniqueId(exercises, label, group);
-    setExercises([...exercises, { id, label, group, muted: false }]);
+    const next = [...exercises, { id, label, group, muted: false }];
+    setExercises(next);
     setNewLabel("");
     setAddingToGroup(null);
+    onSave(buildNextState(next));
+  };
+
+  function buildNextState(nextExercises: Exercise[]): FitnessState {
+    const dayLogs = state.dayLogs.map((log) => ({
+      ...log,
+      exerciseIds: log.exerciseIds.filter((id) => nextExercises.some((e) => e.id === id)),
+    }));
+    return { exercises: nextExercises, dayLogs };
+  }
+
+  const persist = (nextExercises: Exercise[]) => {
+    setExercises(nextExercises);
+    onSave(buildNextState(nextExercises));
   };
 
   const removeExercise = (id: string) => {
-    setExercises(exercises.filter((e) => e.id !== id));
+    const next = exercises.filter((e) => e.id !== id);
+    persist(next);
   };
 
   const toggleMuted = (id: string) => {
-    setExercises(exercises.map((e) => (e.id === id ? { ...e, muted: !e.muted } : e)));
+    const next = exercises.map((e) => (e.id === id ? { ...e, muted: !e.muted } : e));
+    persist(next);
   };
 
   const handleSave = () => {
-    const dayLogs = state.dayLogs.map((log) => ({
-      ...log,
-      exerciseIds: log.exerciseIds.filter((id) => exercises.some((e) => e.id === id)),
-    }));
-    onSave({ exercises, dayLogs });
     onClose();
   };
 
@@ -79,7 +91,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
             onClick={handleSave}
             className="rounded-md bg-stone-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
           >
-            Save
+            Done
           </button>
         </div>
       </div>

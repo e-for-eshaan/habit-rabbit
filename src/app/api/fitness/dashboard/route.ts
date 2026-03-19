@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
-import { readFitnessStore } from "@/lib/fitnessStore";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import { readFitnessStore } from "@/lib/db/fitness";
 import { computeFitnessDashboard } from "@/lib/fitnessDashboard";
+import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const state = await readFitnessStore();
+    const uid = await getAuthUserId(request);
+    if (!uid) return apiError("Unauthorized", 401);
+    const state = await readFitnessStore(uid);
     const data = computeFitnessDashboard(state);
-    return NextResponse.json(data);
+    return Response.json(data);
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to load dashboard" },
-      { status: 500 }
-    );
+    return apiErrorFromUnknown(e, "Failed to load dashboard");
   }
 }

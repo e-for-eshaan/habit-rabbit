@@ -1,39 +1,44 @@
-import { NextResponse } from "next/server";
 import { get } from "lodash";
 import type { Section } from "@/types";
-import { readStore, writeStore } from "@/lib/store";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import { readSectionsStore, writeSectionsStore } from "@/lib/db/sections";
+import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
 
 type Params = { params: Promise<{ sectionId: string }> };
 
 export async function PATCH(request: Request, { params }: Params) {
-  const { sectionId } = await params;
-  const body = await request.json();
-  const store = await readStore();
-  const index = store.sections.findIndex((s: Section) => s.id === sectionId);
-  if (index === -1) {
-    return NextResponse.json({ error: "Section not found" }, { status: 404 });
+  try {
+    const uid = await getAuthUserId(request);
+    if (!uid) return apiError("Unauthorized", 401);
+    const { sectionId } = await params;
+    const body = await request.json().catch(() => ({}));
+    const store = await readSectionsStore(uid);
+    const index = store.sections.findIndex((s: Section) => s.id === sectionId);
+    if (index === -1) return apiError("Section not found", 404);
+    const section = store.sections[index]!;
+    const title = get(body, "title");
+    if (typeof title === "string" && title.trim()) section.title = title.trim();
+    const colorKey = get(body, "colorKey");
+    if (typeof colorKey === "number") section.colorKey = colorKey;
+    await writeSectionsStore(uid, store);
+    return Response.json(section);
+  } catch (e) {
+    return apiErrorFromUnknown(e, "Failed to update section");
   }
-  const section = store.sections[index]!;
-  const title = get(body, "title");
-  if (typeof title === "string" && title.trim()) {
-    section.title = title.trim();
-  }
-  const colorKey = get(body, "colorKey");
-  if (typeof colorKey === "number") {
-    section.colorKey = colorKey;
-  }
-  await writeStore(store);
-  return NextResponse.json(section);
 }
 
 export async function DELETE(request: Request, { params }: Params) {
-  const { sectionId } = await params;
-  const store = await readStore();
-  const index = store.sections.findIndex((s: Section) => s.id === sectionId);
-  if (index === -1) {
-    return NextResponse.json({ error: "Section not found" }, { status: 404 });
+  try {
+    const uid = await getAuthUserId(request);
+    if (!uid) return apiError("Unauthorized", 401);
+    const { sectionId } = await params;
+    const store = await readSectionsStore(uid);
+    const index = store.sections.findIndex((s: Section) => s.id === sectionId);
+    if (index === -1) return apiError("Section not found", 404);
+    store.sections = [...store.sections.slice(0, index), ...store.sections.slice(index + 1)];
+    await writeSectionsStore(uid, store);
+    return Response.json({ ok: true });
+  } catch (e) {
+    return apiErrorFromUnknown(e, "Failed to delete section");
   }
-  store.sections = [...store.sections.slice(0, index), ...store.sections.slice(index + 1)];
-  await writeStore(store);
-  return NextResponse.json({ ok: true });
 }
