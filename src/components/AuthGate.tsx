@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
 
 const LOGIN_PATH = "/login";
 
@@ -34,5 +35,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <ViewSettingsPersistence />
+      {children}
+    </>
+  );
 }

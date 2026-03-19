@@ -22,6 +22,16 @@ export type SortBy = "most-all-time" | "most-today" | "recently-updated" | "name
 
 export type SortDir = "asc" | "desc";
 
+export type StoredViewSettings = {
+  layoutMode: LayoutMode;
+  viewMode: ViewMode;
+  calendarRange: CalendarRange;
+  freqRange: FreqRange;
+  sortBy: SortBy;
+  sortDir: SortDir;
+  collapsedBySectionId: Record<string, boolean>;
+};
+
 export type PendingDelete = {
   sectionId: string;
   updateId: string;
@@ -62,6 +72,7 @@ type SectionsState = {
   toggleSectionCollapse: (sectionId: string) => void;
   collapseAll: () => void;
   expandAll: () => void;
+  hydrateViewSettings: (partial: Partial<StoredViewSettings>) => void;
 };
 
 export const useSectionsStore = create<SectionsState>((set, get) => ({
@@ -82,6 +93,19 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   setViewMode: (mode) => set({ viewMode: mode }),
   setCalendarRange: (range) => set({ calendarRange: range }),
   setFreqRange: (range) => set({ freqRange: range }),
+  hydrateViewSettings: (partial) =>
+    set((state) => ({
+      ...state,
+      ...(partial.layoutMode !== undefined && { layoutMode: partial.layoutMode }),
+      ...(partial.viewMode !== undefined && { viewMode: partial.viewMode }),
+      ...(partial.calendarRange !== undefined && { calendarRange: partial.calendarRange }),
+      ...(partial.freqRange !== undefined && { freqRange: partial.freqRange }),
+      ...(partial.sortBy !== undefined && { sortBy: partial.sortBy }),
+      ...(partial.sortDir !== undefined && { sortDir: partial.sortDir }),
+      ...(partial.collapsedBySectionId !== undefined && {
+        collapsedBySectionId: partial.collapsedBySectionId,
+      }),
+    })),
 
   fetchSections: async () => {
     set({ error: null });
@@ -228,6 +252,24 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       collapsedBySectionId: Object.fromEntries(state.sections.map((s) => [s.id, false])),
     })),
 }));
+
+function pickViewSettings(state: SectionsState): StoredViewSettings {
+  return {
+    layoutMode: state.layoutMode,
+    viewMode: state.viewMode,
+    calendarRange: state.calendarRange,
+    freqRange: state.freqRange,
+    sortBy: state.sortBy,
+    sortDir: state.sortDir,
+    collapsedBySectionId: state.collapsedBySectionId,
+  };
+}
+
+export function subscribeViewSettingsPersist(
+  persist: (settings: StoredViewSettings) => void
+): () => void {
+  return useSectionsStore.subscribe((state) => persist(pickViewSettings(state)));
+}
 
 export const selectIsGridCollapsed = (state: SectionsState): boolean =>
   state.sections.length > 0 && state.sections.every((s) => state.collapsedBySectionId[s.id]);

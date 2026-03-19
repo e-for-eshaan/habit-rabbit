@@ -84,3 +84,14 @@ export async function updateFitness(payload: FitnessState): Promise<FitnessState
 export async function getFitnessDashboard(): Promise<FitnessDashboardData> {
   return fetchJson<FitnessDashboardData>(`${BASE}/api/fitness/dashboard`);
 }
+
+export async function getViewSettings(): Promise<Record<string, unknown>> {
+  return fetchJson<Record<string, unknown>>(`${BASE}/api/settings`);
+}
+
+export async function updateViewSettings(data: Record<string, unknown>): Promise<void> {
+  await fetchJson(`${BASE}/api/settings`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
