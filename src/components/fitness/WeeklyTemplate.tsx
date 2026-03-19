@@ -92,8 +92,32 @@ export function DayTemplate({
                   className="absolute right-0 top-full z-20 mt-1 max-h-56 w-44 overflow-auto rounded-md border border-stone-200 bg-white py-0.5 shadow-lg dark:border-stone-600 dark:bg-stone-800 sm:max-h-64 sm:w-52 sm:rounded-lg sm:py-1"
                   role="listbox"
                 >
+                  <li className="px-2 py-0.5 text-[10px] font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-xs">
+                    Groups
+                  </li>
+                  {groupsToAdd.map((group) => {
+                    const Icon = getGroupIcon(group);
+                    return (
+                      <li key={group}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={false}
+                          onClick={() => {
+                            onAddGroup?.(group);
+                            setAddGroupOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-sm"
+                        >
+                          <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />
+                          <span className="truncate">{group}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
                   {sectionsToShow.length > 0 && (
                     <>
+                      <li className="my-0.5 border-t border-stone-200 dark:border-stone-600 sm:my-1" />
                       <li className="px-2 py-0.5 text-[10px] font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-xs">
                         Sections
                       </li>
@@ -123,32 +147,8 @@ export function DayTemplate({
                           </li>
                         );
                       })}
-                      <li className="my-0.5 border-t border-stone-200 dark:border-stone-600 sm:my-1" />
-                      <li className="px-2 py-0.5 text-[10px] font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-xs">
-                        Groups
-                      </li>
                     </>
                   )}
-                  {groupsToAdd.map((group) => {
-                    const Icon = getGroupIcon(group);
-                    return (
-                      <li key={group}>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={false}
-                          onClick={() => {
-                            onAddGroup?.(group);
-                            setAddGroupOpen(false);
-                          }}
-                          className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-sm"
-                        >
-                          <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />
-                          <span className="truncate">{group}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
                 </ul>
               </>
             )}
