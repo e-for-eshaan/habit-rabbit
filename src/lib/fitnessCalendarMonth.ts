@@ -1,10 +1,4 @@
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  format,
-  startOfWeek,
-} from "date-fns";
+import { eachDayOfInterval, endOfMonth, endOfWeek, format, startOfWeek } from "date-fns";
 
 import type {
   DayLog,
