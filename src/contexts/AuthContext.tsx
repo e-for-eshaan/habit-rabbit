@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const u = authInstance.currentUser;
       if (!u) return null;
       try {
-        return await u.getIdToken(true);
+        return await u.getIdToken();
       } catch {
         return null;
       }
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const getIdToken = useCallback(async (): Promise<string | null> => {
     if (!user) return null;
     try {
-      return await user.getIdToken(true);
+      return await user.getIdToken();
     } catch {
       return null;
     }
