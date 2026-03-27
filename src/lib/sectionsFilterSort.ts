@@ -1,5 +1,5 @@
-import type { Section } from "@/types";
 import type { SortBy, SortDir } from "@/store/useSectionsStore";
+import type { Section } from "@/types";
 
 function isToday(iso: string): boolean {
   const d = new Date(iso);

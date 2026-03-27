@@ -1,8 +1,9 @@
 import { get } from "lodash";
+
+import { getApiToken } from "@/lib/apiAuth";
 import type { Section, Update } from "@/types";
 import type { FitnessState } from "@/types/fitness";
 import type { FitnessDashboardData } from "@/types/fitnessDashboard";
-import { getApiToken } from "@/lib/apiAuth";
 
 const BASE = "";
 

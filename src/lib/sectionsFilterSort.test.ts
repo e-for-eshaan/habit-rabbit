@@ -1,6 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { filterSectionsBySearch, sortSections } from "./sectionsFilterSort";
+import { describe, expect, it } from "vitest";
+
 import type { Section } from "@/types";
+
+import { filterSectionsBySearch, sortSections } from "./sectionsFilterSort";
 
 const section = (
   id: string,

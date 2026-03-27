@@ -1,6 +1,7 @@
 import { isNil } from "lodash";
-import type { FitnessState, Exercise, DayLog } from "@/types/fitness";
+
 import { labelToId } from "@/lib/fitnessConstants";
+import type { DayLog, Exercise, FitnessState } from "@/types/fitness";
 
 function buildExercise(group: string, label: string, idOverride?: string): Exercise {
   return { id: idOverride ?? labelToId(label), label, group };

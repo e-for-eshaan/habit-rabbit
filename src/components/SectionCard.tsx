@@ -1,14 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
+import { isEmpty } from "lodash";
 import Link from "next/link";
-import type { Section } from "@/types";
+import { useMemo } from "react";
+
 import { getPastelStyle } from "@/constants/colors";
+import { groupUpdatesByDay } from "@/lib/groupUpdatesByDay";
+import { cn } from "@/lib/utils";
+import type { Section } from "@/types";
+
 import { AddUpdateForm } from "./AddUpdateForm";
 import { UpdateDayGroup } from "./UpdateDayGroup";
-import { cn } from "@/lib/utils";
-import { groupUpdatesByDay } from "@/lib/groupUpdatesByDay";
-import { isEmpty } from "lodash";
 
 type SectionCardProps = {
   section: Section;

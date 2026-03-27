@@ -1,11 +1,12 @@
 import { getFirestore } from "firebase-admin/firestore";
+
 import { adminApp } from "@/lib/firebase/admin";
-import type { FitnessState } from "@/types/fitness";
 import {
+  getDefaultFitnessState,
   hasValidFitnessState,
   migrateWeekLogsToDayLogs,
-  getDefaultFitnessState,
 } from "@/lib/fitnessStore";
+import type { FitnessState } from "@/types/fitness";
 
 export async function readFitnessStore(uid: string): Promise<FitnessState> {
   if (!adminApp) return getDefaultFitnessState();

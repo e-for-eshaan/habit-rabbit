@@ -1,6 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { groupUpdatesByDay } from "./groupUpdatesByDay";
+import { describe, expect, it } from "vitest";
+
 import type { Update } from "@/types";
+
+import { groupUpdatesByDay } from "./groupUpdatesByDay";
 
 const update = (id: string, text: string, createdAt: string): Update => ({
   id,

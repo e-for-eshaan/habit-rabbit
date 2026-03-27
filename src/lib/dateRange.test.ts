@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest";
 import { differenceInCalendarDays } from "date-fns";
-import { getDateRange, getDaysInRange, getCalendarGrid, toDateKey } from "./dateRange";
+import { describe, expect, it } from "vitest";
+
+import { getCalendarGrid, getDateRange, getDaysInRange, toDateKey } from "./dateRange";
 
 describe("getDateRange", () => {
   const ref = new Date("2025-01-15T12:00:00Z");

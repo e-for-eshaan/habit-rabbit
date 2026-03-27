@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Exercise, DayLog } from "@/types/fitness";
-import { SECTIONS } from "@/lib/fitnessConstants";
-import { getPastelStyle } from "@/constants/colors";
-import { cn } from "@/lib/utils";
 import { groupBy } from "lodash";
+import { useMemo, useState } from "react";
+
+import { getPastelStyle } from "@/constants/colors";
+import { SECTIONS } from "@/lib/fitnessConstants";
+import { cn } from "@/lib/utils";
+import type { DayLog, Exercise } from "@/types/fitness";
+
 import { FitnessCheckbox } from "./FitnessCheckbox";
 import { getGroupIcon, GROUP_ICON_SIZE } from "./groupIcons";
 
@@ -69,7 +71,7 @@ export function DayTemplate({
   return (
     <div className={cn("flex flex-col gap-3 sm:gap-4", className)}>
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
-        <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+        <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
           Exercises for this day
         </h2>
         {canAddGroup && (
@@ -77,7 +79,7 @@ export function DayTemplate({
             <button
               type="button"
               onClick={() => setAddGroupOpen(!addGroupOpen)}
-              className="rounded-md border border-stone-300 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
+              className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
             >
               + Add group
             </button>
@@ -92,7 +94,7 @@ export function DayTemplate({
                   className="absolute right-0 top-full z-20 mt-1 max-h-56 w-44 overflow-auto rounded-md border border-stone-200 bg-white py-0.5 shadow-lg dark:border-stone-600 dark:bg-stone-800 sm:max-h-64 sm:w-52 sm:rounded-lg sm:py-1"
                   role="listbox"
                 >
-                  <li className="px-2 py-0.5 text-[10px] font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-xs">
+                  <li className="px-2 py-1 text-xs font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-sm">
                     Groups
                   </li>
                   {groupsToAdd.map((group) => {
@@ -107,7 +109,7 @@ export function DayTemplate({
                             onAddGroup?.(group);
                             setAddGroupOpen(false);
                           }}
-                          className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-sm"
+                          className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-base"
                         >
                           <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />
                           <span className="truncate">{group}</span>
@@ -118,7 +120,7 @@ export function DayTemplate({
                   {sectionsToShow.length > 0 && (
                     <>
                       <li className="my-0.5 border-t border-stone-200 dark:border-stone-600 sm:my-1" />
-                      <li className="px-2 py-0.5 text-[10px] font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-xs">
+                      <li className="px-2 py-1 text-xs font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-sm">
                         Sections
                       </li>
                       {sectionsToShow.map((section) => {
@@ -134,7 +136,7 @@ export function DayTemplate({
                                 onAddSection?.(toAdd);
                                 setAddGroupOpen(false);
                               }}
-                              className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-sm"
+                              className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-base"
                             >
                               {(() => {
                                 const Icon = getGroupIcon(section.groups[0]);
@@ -156,7 +158,7 @@ export function DayTemplate({
         )}
       </div>
       {byGroup.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/50 px-2 py-3 text-center text-xs text-stone-500 dark:border-stone-600 dark:bg-stone-800/50 dark:text-stone-400 sm:rounded-xl sm:px-8 sm:py-10 sm:text-sm">
+        <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/50 px-3 py-4 text-center text-sm text-stone-500 dark:border-stone-600 dark:bg-stone-800/50 dark:text-stone-400 sm:rounded-xl sm:px-8 sm:py-10 sm:text-base">
           No groups selected. Use &quot;Add group&quot; to choose muscle groups, or for today start
           from the welcome screen.
         </p>
@@ -175,7 +177,7 @@ export function DayTemplate({
                 )}
               >
                 <div className="mb-1.5 flex items-center justify-between gap-1.5 sm:mb-2 sm:gap-2">
-                  <h3 className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-stone-800 dark:text-stone-200 sm:gap-2 sm:text-base">
+                  <h3 className="flex min-w-0 items-center gap-1.5 text-base font-medium text-stone-800 dark:text-stone-200 sm:gap-2 sm:text-lg">
                     {(() => {
                       const Icon = getGroupIcon(group);
                       return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
@@ -186,14 +188,14 @@ export function DayTemplate({
                     <button
                       type="button"
                       onClick={() => onRemoveGroup?.(group)}
-                      className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium text-stone-500 hover:bg-stone-200 hover:text-stone-700 dark:hover:bg-stone-600 dark:hover:text-stone-200 sm:px-2 sm:text-xs"
+                      className="shrink-0 rounded px-2 py-1 text-xs font-medium text-stone-500 hover:bg-stone-200 hover:text-stone-700 dark:hover:bg-stone-600 dark:hover:text-stone-200 sm:px-2 sm:text-sm"
                       title="Remove group from view"
                     >
                       Remove group
                     </button>
                   )}
                 </div>
-                <ul className="flex flex-col gap-1.5 sm:gap-2">
+                <ul className="flex flex-col gap-2 sm:gap-2.5">
                   {items.map((ex) => {
                     const checked = doneSet.has(ex.id);
                     return (

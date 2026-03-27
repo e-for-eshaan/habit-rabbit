@@ -2,8 +2,9 @@
 
 import { SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
-import { useSectionsStore } from "@/store/useSectionsStore";
+
 import { SettingsMenu } from "@/components/SettingsMenu";
+import { useSectionsStore } from "@/store/useSectionsStore";
 
 export function Navbar() {
   const searchQuery = useSectionsStore((s) => s.searchQuery);

@@ -1,10 +1,12 @@
-import type { ReactNode } from "react";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Navbar } from "./Navbar";
+import type { ReactNode } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { useSectionsStore } from "@/store/useSectionsStore";
+
+import { Navbar } from "./Navbar";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),

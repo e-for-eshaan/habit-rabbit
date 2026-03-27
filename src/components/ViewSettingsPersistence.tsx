@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSectionsStore, subscribeViewSettingsPersist } from "@/store/useSectionsStore";
-import { getStoredViewSettings, setStoredViewSettings } from "@/lib/viewSettingsStorage";
+
 import type { StoredViewSettings } from "@/lib/viewSettingsStorage";
+import { getStoredViewSettings, setStoredViewSettings } from "@/lib/viewSettingsStorage";
+import { subscribeViewSettingsPersist, useSectionsStore } from "@/store/useSectionsStore";
 
 const PERSIST_DEBOUNCE_MS = 500;
 

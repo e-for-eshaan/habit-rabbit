@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useSectionsStore } from "@/store/useSectionsStore";
+import { useEffect, useRef, useState } from "react";
+
 import { cn } from "@/lib/utils";
+import { useSectionsStore } from "@/store/useSectionsStore";
 
 export function AddHabitFab() {
   const addSection = useSectionsStore((s) => s.addSection);

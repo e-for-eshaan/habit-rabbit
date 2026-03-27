@@ -1,10 +1,11 @@
 /**
  * @vitest-environment node
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import type { Store } from "@/lib/store";
-import type { FitnessState } from "@/types/fitness";
 import type { Section, Update } from "@/types";
+import type { FitnessState } from "@/types/fitness";
 
 const mockSections: Section[] = [
   { id: "sec-1", title: "Fitness", colorKey: 0, updates: [] },

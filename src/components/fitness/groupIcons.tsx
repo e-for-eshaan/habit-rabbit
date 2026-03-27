@@ -25,4 +25,4 @@ export function getGroupIcon(group: string): LucideIcon {
   return GROUP_ICON_MAP[group] ?? Dumbbell;
 }
 
-export const GROUP_ICON_SIZE = 16;
+export const GROUP_ICON_SIZE = 20;

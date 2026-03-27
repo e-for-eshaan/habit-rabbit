@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { PASTEL_COLORS, getPastelStyle } from "./colors";
+import { describe, expect, it } from "vitest";
+
+import { getPastelStyle, PASTEL_COLORS } from "./colors";
 
 describe("colors", () => {
   describe("PASTEL_COLORS", () => {

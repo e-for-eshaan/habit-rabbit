@@ -1,4 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
+
 import { adminApp } from "@/lib/firebase/admin";
 
 const DOC_ID = "viewSettings";

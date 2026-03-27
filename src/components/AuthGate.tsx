@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+
 import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
+import { useAuth } from "@/contexts/AuthContext";
 
 const LOGIN_PATH = "/login";
 

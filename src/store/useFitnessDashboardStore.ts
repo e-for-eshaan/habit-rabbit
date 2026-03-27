@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+
 import { getFitnessDashboard } from "@/lib/api";
 import type { FitnessDashboardData } from "@/types/fitnessDashboard";
 

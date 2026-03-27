@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 import { DownOutlined, LogoutOutlined, UpOutlined } from "@ant-design/icons";
 import { ConfigProvider, Popover, Segmented } from "antd";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+
 import { popoverDarkTheme } from "@/constants/antdTheme";
-import { useSectionsStore, selectIsGridCollapsed } from "@/store/useSectionsStore";
-import { useAuth } from "@/contexts/AuthContext";
 import { SORT_OPTIONS } from "@/constants/sortOptions";
-import { VIEW_MODES, CALENDAR_RANGES, FREQ_RANGES, LAYOUT_MODES } from "@/constants/viewOptions";
-import type { ViewMode } from "@/store/useSectionsStore";
+import { CALENDAR_RANGES, FREQ_RANGES, LAYOUT_MODES, VIEW_MODES } from "@/constants/viewOptions";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import type { ViewMode } from "@/store/useSectionsStore";
+import { selectIsGridCollapsed, useSectionsStore } from "@/store/useSectionsStore";
 
 function SlidersIcon({ className }: { className?: string }) {
   return (

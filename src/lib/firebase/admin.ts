@@ -1,4 +1,4 @@
-import { getApps, initializeApp, getApp, cert, type App } from "firebase-admin/app";
+import { type App, cert, getApp, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
 function getAdminApp(): App | null {

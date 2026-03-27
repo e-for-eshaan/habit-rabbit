@@ -1,8 +1,9 @@
 import { get, isNil } from "lodash";
-import type { Section } from "@/types";
-import { getAuthUserId } from "@/lib/firebase/admin";
-import { readSectionsStore, writeSectionsStore } from "@/lib/db/sections";
+
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
+import { readSectionsStore, writeSectionsStore } from "@/lib/db/sections";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import type { Section } from "@/types";
 import type { Update } from "@/types";
 
 type Params = { params: Promise<{ sectionId: string }> };

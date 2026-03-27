@@ -1,14 +1,15 @@
 "use client";
 
 import { create } from "zustand";
-import type { Section, Update } from "@/types";
+
 import {
-  getSections as fetchSectionsApi,
   createSection as createSectionApi,
   createUpdate,
-  updateUpdate,
   deleteUpdate as deleteUpdateApi,
+  getSections as fetchSectionsApi,
+  updateUpdate,
 } from "@/lib/api";
+import type { Section, Update } from "@/types";
 
 export type LayoutMode = "horizontal" | "grid";
 

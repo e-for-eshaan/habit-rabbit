@@ -1,13 +1,13 @@
+import { getViewSettings, updateViewSettings } from "@/lib/api";
 import type {
-  LayoutMode,
-  ViewMode,
   CalendarRange,
   FreqRange,
+  LayoutMode,
   SortBy,
   SortDir,
   StoredViewSettings,
+  ViewMode,
 } from "@/store/useSectionsStore";
-import { getViewSettings, updateViewSettings } from "@/lib/api";
 
 export type { StoredViewSettings };
 

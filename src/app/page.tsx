@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useSectionsStore } from "@/store/useSectionsStore";
-import { SectionCard } from "@/components/SectionCard";
-import { FreqChart } from "@/components/FreqChart";
-import { CalendarGrid } from "@/components/CalendarGrid";
-import { Navbar } from "@/components/Navbar";
-import { DeleteToast } from "@/components/DeleteToast";
-import { AddHabitFab } from "@/components/AddHabitFab";
-import { filterSectionsBySearch, sortSections } from "@/lib/sectionsFilterSort";
-import { getPastelStyle } from "@/constants/colors";
-import { cn } from "@/lib/utils";
 import { isEmpty } from "lodash";
+import { useEffect, useMemo } from "react";
+
+import { AddHabitFab } from "@/components/AddHabitFab";
+import { CalendarGrid } from "@/components/CalendarGrid";
+import { DeleteToast } from "@/components/DeleteToast";
+import { FreqChart } from "@/components/FreqChart";
+import { Navbar } from "@/components/Navbar";
+import { SectionCard } from "@/components/SectionCard";
+import { getPastelStyle } from "@/constants/colors";
+import { filterSectionsBySearch, sortSections } from "@/lib/sectionsFilterSort";
+import { cn } from "@/lib/utils";
+import { useSectionsStore } from "@/store/useSectionsStore";
 
 export default function Home() {
   const loading = useSectionsStore((s) => s.loading);

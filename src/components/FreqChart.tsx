@@ -1,17 +1,18 @@
 "use client";
 
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import type { Section } from "@/types";
+
 import { getFreqCounts } from "@/lib/updatesPerDay";
-import type { FreqRange } from "@/store/useSectionsStore";
 import { cn } from "@/lib/utils";
+import type { FreqRange } from "@/store/useSectionsStore";
+import type { Section } from "@/types";
 
 type FreqChartProps = {
   section: Section;

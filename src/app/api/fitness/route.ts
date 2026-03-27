@@ -1,8 +1,9 @@
 import { isNil } from "lodash";
-import { getAuthUserId } from "@/lib/firebase/admin";
-import { readFitnessStore, writeFitnessStore } from "@/lib/db/fitness";
+
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
-import type { FitnessState, DayLog } from "@/types/fitness";
+import { readFitnessStore, writeFitnessStore } from "@/lib/db/fitness";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import type { DayLog, FitnessState } from "@/types/fitness";
 
 function isValidDateKey(s: unknown): boolean {
   if (typeof s !== "string") return false;

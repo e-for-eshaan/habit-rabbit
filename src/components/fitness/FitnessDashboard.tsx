@@ -1,27 +1,28 @@
 "use client";
 
+import { eachDayOfInterval, subDays } from "date-fns";
 import { useEffect, useMemo } from "react";
 import {
-  BarChart,
+  Area,
+  AreaChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
-  LineChart,
-  Line,
-  CartesianGrid,
-  AreaChart,
-  Area,
-  Legend,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { subDays, eachDayOfInterval } from "date-fns";
-import type { FitnessState } from "@/types/fitness";
+
 import { getPastelStyle } from "@/constants/colors";
+import { getCalendarGrid, toDateKey } from "@/lib/dateRange";
+import { computeFitnessDashboard, getActivityHeatLevel } from "@/lib/fitnessDashboard";
 import { cn } from "@/lib/utils";
 import { useFitnessDashboardStore } from "@/store/useFitnessDashboardStore";
-import { computeFitnessDashboard, getActivityHeatLevel } from "@/lib/fitnessDashboard";
-import { getCalendarGrid, toDateKey } from "@/lib/dateRange";
+import type { FitnessState } from "@/types/fitness";
 
 const PASTEL_VARS = [
   "var(--pastel-1)",
@@ -65,7 +66,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
   return (
     <div className={cn("min-w-0 overflow-x-hidden", className)}>
-      <h2 className="mb-3 text-sm font-semibold text-stone-800 dark:text-stone-200 sm:mb-4 sm:text-base md:text-lg">
+      <h2 className="mb-3 text-base font-semibold text-stone-800 dark:text-stone-200 sm:mb-4 sm:text-lg md:text-xl">
         Dashboard
       </h2>
 
@@ -99,7 +100,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-3 lg:col-span-4">
           <ChartCard title="Weekly volume (last 12 weeks)" pastelKey={2}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
+              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
                 No weekly data yet.
               </p>
             ) : (
@@ -109,7 +110,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 10 }}
+                      tick={{ fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -142,7 +143,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       fill={PASTEL_VARS[3]}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -153,7 +154,9 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Swim vs run (last 12 weeks)" pastelKey={3}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">No data yet.</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
+                No data yet.
+              </p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -161,7 +164,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 10 }}
+                      tick={{ fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -186,7 +189,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       dot={{ r: 3 }}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -197,7 +200,9 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Workout days per week" pastelKey={4}>
             {workoutDaysPerWeek.length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">No data yet.</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
+                No data yet.
+              </p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -208,7 +213,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 10 }}
+                      tick={{ fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -234,7 +239,9 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="By muscle group (total completions)" pastelKey={1}>
             {groupFreq.every((g) => g.count === 0) ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">No data yet.</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
+                No data yet.
+              </p>
             ) : (
               <div className="h-[120px] w-full min-w-0 sm:h-[140px] md:h-[160px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -247,7 +254,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="group"
-                      tick={{ fontSize: 9 }}
+                      tick={{ fontSize: 10 }}
                       width={72}
                       tickLine={false}
                       axisLine={false}
@@ -272,7 +279,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Least hit exercises (days done)" pastelKey={0}>
             {leastHit.length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
+              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
                 Complete exercises on a day to see stats.
               </p>
             ) : (
@@ -287,7 +294,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="label"
-                      tick={{ fontSize: 9 }}
+                      tick={{ fontSize: 10 }}
                       width={80}
                       tickLine={false}
                       axisLine={false}
@@ -339,15 +346,13 @@ function KPICard({
         style.light
       )}
     >
-      <p className="text-[10px] font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400 sm:text-xs">
+      <p className="text-xs font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400 sm:text-sm">
         {label}
       </p>
-      <p className="mt-0.5 text-xs font-semibold text-stone-800 dark:text-stone-200 sm:text-sm md:text-base">
+      <p className="mt-0.5 text-sm font-semibold text-stone-800 dark:text-stone-200 sm:text-base md:text-lg">
         {value}
       </p>
-      {sub && (
-        <p className="mt-0.5 text-[10px] text-stone-600 dark:text-stone-400 sm:text-xs">{sub}</p>
-      )}
+      {sub && <p className="mt-0.5 text-xs text-stone-600 dark:text-stone-400 sm:text-sm">{sub}</p>}
     </div>
   );
 }
@@ -375,11 +380,11 @@ function ActivityHeatmap({
         style.light
       )}
     >
-      <h3 className="mb-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-sm">
+      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
         Activity (last 12 weeks)
       </h3>
       {!hasAny ? (
-        <p className="text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
+        <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
           Log activity to see your calendar.
         </p>
       ) : (
@@ -448,7 +453,7 @@ function ChartCard({
         style.light
       )}
     >
-      <h3 className="mb-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-sm">
+      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
         {title}
       </h3>
       {children}
@@ -472,7 +477,7 @@ function MissedExercisesCard({
         style.light
       )}
     >
-      <h3 className="mb-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-sm">
+      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
         Haven’t done in 14+ days
       </h3>
       <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2">
@@ -480,7 +485,7 @@ function MissedExercisesCard({
           <span
             key={item.id}
             className={cn(
-              "inline-flex max-w-full items-center rounded border px-1.5 py-0.5 text-[11px] font-medium sm:max-w-none sm:rounded-md sm:px-2 sm:py-1 sm:text-xs",
+              "inline-flex max-w-full items-center rounded border px-2 py-1 text-xs font-medium sm:max-w-none sm:rounded-md sm:px-2 sm:py-1 sm:text-sm",
               "border-stone-300 bg-stone-100 text-stone-700 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-300"
             )}
             title={`${item.label} (${item.group}) · ${item.daysSinceLastDone} days ago`}

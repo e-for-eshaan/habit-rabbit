@@ -1,10 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import {
-  VIEW_MODES,
-  CALENDAR_RANGES,
   CALENDAR_RANGE_LABELS,
+  CALENDAR_RANGES,
   FREQ_RANGES,
   LAYOUT_MODES,
+  VIEW_MODES,
 } from "./viewOptions";
 
 describe("viewOptions", () => {

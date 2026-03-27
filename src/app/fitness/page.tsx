@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { isNil } from "lodash";
 import Link from "next/link";
-import { getFitness, updateFitness } from "@/lib/api";
-import type { FitnessState, DayLog } from "@/types/fitness";
-import { toDateKey } from "@/lib/dateRange";
+import { useCallback, useEffect, useState } from "react";
+
 import { DaySelector } from "@/components/fitness/DaySelector";
+import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
+import { FitnessDashboard } from "@/components/fitness/FitnessDashboard";
+import { SwimRunInput } from "@/components/fitness/SwimRunInput";
 import { DayTemplate } from "@/components/fitness/WeeklyTemplate";
 import { WelcomeScreen } from "@/components/fitness/WelcomeScreen";
-import { SwimRunInput } from "@/components/fitness/SwimRunInput";
-import { FitnessDashboard } from "@/components/fitness/FitnessDashboard";
-import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
+import { getFitness, updateFitness } from "@/lib/api";
+import { toDateKey } from "@/lib/dateRange";
 import { cn } from "@/lib/utils";
-import { isNil } from "lodash";
+import type { DayLog, FitnessState } from "@/types/fitness";
 
 function getOrCreateDayLog(dayLogs: DayLog[], dateKey: string): DayLog {
   const existing = dayLogs.find((l) => l.dateKey === dateKey);
@@ -192,7 +193,7 @@ function FitnessPage() {
   if (loading || isNil(state)) {
     return (
       <div className="flex min-h-screen items-center justify-center p-3 sm:p-4">
-        <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">Loading...</p>
+        <p className="text-base text-stone-500 dark:text-stone-400 sm:text-lg">Loading...</p>
       </div>
     );
   }
@@ -200,15 +201,18 @@ function FitnessPage() {
   if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-3 sm:gap-4 sm:p-4">
-        <p className="text-center text-sm text-red-600 dark:text-red-400 sm:text-base">{error}</p>
+        <p className="text-center text-base text-red-600 dark:text-red-400 sm:text-lg">{error}</p>
         <button
           type="button"
           onClick={fetchState}
-          className="rounded-md bg-stone-200 px-3 py-1.5 text-xs font-medium dark:bg-stone-700 sm:rounded-lg sm:px-4 sm:py-2 sm:text-sm"
+          className="rounded-md bg-stone-200 px-4 py-2 text-sm font-medium dark:bg-stone-700 sm:rounded-lg sm:px-4 sm:py-2 sm:text-base"
         >
           Retry
         </button>
-        <Link href="/" className="text-xs text-stone-600 dark:text-stone-400 underline sm:text-sm">
+        <Link
+          href="/"
+          className="text-sm text-stone-600 dark:text-stone-400 underline sm:text-base"
+        >
           Back to habits
         </Link>
       </div>
@@ -221,18 +225,18 @@ function FitnessPage() {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 sm:gap-4">
           <Link
             href="/"
-            className="text-xs font-medium text-stone-600 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 sm:text-sm"
+            className="text-sm font-medium text-stone-600 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 sm:text-base"
           >
             ← Back to habits
           </Link>
-          <h1 className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+          <h1 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
             Fitness
           </h1>
           <button
             type="button"
             onClick={() => setEditExercisesMode(!editExercisesMode)}
             className={cn(
-              "rounded-md px-2.5 py-1 text-xs font-medium sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm",
+              "rounded-md px-3 py-1.5 text-sm font-medium sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base",
               editExercisesMode
                 ? "bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100"
                 : "bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
@@ -259,7 +263,7 @@ function FitnessPage() {
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(null)}
-                    className="rounded-md bg-stone-700 px-2.5 py-1 text-xs font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
+                    className="rounded-md bg-stone-700 px-3 py-1.5 text-sm font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
                   >
                     Done editing this day
                   </button>
@@ -267,7 +271,7 @@ function FitnessPage() {
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(selectedDateKey)}
-                    className="rounded-md bg-stone-200 px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
+                    className="rounded-md bg-stone-200 px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
                   >
                     Edit this day
                   </button>

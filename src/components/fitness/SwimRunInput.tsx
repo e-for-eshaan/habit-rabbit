@@ -1,8 +1,10 @@
 "use client";
 
-import type { DayLog } from "@/types/fitness";
 import { Heart } from "lucide-react";
+
 import { cn } from "@/lib/utils";
+import type { DayLog } from "@/types/fitness";
+
 import { FitnessCheckbox } from "./FitnessCheckbox";
 
 type SwimRunInputProps = {
@@ -30,8 +32,8 @@ export function SwimRunInput({
         className
       )}
     >
-      <h2 className="flex w-full items-center gap-2 text-base font-semibold text-stone-800 dark:text-stone-200 sm:gap-2.5 sm:text-lg">
-        <Heart size={18} className="shrink-0" aria-hidden />
+      <h2 className="flex w-full items-center gap-2 text-lg font-semibold text-stone-800 dark:text-stone-200 sm:gap-2.5 sm:text-xl">
+        <Heart size={22} className="shrink-0" aria-hidden />
         Cardio
       </h2>
       <FitnessCheckbox

@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   addDays,
-  isSameMonth,
-  isSameDay,
-  isToday,
+  endOfMonth,
+  endOfWeek,
+  format,
   isAfter,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
+import { useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -82,7 +83,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">
+        <span className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
           {format(monthStart, "MMMM yyyy")}
         </span>
         <button
@@ -110,7 +111,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className="py-1 text-center text-xs font-medium text-stone-500 dark:text-stone-400"
+            className="py-1 text-center text-sm font-medium text-stone-500 dark:text-stone-400"
           >
             {day}
           </div>
@@ -127,7 +128,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
               disabled={disabled}
               onClick={() => !disabled && onSelect(day)}
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg text-sm transition-colors",
+                "flex h-10 w-10 items-center justify-center rounded-lg text-base transition-colors sm:h-9 sm:w-9 sm:text-sm",
                 !inMonth && "text-stone-400 dark:text-stone-500",
                 inMonth && "text-stone-800 dark:text-stone-200",
                 disabled && "cursor-not-allowed opacity-50",

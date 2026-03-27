@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { isNil } from "lodash";
+import { useState } from "react";
+
 import type { Update } from "@/types";
 
 type UpdateItemProps = {

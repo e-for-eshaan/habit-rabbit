@@ -1,7 +1,8 @@
 import { get } from "lodash";
-import { getAuthUserId } from "@/lib/firebase/admin";
-import { readSectionsStore, writeSectionsStore } from "@/lib/db/sections";
+
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
+import { readSectionsStore, writeSectionsStore } from "@/lib/db/sections";
+import { getAuthUserId } from "@/lib/firebase/admin";
 import type { Section } from "@/types";
 
 export async function GET(request: Request) {

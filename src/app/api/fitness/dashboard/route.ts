@@ -1,7 +1,7 @@
-import { getAuthUserId } from "@/lib/firebase/admin";
-import { readFitnessStore } from "@/lib/db/fitness";
-import { computeFitnessDashboard } from "@/lib/fitnessDashboard";
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
+import { readFitnessStore } from "@/lib/db/fitness";
+import { getAuthUserId } from "@/lib/firebase/admin";
+import { computeFitnessDashboard } from "@/lib/fitnessDashboard";
 
 export async function GET(request: Request) {
   try {

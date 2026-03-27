@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Update } from "@/types";
-import { UpdateItem } from "./UpdateItem";
+
 import { cn } from "@/lib/utils";
+import type { Update } from "@/types";
+
+import { UpdateItem } from "./UpdateItem";
 
 type UpdateDayGroupProps = {
   dateLabel: string;

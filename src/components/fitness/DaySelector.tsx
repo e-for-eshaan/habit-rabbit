@@ -1,9 +1,11 @@
 "use client";
 
+import { addDays, format, subDays } from "date-fns";
+import { Calendar, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import { format, addDays, subDays } from "date-fns";
-import { ChevronLeft, ChevronRight, Calendar, X } from "lucide-react";
+
 import { cn } from "@/lib/utils";
+
 import { ThemedCalendar } from "./ThemedCalendar";
 
 type DaySelectorProps = {
@@ -20,7 +22,7 @@ function getTodayKey(): string {
   return format(new Date(), "yyyy-MM-dd");
 }
 
-const ICON_SIZE = 18;
+const ICON_SIZE = 22;
 
 export function DaySelector({ dateKey, onDateChange, className }: DaySelectorProps) {
   const [accordionOpen, setAccordionOpen] = useState(false);
@@ -74,7 +76,7 @@ export function DaySelector({ dateKey, onDateChange, className }: DaySelectorPro
             onClick={goToday}
             aria-label="Go to today"
             className={cn(
-              "rounded-md px-1.5 py-1 text-xs font-medium sm:rounded-lg sm:px-2 sm:py-1.5 sm:text-sm",
+              "rounded-md px-2 py-1.5 text-sm font-medium sm:rounded-lg sm:px-2 sm:py-1.5 sm:text-base",
               isToday
                 ? "bg-stone-300 text-stone-600 dark:bg-stone-600 dark:text-stone-300"
                 : "text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700"
@@ -84,7 +86,7 @@ export function DaySelector({ dateKey, onDateChange, className }: DaySelectorPro
           </button>
         </div>
         <span
-          className="min-w-0 flex-1 truncate text-center text-xs font-medium text-stone-800 dark:text-stone-200 sm:text-sm"
+          className="min-w-0 flex-1 truncate text-center text-sm font-medium text-stone-800 dark:text-stone-200 sm:text-base"
           title={labelLong}
         >
           <span className="sm:hidden">{labelShort}</span>

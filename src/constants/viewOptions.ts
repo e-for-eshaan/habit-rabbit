@@ -1,4 +1,4 @@
-import type { ViewMode, CalendarRange, FreqRange, LayoutMode } from "@/store/useSectionsStore";
+import type { CalendarRange, FreqRange, LayoutMode, ViewMode } from "@/store/useSectionsStore";
 
 export const VIEW_MODES: { value: ViewMode; label: string }[] = [
   { value: "list", label: "List" },

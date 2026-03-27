@@ -1,7 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { SectionCard } from "./SectionCard";
+import { describe, expect, it, vi } from "vitest";
+
 import type { Section } from "@/types";
+
+import { SectionCard } from "./SectionCard";
 
 const section: Section = {
   id: "sec-1",

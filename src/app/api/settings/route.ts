@@ -1,6 +1,6 @@
-import { getAuthUserId } from "@/lib/firebase/admin";
-import { readViewSettings, writeViewSettings } from "@/lib/db/viewSettings";
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
+import { readViewSettings, writeViewSettings } from "@/lib/db/viewSettings";
+import { getAuthUserId } from "@/lib/firebase/admin";
 
 export async function GET(request: Request) {
   try {

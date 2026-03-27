@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+
+import { getPastelStyle } from "@/constants/colors";
 import type { SectionDef } from "@/lib/fitnessConstants";
 import { SECTIONS } from "@/lib/fitnessConstants";
-import { getPastelStyle } from "@/constants/colors";
+import { cn } from "@/lib/utils";
+
 import { FitnessCheckbox } from "./FitnessCheckbox";
 import { getGroupIcon, GROUP_ICON_SIZE } from "./groupIcons";
-import { cn } from "@/lib/utils";
 
 type SectionRowProps = {
   section: SectionDef;
@@ -41,7 +43,7 @@ function SectionRow({
           type="button"
           onClick={() => onStartSection([...section.groups])}
           className={cn(
-            "rounded-md px-2 py-1 text-xs font-semibold transition-colors sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-sm",
+            "rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-base",
             "bg-stone-800 text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300"
           )}
         >
@@ -74,7 +76,7 @@ function SectionRow({
                   checked={selected.has(group)}
                   onChange={() => onToggleGroup(group)}
                   label={group}
-                  labelClassName="text-xs font-medium text-stone-800 dark:text-stone-200 sm:text-sm"
+                  labelClassName="text-sm font-medium text-stone-800 dark:text-stone-200 sm:text-base"
                   accentClassName={cn(style.bg, style.border)}
                   checkIconClassName="text-stone-800 dark:text-stone-200"
                 />
@@ -123,7 +125,7 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
       <h2 className="mb-1 text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
         Welcome back
       </h2>
-      <p className="mb-4 text-xs text-stone-600 dark:text-stone-400 sm:mb-6 sm:text-sm">
+      <p className="mb-4 text-sm text-stone-600 dark:text-stone-400 sm:mb-6 sm:text-base">
         Start a section with one click, or pick individual groups below.
       </p>
       <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:gap-4">
@@ -147,7 +149,7 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
         onClick={handleStart}
         disabled={selected.size === 0}
         className={cn(
-          "w-full rounded-lg py-2.5 text-xs font-semibold transition-colors sm:rounded-xl sm:py-3 sm:text-sm",
+          "w-full rounded-lg py-3 text-sm font-semibold transition-colors sm:rounded-xl sm:py-3 sm:text-base",
           selected.size > 0
             ? "bg-stone-800 text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300"
             : "cursor-not-allowed bg-stone-200 text-stone-500 dark:bg-stone-700 dark:text-stone-400"

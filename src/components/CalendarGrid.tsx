@@ -1,16 +1,16 @@
 "use client";
 
-import type { Section } from "@/types";
-import { getUpdatesCountByDay, getHeatLevel } from "@/lib/calendarHeatmap";
-import type { CalendarRange } from "@/store/useSectionsStore";
-import { getDaysInRange, getCalendarGrid, toDateKey } from "@/lib/dateRange";
+import { getHeatLevel, getUpdatesCountByDay } from "@/lib/calendarHeatmap";
+import { getCalendarGrid, getDaysInRange, toDateKey } from "@/lib/dateRange";
 import {
-  formatIndianDate,
   formatCalendarRangeLabel,
+  formatIndianDate,
   rangeSpansMultipleYears,
   WEEKDAY_NAMES,
 } from "@/lib/formatIndianDate";
 import { cn } from "@/lib/utils";
+import type { CalendarRange } from "@/store/useSectionsStore";
+import type { Section } from "@/types";
 
 type CalendarGridProps = {
   section: Section;

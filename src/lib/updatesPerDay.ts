@@ -1,6 +1,8 @@
-import { subDays, eachDayOfInterval } from "date-fns";
-import type { Update } from "@/types";
+import { eachDayOfInterval, subDays } from "date-fns";
+
 import type { FreqRange } from "@/store/useSectionsStore";
+import type { Update } from "@/types";
+
 import { toDateKey } from "./dateRange";
 
 const FREQ_DAYS: Record<FreqRange, number> = {

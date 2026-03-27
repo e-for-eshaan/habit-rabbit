@@ -16,7 +16,7 @@ type FitnessCheckboxProps = {
 const CHECK_ICON = (
   <svg
     viewBox="0 0 12 10"
-    className="h-2 w-2.5 shrink-0 stroke-current stroke-[3] sm:h-2.5 sm:w-3"
+    className="h-3 w-3.5 shrink-0 stroke-current stroke-[2.5] sm:h-3.5 sm:w-4"
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -39,7 +39,7 @@ export function FitnessCheckbox({
     <label
       htmlFor={id}
       className={cn(
-        "flex cursor-pointer items-center gap-2 transition-opacity sm:gap-3",
+        "flex min-h-11 cursor-pointer items-center gap-2.5 py-0.5 transition-opacity sm:min-h-0 sm:gap-3 sm:py-0",
         disabled && "cursor-default opacity-70"
       )}
     >
@@ -54,7 +54,7 @@ export function FitnessCheckbox({
         />
         <span
           className={cn(
-            "flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-all duration-200 ease-out sm:h-5 sm:w-5 sm:rounded-md",
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200 ease-out sm:h-6 sm:w-6 md:h-7 md:w-7",
             "peer-focus-visible:ring-2 peer-focus-visible:ring-stone-400 peer-focus-visible:ring-offset-1 sm:peer-focus-visible:ring-offset-2 dark:ring-offset-stone-900",
             checked
               ? accentClassName
@@ -81,7 +81,7 @@ export function FitnessCheckbox({
           />
         )}
       </span>
-      <span className={cn("select-none text-xs sm:text-sm", labelClassName)}>{label}</span>
+      <span className={cn("select-none text-sm sm:text-base", labelClassName)}>{label}</span>
     </label>
   );
 }

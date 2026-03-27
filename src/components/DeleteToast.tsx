@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import type { PendingDelete } from "@/store/useSectionsStore";
 import { useSectionsStore } from "@/store/useSectionsStore";
 

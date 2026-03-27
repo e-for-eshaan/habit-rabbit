@@ -1,16 +1,17 @@
-import { subDays, eachDayOfInterval, startOfWeek, format } from "date-fns";
-import type { FitnessState, Exercise, DayLog } from "@/types/fitness";
+import { eachDayOfInterval, format, startOfWeek, subDays } from "date-fns";
+
+import { getHeatLevel } from "@/lib/calendarHeatmap";
+import { toDateKey } from "@/lib/dateRange";
+import type { DayLog, Exercise, FitnessState } from "@/types/fitness";
 import type {
   DashboardKPIs,
-  WeeklyVolumeItem,
-  WorkoutDaysPerWeekItem,
+  FitnessDashboardData,
   GroupFreqItem,
   LeastHitItem,
   MissedExerciseItem,
-  FitnessDashboardData,
+  WeeklyVolumeItem,
+  WorkoutDaysPerWeekItem,
 } from "@/types/fitnessDashboard";
-import { toDateKey } from "@/lib/dateRange";
-import { getHeatLevel } from "@/lib/calendarHeatmap";
 
 const LEAST_HIT_COUNT = 8;
 const WEEK_COUNT = 12;

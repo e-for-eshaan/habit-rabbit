@@ -1,6 +1,7 @@
 import type { Update } from "@/types";
-import { toDateKey } from "./dateRange";
+
 import type { CalendarRange } from "./dateRange";
+import { toDateKey } from "./dateRange";
 import { getDaysInRange } from "./dateRange";
 
 const HEAT_LEVELS = 5;

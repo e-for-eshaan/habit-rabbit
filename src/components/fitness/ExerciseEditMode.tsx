@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { FitnessState, Exercise } from "@/types/fitness";
-import { EXERCISE_GROUPS, labelToId } from "@/lib/fitnessConstants";
-import { getPastelStyle } from "@/constants/colors";
+
 import { getGroupIcon, GROUP_ICON_SIZE } from "@/components/fitness/groupIcons";
+import { getPastelStyle } from "@/constants/colors";
+import { EXERCISE_GROUPS, labelToId } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
+import type { Exercise, FitnessState } from "@/types/fitness";
 
 type ExerciseEditModeProps = {
   state: FitnessState;
@@ -75,21 +76,21 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+        <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
           Edit exercises
         </h2>
         <div className="flex gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md px-2.5 py-1 text-xs font-medium text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-md bg-stone-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-sm"
+            className="rounded-md bg-stone-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
           >
             Done
           </button>
@@ -110,7 +111,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                 style.light
               )}
             >
-              <h3 className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:gap-2 sm:text-sm">
+              <h3 className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:gap-2 sm:text-base">
                 {(() => {
                   const Icon = getGroupIcon(group);
                   return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
@@ -122,14 +123,14 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                   <li
                     key={ex.id}
                     className={cn(
-                      "flex items-center justify-between gap-1.5 text-xs sm:gap-2 sm:text-sm",
+                      "flex items-center justify-between gap-1.5 text-sm sm:gap-2 sm:text-base",
                       ex.muted && "opacity-60"
                     )}
                   >
                     <span className="truncate text-stone-700 dark:text-stone-300">
                       {ex.label}
                       {ex.muted && (
-                        <span className="ml-0.5 text-[10px] text-stone-500 dark:text-stone-400 sm:ml-1 sm:text-xs">
+                        <span className="ml-0.5 text-xs text-stone-500 dark:text-stone-400 sm:ml-1 sm:text-sm">
                           (muted)
                         </span>
                       )}
@@ -140,7 +141,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                         onClick={() => toggleMuted(ex.id)}
                         title={ex.muted ? "Show in least hit" : "Hide from least hit"}
                         className={cn(
-                          "rounded px-1 py-0.5 text-[10px] font-medium sm:px-1.5 sm:text-xs",
+                          "rounded px-1.5 py-1 text-xs font-medium sm:px-2 sm:text-sm",
                           ex.muted
                             ? "bg-stone-300 text-stone-600 dark:bg-stone-600 dark:text-stone-300"
                             : "bg-stone-200 text-stone-500 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-400 dark:hover:bg-stone-600"
@@ -151,7 +152,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                       <button
                         type="button"
                         onClick={() => removeExercise(ex.id)}
-                        className="rounded px-1 py-0.5 text-[10px] font-medium text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30 sm:px-1.5 sm:text-xs"
+                        className="rounded px-1.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30 sm:px-2 sm:text-sm"
                       >
                         Remove
                       </button>
@@ -174,12 +175,12 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                     }}
                     placeholder="Exercise name"
                     autoFocus
-                    className="min-w-0 flex-1 rounded border border-stone-300 bg-white px-1.5 py-1 text-xs dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 sm:px-2 sm:py-1.5 sm:text-sm"
+                    className="min-w-0 flex-1 rounded border border-stone-300 bg-white px-2 py-1.5 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 sm:px-2 sm:py-2 sm:text-base"
                   />
                   <button
                     type="button"
                     onClick={() => addExerciseToGroup(group)}
-                    className="rounded bg-stone-700 px-1.5 py-1 text-[10px] font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:px-2 sm:py-1.5 sm:text-xs"
+                    className="rounded bg-stone-700 px-2 py-1.5 text-xs font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:px-2 sm:py-2 sm:text-sm"
                   >
                     Add
                   </button>
@@ -189,7 +190,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                       setAddingToGroup(null);
                       setNewLabel("");
                     }}
-                    className="rounded px-1.5 py-1 text-[10px] text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700 sm:px-2 sm:py-1.5 sm:text-xs"
+                    className="rounded px-2 py-1.5 text-xs text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700 sm:px-2 sm:py-2 sm:text-sm"
                   >
                     Cancel
                   </button>
@@ -198,7 +199,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                 <button
                   type="button"
                   onClick={() => setAddingToGroup(group)}
-                  className="mt-1.5 w-full rounded border border-dashed border-stone-300 py-1 text-[10px] font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 dark:border-stone-600 dark:text-stone-400 dark:hover:border-stone-500 dark:hover:text-stone-300 sm:mt-2 sm:py-1.5 sm:text-xs"
+                  className="mt-1.5 w-full rounded border border-dashed border-stone-300 py-2 text-xs font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 dark:border-stone-600 dark:text-stone-400 dark:hover:border-stone-500 dark:hover:text-stone-300 sm:mt-2 sm:py-2 sm:text-sm"
                 >
                   + Add exercise
                 </button>
