@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { AuthShellSkeleton } from "@/components/skeletons";
 import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -21,11 +22,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   }, [user, loading, pathname, router]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <p className="text-stone-500 dark:text-stone-400">Loading...</p>
-      </div>
-    );
+    return <AuthShellSkeleton />;
   }
 
   if (!user && pathname !== LOGIN_PATH) {

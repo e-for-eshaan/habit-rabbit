@@ -10,6 +10,7 @@ import { FitnessDashboard } from "@/components/fitness/FitnessDashboard";
 import { SwimRunInput } from "@/components/fitness/SwimRunInput";
 import { DayTemplate } from "@/components/fitness/WeeklyTemplate";
 import { WelcomeScreen } from "@/components/fitness/WelcomeScreen";
+import { FitnessPageSkeleton } from "@/components/skeletons";
 import { getFitness, updateFitness } from "@/lib/api";
 import { toDateKey } from "@/lib/dateRange";
 import { cn } from "@/lib/utils";
@@ -191,11 +192,7 @@ function FitnessPage() {
   );
 
   if (loading || isNil(state)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-3 sm:p-4">
-        <p className="text-base text-stone-500 dark:text-stone-400 sm:text-lg">Loading...</p>
-      </div>
-    );
+    return <FitnessPageSkeleton />;
   }
 
   if (error) {

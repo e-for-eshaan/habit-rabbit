@@ -9,6 +9,7 @@ import { DeleteToast } from "@/components/DeleteToast";
 import { FreqChart } from "@/components/FreqChart";
 import { Navbar } from "@/components/Navbar";
 import { SectionCard } from "@/components/SectionCard";
+import { HomePageSkeleton } from "@/components/skeletons";
 import { getPastelStyle } from "@/constants/colors";
 import { filterSectionsBySearch, sortSections } from "@/lib/sectionsFilterSort";
 import { cn } from "@/lib/utils";
@@ -42,11 +43,7 @@ export default function Home() {
   }, [fetchSections]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <p className="text-stone-500 dark:text-stone-400">Loading...</p>
-      </div>
-    );
+    return <HomePageSkeleton />;
   }
 
   if (error) {

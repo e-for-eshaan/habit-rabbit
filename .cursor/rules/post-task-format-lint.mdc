@@ -1,0 +1,27 @@
+---
+description: After substantive code edits, run Prettier and ESLint with fix before wrapping up
+alwaysApply: true
+---
+
+# Post-task formatting and lint
+
+After finishing substantive edits in this repo (features, refactors, non-trivial fixes), **before** considering the task done:
+
+1. **Format the codebase**
+   ```bash
+   pnpm run format
+   ```
+
+2. **Apply ESLint auto-fixes**
+   ```bash
+   pnpm run lint:fix
+   ```
+
+3. **Verify** (optional if the above reported no issues; run if you want a quiet pass)
+   ```bash
+   pnpm exec eslint . --quiet
+   ```
+
+Run these from the project root (`habit-rabbit`). If any command fails, fix the reported problems and re-run until clean.
+
+**Skip** for read-only work (questions, planning only, no file changes).
