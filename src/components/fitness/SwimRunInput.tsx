@@ -28,12 +28,12 @@ export function SwimRunInput({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-4 rounded-lg border border-stone-200 bg-stone-50/50 p-3 dark:border-stone-600 dark:bg-stone-800/50 sm:gap-6 sm:rounded-xl sm:p-4",
+        "flex flex-wrap items-center gap-4 rounded-xl border border-border-subtle bg-surface-elevated/25 p-3 sm:gap-6 sm:p-4",
         className
       )}
     >
-      <h2 className="flex w-full items-center gap-2 text-lg font-semibold text-stone-800 dark:text-stone-200 sm:gap-2.5 sm:text-xl">
-        <Heart size={22} className="shrink-0" aria-hidden />
+      <h2 className="flex w-full items-center gap-2 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+        <Heart size={22} className="shrink-0 text-red-400/90" aria-hidden />
         Cardio
       </h2>
       <FitnessCheckbox
@@ -42,7 +42,7 @@ export function SwimRunInput({
         onChange={(checked) => onSwimmingChange(checked ? 1 : 0)}
         disabled={locked}
         label="Swimming"
-        labelClassName="text-stone-700 dark:text-stone-300"
+        labelClassName="text-foreground"
       />
       <FitnessCheckbox
         id="run-checkbox"
@@ -50,7 +50,7 @@ export function SwimRunInput({
         onChange={(checked) => onRunningChange(checked ? 1 : 0)}
         disabled={locked}
         label="Running"
-        labelClassName="text-stone-700 dark:text-stone-300"
+        labelClassName="text-foreground"
       />
     </div>
   );

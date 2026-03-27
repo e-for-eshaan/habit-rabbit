@@ -28,13 +28,13 @@ describe("Navbar", () => {
 
   it("renders search input with placeholder", () => {
     render(<Navbar />, { wrapper: Wrapper });
-    expect(screen.getByPlaceholderText("Search sections & updates...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Search habits & logs…")).toBeInTheDocument();
   });
 
   it("updates store when user types in search", async () => {
     const user = userEvent.setup();
     render(<Navbar />, { wrapper: Wrapper });
-    const inputs = screen.getAllByPlaceholderText("Search sections & updates...");
+    const inputs = screen.getAllByPlaceholderText("Search habits & logs…");
     await user.type(inputs[0]!, "test");
     expect(useSectionsStore.getState().searchQuery).toBe("test");
   });

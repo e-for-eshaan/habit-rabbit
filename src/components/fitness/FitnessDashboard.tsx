@@ -17,7 +17,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { getPastelStyle } from "@/constants/colors";
+import { getPastelAccentVar } from "@/constants/colors";
 import { getCalendarGrid, toDateKey } from "@/lib/dateRange";
 import { computeFitnessDashboard, getActivityHeatLevel } from "@/lib/fitnessDashboard";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,17 @@ const PASTEL_VARS = [
 ] as const;
 
 const HEATMAP_DAYS = 84;
+
+const CHART_TOOLTIP = {
+  contentStyle: {
+    background: "var(--surface-elevated)",
+    border: "1px solid var(--border-subtle)",
+    borderRadius: 8,
+    fontSize: 12,
+    color: "var(--foreground)",
+  },
+  labelStyle: { color: "var(--muted)" },
+} as const;
 
 function getHeatmapGrid(): (Date | null)[][] {
   const end = new Date();
@@ -66,7 +77,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
   return (
     <div className={cn("min-w-0 overflow-x-hidden", className)}>
-      <h2 className="mb-3 text-base font-semibold text-stone-800 dark:text-stone-200 sm:mb-4 sm:text-lg md:text-xl">
+      <h2 className="mb-3 text-base font-semibold tracking-tight text-foreground sm:mb-4 sm:text-lg md:text-xl">
         Dashboard
       </h2>
 
@@ -100,22 +111,21 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-3 lg:col-span-4">
           <ChartCard title="Weekly volume (last 12 weeks)" pastelKey={2}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
-                No weekly data yet.
-              </p>
+              <p className="text-sm text-muted-fg sm:text-base">No weekly data yet.</p>
             ) : (
               <div className="h-[120px] w-full min-w-0 sm:h-[140px] md:h-[160px] lg:h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={weeklyVolume} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11 }}
+                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis hide domain={[0, "auto"]} />
                     <RechartsTooltip
+                      {...CHART_TOOLTIP}
                       formatter={(value: number) => [value, ""]}
                       labelFormatter={(label) => `Week ${label}`}
                     />
@@ -143,7 +153,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       fill={PASTEL_VARS[3]}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 12, color: "var(--muted)" }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -154,22 +164,21 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Swim vs run (last 12 weeks)" pastelKey={3}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
-                No data yet.
-              </p>
+              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyVolume} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11 }}
+                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis hide domain={[0, "auto"]} />
                     <RechartsTooltip
+                      {...CHART_TOOLTIP}
                       formatter={(value: number) => [value, ""]}
                       labelFormatter={(label) => `Week ${label}`}
                     />
@@ -189,7 +198,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       dot={{ r: 3 }}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 12, color: "var(--muted)" }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -200,9 +209,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Workout days per week" pastelKey={4}>
             {workoutDaysPerWeek.length === 0 ? (
-              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
-                No data yet.
-              </p>
+              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -210,15 +217,16 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     data={workoutDaysPerWeek}
                     margin={{ top: 4, right: 4, bottom: 4, left: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--stone-300)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11 }}
+                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis hide domain={[0, 7]} />
                     <RechartsTooltip
+                      {...CHART_TOOLTIP}
                       formatter={(value: number) => [value, "Days"]}
                       labelFormatter={(label) => `Week ${label}`}
                     />
@@ -239,9 +247,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="By muscle group (total completions)" pastelKey={1}>
             {groupFreq.every((g) => g.count === 0) ? (
-              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
-                No data yet.
-              </p>
+              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
             ) : (
               <div className="h-[120px] w-full min-w-0 sm:h-[140px] md:h-[160px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -254,12 +260,13 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="group"
-                      tick={{ fontSize: 10 }}
+                      tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
                       width={72}
                       tickLine={false}
                       axisLine={false}
                     />
                     <RechartsTooltip
+                      {...CHART_TOOLTIP}
                       formatter={(value: number) => [value, "Days"]}
                       labelFormatter={(label) => label}
                     />
@@ -279,7 +286,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Least hit exercises (days done)" pastelKey={0}>
             {leastHit.length === 0 ? (
-              <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
+              <p className="text-sm text-muted-fg sm:text-base">
                 Complete exercises on a day to see stats.
               </p>
             ) : (
@@ -294,12 +301,13 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="label"
-                      tick={{ fontSize: 10 }}
+                      tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
                       width={80}
                       tickLine={false}
                       axisLine={false}
                     />
                     <RechartsTooltip
+                      {...CHART_TOOLTIP}
                       formatter={(value: number) => [value, "Days"]}
                       labelFormatter={(label) => label}
                     />
@@ -337,22 +345,19 @@ function KPICard({
   sub?: string;
   pastelKey: number;
 }) {
-  const style = getPastelStyle(pastelKey);
+  const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className={cn(
-        "rounded-md border-2 p-2 shadow-sm sm:rounded-lg sm:p-2.5 md:rounded-xl md:p-3",
-        style.border,
-        style.light
-      )}
+      className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3"
+      style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <p className="text-xs font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400 sm:text-sm">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-fg sm:text-sm">
         {label}
       </p>
-      <p className="mt-0.5 text-sm font-semibold text-stone-800 dark:text-stone-200 sm:text-base md:text-lg">
+      <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-base md:text-lg">
         {value}
       </p>
-      {sub && <p className="mt-0.5 text-xs text-stone-600 dark:text-stone-400 sm:text-sm">{sub}</p>}
+      {sub && <p className="mt-0.5 text-xs text-muted sm:text-sm">{sub}</p>}
     </div>
   );
 }
@@ -367,26 +372,21 @@ function ActivityHeatmap({
   activityByDay: Record<string, number>;
   grid: (Date | null)[][];
 }) {
-  const style = getPastelStyle(2);
+  const accent = getPastelAccentVar(2);
   const hasAny = Object.values(activityByDay).some((c) => c > 0);
   const flatCells = useMemo(() => grid.flat(), [grid]);
   const cellFlexBasis = `calc((100% - ${(HEATMAP_COLS - 1) * HEATMAP_GAP}px) / ${HEATMAP_COLS})`;
 
   return (
     <div
-      className={cn(
-        "flex min-h-full min-w-0 flex-col rounded-lg border-2 p-2.5 shadow-sm sm:rounded-xl sm:p-3 md:p-4",
-        style.border,
-        style.light
-      )}
+      className="flex min-h-full min-w-0 flex-col rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
+      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">
         Activity (last 12 weeks)
       </h3>
       {!hasAny ? (
-        <p className="text-sm text-stone-500 dark:text-stone-400 sm:text-base">
-          Log activity to see your calendar.
-        </p>
+        <p className="text-sm text-muted-fg sm:text-base">Log activity to see your calendar.</p>
       ) : (
         <div
           className="flex w-full max-w-[98px] flex-wrap gap-px sm:max-w-[112px] md:max-w-[126px] lg:max-w-[140px]"
@@ -397,7 +397,7 @@ function ActivityHeatmap({
               return (
                 <div
                   key={`empty-${i}`}
-                  className="rounded-[1px] border border-stone-200/60 dark:border-stone-600/60 opacity-0"
+                  className="rounded-[1px] border border-border-subtle opacity-0"
                   style={{
                     flex: `0 0 ${cellFlexBasis}`,
                     aspectRatio: "1",
@@ -414,7 +414,7 @@ function ActivityHeatmap({
                 key={dateKey}
                 title={title}
                 className={cn(
-                  "min-w-0 rounded-[1px] border border-stone-200/60 dark:border-stone-600/60",
+                  "min-w-0 rounded-[1px] border border-border-subtle",
                   level === 0 && "heat-0",
                   level === 1 && "heat-1",
                   level === 2 && "heat-2",
@@ -444,18 +444,13 @@ function ChartCard({
   pastelKey: number;
   children: React.ReactNode;
 }) {
-  const style = getPastelStyle(pastelKey);
+  const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className={cn(
-        "min-w-0 rounded-lg border-2 p-2.5 shadow-sm sm:rounded-xl sm:p-3 md:p-4",
-        style.border,
-        style.light
-      )}
+      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
-        {title}
-      </h3>
+      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">{title}</h3>
       {children}
     </div>
   );
@@ -468,34 +463,26 @@ function MissedExercisesCard({
   items: { id: string; label: string; group: string; daysSinceLastDone: number }[];
   pastelKey: number;
 }) {
-  const style = getPastelStyle(pastelKey);
+  const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className={cn(
-        "min-w-0 rounded-lg border-2 p-2.5 shadow-sm sm:rounded-xl sm:p-3 md:p-4",
-        style.border,
-        style.light
-      )}
+      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:text-base">
+      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">
         Haven’t done in 14+ days
       </h3>
       <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2">
         {items.map((item) => (
           <span
             key={item.id}
-            className={cn(
-              "inline-flex max-w-full items-center rounded border px-2 py-1 text-xs font-medium sm:max-w-none sm:rounded-md sm:px-2 sm:py-1 sm:text-sm",
-              "border-stone-300 bg-stone-100 text-stone-700 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-300"
-            )}
+            className="inline-flex max-w-full items-center rounded-md border border-border-subtle bg-surface px-2 py-1 text-xs font-medium text-foreground sm:max-w-none sm:text-sm"
             title={`${item.label} (${item.group}) · ${item.daysSinceLastDone} days ago`}
           >
-            <span className="truncate max-w-[80px] sm:max-w-[120px] md:max-w-[160px]">
+            <span className="max-w-[80px] truncate sm:max-w-[120px] md:max-w-[160px]">
               {item.label}
             </span>
-            <span className="ml-1 shrink-0 text-stone-500 dark:text-stone-400">
-              {item.daysSinceLastDone}d
-            </span>
+            <span className="ml-1 shrink-0 text-muted-fg">{item.daysSinceLastDone}d</span>
           </span>
         ))}
       </div>

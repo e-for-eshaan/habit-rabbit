@@ -1,6 +1,7 @@
 "use client";
 
 import { isNil } from "lodash";
+import { ArrowLeft, Check, Pencil, PenLine } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -198,19 +199,20 @@ function FitnessPage() {
   if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-3 sm:gap-4 sm:p-4">
-        <p className="text-center text-base text-red-600 dark:text-red-400 sm:text-lg">{error}</p>
+        <p className="text-center text-base text-red-400 sm:text-lg">{error}</p>
         <button
           type="button"
           onClick={fetchState}
-          className="rounded-md bg-stone-200 px-4 py-2 text-sm font-medium dark:bg-stone-700 sm:rounded-lg sm:px-4 sm:py-2 sm:text-base"
+          className="rounded-xl bg-surface-elevated px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700 sm:text-base"
         >
           Retry
         </button>
         <Link
           href="/"
-          className="text-sm text-stone-600 dark:text-stone-400 underline sm:text-base"
+          className="flex items-center gap-1.5 text-sm text-muted-fg hover:text-foreground sm:text-base"
         >
-          Back to habits
+          <ArrowLeft className="size-4" aria-hidden />
+          Habits
         </Link>
       </div>
     );
@@ -218,28 +220,39 @@ function FitnessPage() {
 
   return (
     <div className="min-h-screen font-sans">
-      <header className="sticky top-0 z-10 border-b border-stone-200 bg-white/90 px-3 py-2 backdrop-blur dark:border-stone-700 dark:bg-stone-900/90 sm:px-4 sm:py-3">
+      <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 sm:gap-4">
           <Link
             href="/"
-            className="text-sm font-medium text-stone-600 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 sm:text-base"
+            className="flex min-h-10 min-w-10 items-center justify-center rounded-xl text-muted-fg hover:bg-surface-elevated hover:text-foreground sm:min-w-0 sm:justify-start sm:gap-2 sm:px-2"
+            aria-label="Back to habits"
           >
-            ← Back to habits
+            <ArrowLeft className="size-5 shrink-0" aria-hidden />
+            <span className="hidden text-sm font-medium sm:inline">Habits</span>
           </Link>
-          <h1 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
+          <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
             Fitness
           </h1>
           <button
             type="button"
             onClick={() => setEditExercisesMode(!editExercisesMode)}
             className={cn(
-              "rounded-md px-3 py-1.5 text-sm font-medium sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base",
+              "flex min-h-10 min-w-10 items-center justify-center rounded-xl sm:min-w-0 sm:gap-2 sm:px-3",
               editExercisesMode
-                ? "bg-amber-200 text-amber-900 dark:bg-amber-800 dark:text-amber-100"
-                : "bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
+                ? "bg-lime-400/20 text-lime-300 ring-1 ring-lime-400/40"
+                : "bg-surface-elevated text-muted hover:bg-zinc-700 hover:text-foreground ring-1 ring-border-subtle"
             )}
+            aria-label={editExercisesMode ? "Done editing exercises" : "Edit exercise list"}
+            title={editExercisesMode ? "Done" : "Edit exercises"}
           >
-            {editExercisesMode ? "Done editing" : "Edit exercises"}
+            {editExercisesMode ? (
+              <Check className="size-5" aria-hidden />
+            ) : (
+              <Pencil className="size-5" aria-hidden />
+            )}
+            <span className="hidden text-sm font-medium sm:inline">
+              {editExercisesMode ? "Done" : "Edit"}
+            </span>
           </button>
         </div>
       </header>
@@ -255,22 +268,26 @@ function FitnessPage() {
           <>
             <DaySelector dateKey={selectedDateKey} onDateChange={setSelectedDateKey} />
             {!isCurrentDay && (
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-2">
                 {isEditingThisDay ? (
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(null)}
-                    className="rounded-md bg-stone-700 px-3 py-1.5 text-sm font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
+                    className="flex items-center gap-2 rounded-xl bg-lime-400/15 px-3 py-2 text-sm font-medium text-lime-200 ring-1 ring-lime-400/35"
+                    aria-label="Done editing this day"
                   >
-                    Done editing this day
+                    <Check className="size-4" aria-hidden />
+                    <span className="hidden sm:inline">Done</span>
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(selectedDateKey)}
-                    className="rounded-md bg-stone-200 px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
+                    className="flex items-center gap-2 rounded-xl bg-surface-elevated px-3 py-2 text-sm font-medium text-muted ring-1 ring-border-subtle hover:bg-zinc-700 hover:text-foreground"
+                    aria-label="Edit this day"
                   >
-                    Edit this day
+                    <PenLine className="size-4" aria-hidden />
+                    <span className="hidden sm:inline">Edit day</span>
                   </button>
                 )}
               </div>

@@ -1,8 +1,10 @@
 "use client";
 
 import { isNil } from "lodash";
+import { Clock, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import { cn } from "@/lib/utils";
 import type { Update } from "@/types";
 
 type UpdateItemProps = {
@@ -46,38 +48,34 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
   }
 
   const hasText = !isNil(update.text) && update.text.trim() !== "";
+  const isEditing = editingText || editingTimestamp;
 
   return (
-    <div className="relative flex flex-col gap-1 rounded border border-stone-200 bg-white/80 p-2 pr-8 dark:border-stone-600 dark:bg-stone-800/80">
-      <button
-        type="button"
-        onClick={() => onDelete(update.id)}
-        className="absolute right-2 top-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-stone-400 hover:bg-stone-200 hover:text-stone-600 dark:hover:bg-stone-600 dark:hover:text-stone-300"
-        aria-label="Delete update"
-      >
-        <span className="text-sm leading-none">×</span>
-      </button>
-      {editingText ? (
-        <textarea
-          value={textValue}
-          onChange={(e) => setTextValue(e.target.value)}
-          onBlur={commitText}
-          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && commitText()}
-          placeholder="What did you do?"
-          rows={2}
-          className="min-w-0 resize-none rounded border border-stone-300 px-2 py-1 text-sm dark:border-stone-500 dark:bg-stone-700"
-          autoFocus
-        />
-      ) : (
-        <button
-          type="button"
-          onClick={() => setEditingText(true)}
-          className="text-left text-sm font-medium text-stone-800 dark:text-stone-200"
-        >
-          {hasText ? update.text : formatDate(update.createdAt)}
-        </button>
-      )}
-      <div className="flex items-center justify-between gap-2">
+    <div className={cn("flex items-start gap-2 py-3 first:pt-2", !isEditing && "min-h-[52px]")}>
+      <div className="min-w-0 flex-1">
+        {editingText ? (
+          <textarea
+            value={textValue}
+            onChange={(e) => setTextValue(e.target.value)}
+            onBlur={commitText}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && commitText()}
+            placeholder="What did you do?"
+            rows={2}
+            className="w-full resize-none rounded-lg border border-border-subtle bg-surface-elevated px-3 py-2 text-sm text-foreground outline-none ring-lime-400/30 focus:ring-2"
+            autoFocus
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setTextValue(update.text);
+              setEditingText(true);
+            }}
+            className="w-full text-left text-sm font-medium leading-snug text-foreground"
+          >
+            {hasText ? update.text : formatDate(update.createdAt)}
+          </button>
+        )}
         {editingTimestamp ? (
           <input
             type="datetime-local"
@@ -85,19 +83,52 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
             onChange={(e) => setTimestampValue(e.target.value)}
             onBlur={commitTimestamp}
             onKeyDown={(e) => e.key === "Enter" && commitTimestamp()}
-            className="min-w-0 flex-1 rounded border border-stone-300 px-2 py-1 text-xs dark:border-stone-500 dark:bg-stone-700"
+            className="mt-2 w-full rounded-lg border border-border-subtle bg-surface-elevated px-2 py-1.5 text-xs text-foreground outline-none ring-lime-400/30 focus:ring-2"
             autoFocus
           />
         ) : (
-          <button
-            type="button"
-            onClick={() => setEditingTimestamp(true)}
-            className="text-left text-xs text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-300"
-          >
-            {formatTime(update.createdAt)}
-          </button>
+          !editingText && (
+            <p className="mt-0.5 text-xs text-muted-fg">{formatTime(update.createdAt)}</p>
+          )
         )}
       </div>
+      {!isEditing && (
+        <div className="flex shrink-0 items-center gap-0.5 pt-0.5">
+          <button
+            type="button"
+            onClick={() => {
+              setTextValue(update.text);
+              setEditingText(true);
+            }}
+            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
+            aria-label="Edit text"
+            title="Edit text"
+          >
+            <Pencil className="size-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setTimestampValue(update.createdAt.slice(0, 16));
+              setEditingTimestamp(true);
+            }}
+            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
+            aria-label="Edit time"
+            title="Edit time"
+          >
+            <Clock className="size-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(update.id)}
+            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-red-950/40 hover:text-red-400"
+            aria-label="Delete update"
+            title="Delete"
+          >
+            <Trash2 className="size-4" aria-hidden />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

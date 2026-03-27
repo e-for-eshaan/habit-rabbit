@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { getPastelStyle } from "@/constants/colors";
+import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
 import type { SectionDef } from "@/lib/fitnessConstants";
 import { SECTIONS } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { getGroupIcon, GROUP_ICON_SIZE } from "./groupIcons";
 
 type SectionRowProps = {
   section: SectionDef;
-  sectionStyle: { border: string; light: string; bg: string };
+  accentVar: string;
   sectionIdx: number;
   selected: Set<string>;
   onToggleGroup: (group: string) => void;
@@ -21,7 +21,7 @@ type SectionRowProps = {
 
 function SectionRow({
   section,
-  sectionStyle,
+  accentVar,
   sectionIdx,
   selected,
   onToggleGroup,
@@ -29,28 +29,20 @@ function SectionRow({
 }: SectionRowProps) {
   return (
     <div
-      className={cn(
-        "rounded-lg border-2 p-2 sm:rounded-xl sm:p-3",
-        sectionStyle.border,
-        sectionStyle.light
-      )}
+      className="rounded-xl border border-border-subtle bg-surface-elevated/20 p-3 sm:p-4"
+      style={{ borderLeftWidth: 3, borderLeftColor: accentVar }}
     >
-      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5 border-b border-stone-200/50 pb-1.5 dark:border-stone-600/50 sm:mb-2 sm:gap-2 sm:pb-2">
-        <span className="text-sm font-medium text-stone-800 dark:text-stone-200 sm:text-base">
-          {section.name}
-        </span>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-2">
+        <span className="text-sm font-medium text-foreground sm:text-base">{section.name}</span>
         <button
           type="button"
           onClick={() => onStartSection([...section.groups])}
-          className={cn(
-            "rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-base",
-            "bg-stone-800 text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300"
-          )}
+          className="rounded-lg bg-lime-400 px-3 py-1.5 text-sm font-semibold text-zinc-950 hover:bg-lime-300"
         >
           Start
         </button>
       </div>
-      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+      <div className="flex flex-wrap gap-2 sm:gap-2.5">
         {section.groups.map((group, groupIdx) => {
           const style = getPastelStyle((sectionIdx * 3 + groupIdx) % 6);
           const GroupIcon = getGroupIcon(group);
@@ -58,27 +50,20 @@ function SectionRow({
             <div
               key={group}
               className={cn(
-                "rounded-md border-2 px-2 py-1 sm:rounded-lg sm:px-2.5 sm:py-1.5",
-                style.border,
-                style.light,
-                selected.has(group) &&
-                  "ring-2 ring-offset-1 ring-stone-400 dark:ring-offset-stone-900"
+                "rounded-lg border border-border-subtle bg-surface/80 px-2 py-1.5 sm:px-2.5 sm:py-2",
+                selected.has(group) && "ring-2 ring-lime-400/50 ring-offset-2 ring-offset-zinc-950"
               )}
             >
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <GroupIcon
-                  size={GROUP_ICON_SIZE}
-                  className="shrink-0 text-stone-600 dark:text-stone-400"
-                  aria-hidden
-                />
+              <div className="flex items-center gap-2">
+                <GroupIcon size={GROUP_ICON_SIZE} className="shrink-0 text-muted" aria-hidden />
                 <FitnessCheckbox
                   id={`welcome-${group}`}
                   checked={selected.has(group)}
                   onChange={() => onToggleGroup(group)}
                   label={group}
-                  labelClassName="text-sm font-medium text-stone-800 dark:text-stone-200 sm:text-base"
+                  labelClassName="text-sm font-medium text-foreground sm:text-base"
                   accentClassName={cn(style.bg, style.border)}
-                  checkIconClassName="text-stone-800 dark:text-stone-200"
+                  checkIconClassName="text-foreground"
                 />
               </div>
             </div>
@@ -118,44 +103,41 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
   return (
     <div
       className={cn(
-        "rounded-xl border-2 border-stone-200 bg-stone-50/80 p-4 dark:border-stone-600 dark:bg-stone-800/80 sm:rounded-2xl sm:p-5 md:p-6",
+        "rounded-2xl border border-border-subtle bg-surface p-4 sm:p-5 md:p-6",
         className
       )}
     >
-      <h2 className="mb-1 text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
+      <h2 className="mb-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
         Welcome back
       </h2>
-      <p className="mb-4 text-sm text-stone-600 dark:text-stone-400 sm:mb-6 sm:text-base">
-        Start a section with one click, or pick individual groups below.
+      <p className="mb-4 text-sm text-muted-fg sm:mb-6 sm:text-base">
+        Start a section with one tap, or pick individual groups below.
       </p>
       <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:gap-4">
-        {SECTIONS.map((section, sectionIdx) => {
-          const sectionStyle = getPastelStyle(sectionIdx % 6);
-          return (
-            <SectionRow
-              key={section.name}
-              section={section}
-              sectionStyle={sectionStyle}
-              sectionIdx={sectionIdx}
-              selected={selected}
-              onToggleGroup={toggleGroup}
-              onStartSection={handleStartSection}
-            />
-          );
-        })}
+        {SECTIONS.map((section, sectionIdx) => (
+          <SectionRow
+            key={section.name}
+            section={section}
+            accentVar={getPastelAccentVar(sectionIdx)}
+            sectionIdx={sectionIdx}
+            selected={selected}
+            onToggleGroup={toggleGroup}
+            onStartSection={handleStartSection}
+          />
+        ))}
       </div>
       <button
         type="button"
         onClick={handleStart}
         disabled={selected.size === 0}
         className={cn(
-          "w-full rounded-lg py-3 text-sm font-semibold transition-colors sm:rounded-xl sm:py-3 sm:text-base",
+          "w-full rounded-xl py-3 text-sm font-semibold transition-colors sm:py-3.5 sm:text-base",
           selected.size > 0
-            ? "bg-stone-800 text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300"
-            : "cursor-not-allowed bg-stone-200 text-stone-500 dark:bg-stone-700 dark:text-stone-400"
+            ? "bg-lime-400 text-zinc-950 hover:bg-lime-300"
+            : "cursor-not-allowed bg-zinc-800 text-muted-fg"
         )}
       >
-        Start — show {selected.size} group{selected.size !== 1 ? "s" : ""}
+        Start — {selected.size} group{selected.size !== 1 ? "s" : ""}
       </button>
     </div>
   );

@@ -1,10 +1,11 @@
 "use client";
 
 import { isEmpty } from "lodash";
+import { ChevronDown, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { getPastelStyle } from "@/constants/colors";
+import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
 import { groupUpdatesByDay } from "@/lib/groupUpdatesByDay";
 import { cn } from "@/lib/utils";
 import type { Section } from "@/types";
@@ -36,58 +37,60 @@ export function SectionCard({
   openDashboardHref,
 }: SectionCardProps) {
   const style = getPastelStyle(section.colorKey);
+  const accentVar = getPastelAccentVar(section.colorKey);
   const dayGroups = useMemo(() => groupUpdatesByDay(section.updates), [section.updates]);
 
   return (
     <section
       className={cn(
-        "flex min-w-[280px] max-w-[380px] flex-1 flex-col rounded-xl border-2 shadow-sm",
-        style.border,
-        style.light
+        "flex min-w-[280px] max-w-[380px] flex-1 flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface shadow-sm"
       )}
+      style={{ borderLeftWidth: 4, borderLeftColor: accentVar }}
     >
-      <div className="flex items-center gap-1 border-b border-stone-200/50 dark:border-stone-600/50">
+      <div className="flex items-stretch gap-0 border-b border-border-subtle">
         <button
           type="button"
           onClick={() => onToggleCollapse(section.id)}
           data-testid="section-toggle"
+          aria-expanded={!collapsed}
+          aria-label={`${section.title}, ${section.updates.length} update${section.updates.length !== 1 ? "s" : ""}`}
           className={cn(
-            "flex flex-1 items-center justify-between gap-2 px-4 py-3 text-left font-semibold",
-            style.bg,
-            "rounded-t-xl"
+            "flex min-h-[48px] flex-1 items-center gap-3 px-4 py-3 text-left",
+            style.light
           )}
         >
-          <span className="truncate text-stone-800 dark:text-stone-200">{section.title}</span>
-          <span className="text-xs font-normal text-stone-600 dark:text-stone-400">
-            {section.updates.length} update{section.updates.length !== 1 ? "s" : ""}
-          </span>
-          <span
+          <ChevronDown
             className={cn(
-              "shrink-0 text-stone-600 transition-transform dark:text-stone-400",
-              collapsed && "rotate-180"
+              "size-4 shrink-0 text-muted transition-transform",
+              collapsed && "-rotate-90"
             )}
-          >
-            ▼
+            aria-hidden
+          />
+          <span className="min-w-0 flex-1 truncate font-semibold text-foreground">
+            {section.title}
+          </span>
+          <span className="shrink-0 text-xs tabular-nums text-muted-fg">
+            {section.updates.length}
           </span>
         </button>
         {openDashboardHref && (
           <Link
             href={openDashboardHref}
             className={cn(
-              "shrink-0 rounded-r-xl px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-300",
-              style.bg,
-              "hover:opacity-90"
+              "flex min-h-[48px] min-w-[48px] items-center justify-center border-l border-border-subtle text-muted hover:bg-surface-elevated hover:text-foreground"
             )}
+            aria-label="Open fitness dashboard"
+            title="Dashboard"
           >
-            Open dashboard
+            <LayoutDashboard className="size-5" aria-hidden />
           </Link>
         )}
       </div>
       {!collapsed && (
         <div className="flex flex-1 flex-col gap-3 p-3">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {isEmpty(dayGroups) ? (
-              <p className="py-4 text-center text-sm text-stone-500 dark:text-stone-400">
+              <p className="py-6 text-center text-sm text-muted-fg">
                 No updates yet. Add one below.
               </p>
             ) : (

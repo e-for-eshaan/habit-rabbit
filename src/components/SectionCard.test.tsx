@@ -29,7 +29,7 @@ describe("SectionCard", () => {
     expect(screen.getByText("Test Habit")).toBeInTheDocument();
   });
 
-  it("shows update count in header", () => {
+  it("exposes update count in header control label", () => {
     render(
       <SectionCard
         section={section}
@@ -40,9 +40,8 @@ describe("SectionCard", () => {
         onDeleteUpdate={noop}
       />
     );
-    const updates = screen.getAllByText(/1 update/);
-    expect(updates.length).toBeGreaterThanOrEqual(1);
-    expect(updates[0]).toBeInTheDocument();
+    const toggles = screen.getAllByTestId("section-toggle");
+    expect(toggles[0]).toHaveAttribute("aria-label", "Test Habit, 1 update");
   });
 
   it("calls onToggleCollapse with section id when header is clicked", () => {

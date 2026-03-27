@@ -2,6 +2,8 @@
 
 Habit tracker with **sections** (habits), **updates** (log entries), and multiple views: list, frequency chart, and calendar heatmap. Built with Next.js (App Router), Zustand, Ant Design, Tailwind CSS, and Recharts.
 
+**Product overview** (user journeys, fitness vs sections, data flow, key files): [docs/APP_OVERVIEW.md](docs/APP_OVERVIEW.md).
+
 ---
 
 ## What this app does

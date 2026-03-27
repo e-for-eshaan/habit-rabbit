@@ -10,7 +10,7 @@ import { FreqChart } from "@/components/FreqChart";
 import { Navbar } from "@/components/Navbar";
 import { SectionCard } from "@/components/SectionCard";
 import { HomePageSkeleton } from "@/components/skeletons";
-import { getPastelStyle } from "@/constants/colors";
+import { ViewChartPanel } from "@/components/ViewChartPanel";
 import { filterSectionsBySearch, sortSections } from "@/lib/sectionsFilterSort";
 import { cn } from "@/lib/utils";
 import { useSectionsStore } from "@/store/useSectionsStore";
@@ -49,14 +49,14 @@ export default function Home() {
   if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
-        <p className="text-red-600 dark:text-red-400">{error}</p>
+        <p className="text-center text-red-400">{error}</p>
         <button
           type="button"
           onClick={() => {
             useSectionsStore.setState({ loading: true });
             fetchSections();
           }}
-          className="rounded-lg bg-stone-200 px-4 py-2 text-sm font-medium dark:bg-stone-700"
+          className="rounded-xl bg-surface-elevated px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700"
         >
           Retry
         </button>
@@ -69,7 +69,7 @@ export default function Home() {
       <div className="min-h-screen font-sans">
         <Navbar />
         <div className="flex min-h-[60vh] items-center justify-center p-4">
-          <p className="text-stone-500 dark:text-stone-400">No habits yet.</p>
+          <p className="text-muted-fg">No habits yet. Tap + to add one.</p>
         </div>
         <AddHabitFab />
       </div>
@@ -82,9 +82,7 @@ export default function Home() {
 
       <main className="mx-auto max-w-7xl p-4">
         {isEmpty(filteredAndSortedSections) ? (
-          <p className="py-8 text-center text-stone-500 dark:text-stone-400">
-            No sections match your search.
-          </p>
+          <p className="py-8 text-center text-muted-fg">No sections match your search.</p>
         ) : viewMode === "list" ? (
           <div
             className={cn(
@@ -116,37 +114,19 @@ export default function Home() {
           </div>
         ) : viewMode === "freq" ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredAndSortedSections.map((section) => {
-              const style = getPastelStyle(section.colorKey);
-              return (
-                <div
-                  key={section.id}
-                  className={cn("rounded-xl border-2 p-4 shadow-sm", style.border, style.light)}
-                >
-                  <h2 className="mb-3 truncate font-semibold text-stone-800 dark:text-stone-200">
-                    {section.title}
-                  </h2>
-                  <FreqChart section={section} freqRange={freqRange} />
-                </div>
-              );
-            })}
+            {filteredAndSortedSections.map((section) => (
+              <ViewChartPanel key={section.id} title={section.title} colorKey={section.colorKey}>
+                <FreqChart section={section} freqRange={freqRange} />
+              </ViewChartPanel>
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredAndSortedSections.map((section) => {
-              const style = getPastelStyle(section.colorKey);
-              return (
-                <div
-                  key={section.id}
-                  className={cn("rounded-xl border-2 p-4 shadow-sm", style.border, style.light)}
-                >
-                  <h2 className="mb-3 truncate font-semibold text-stone-800 dark:text-stone-200">
-                    {section.title}
-                  </h2>
-                  <CalendarGrid section={section} range={calendarRange} />
-                </div>
-              );
-            })}
+            {filteredAndSortedSections.map((section) => (
+              <ViewChartPanel key={section.id} title={section.title} colorKey={section.colorKey}>
+                <CalendarGrid section={section} range={calendarRange} />
+              </ViewChartPanel>
+            ))}
           </div>
         )}
       </main>

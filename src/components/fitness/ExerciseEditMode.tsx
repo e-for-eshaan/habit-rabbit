@@ -1,9 +1,10 @@
 "use client";
 
+import { Check, Plus, Trash2, Volume2, VolumeX, X } from "lucide-react";
 import { useState } from "react";
 
 import { getGroupIcon, GROUP_ICON_SIZE } from "@/components/fitness/groupIcons";
-import { getPastelStyle } from "@/constants/colors";
+import { getPastelAccentVar } from "@/constants/colors";
 import { EXERCISE_GROUPS, labelToId } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
 import type { Exercise, FitnessState } from "@/types/fitness";
@@ -71,28 +72,32 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/30 p-3 dark:border-amber-800 dark:bg-amber-900/20 sm:gap-4 sm:rounded-xl sm:p-4",
+        "flex flex-col gap-3 rounded-2xl border border-amber-500/25 bg-amber-950/20 p-3 ring-1 ring-amber-500/15 sm:gap-4 sm:p-4",
         className
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
           Edit exercises
         </h2>
-        <div className="flex gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
+            className="flex size-10 items-center justify-center rounded-xl text-muted hover:bg-surface-elevated hover:text-foreground"
+            aria-label="Cancel"
+            title="Cancel"
           >
-            Cancel
+            <X className="size-5" aria-hidden />
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-md bg-stone-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
+            className="flex size-10 items-center justify-center rounded-xl bg-lime-400 text-zinc-950 hover:bg-lime-300"
+            aria-label="Done"
+            title="Done"
           >
-            Done
+            <Check className="size-5" aria-hidden />
           </button>
         </div>
       </div>
@@ -100,68 +105,72 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         {EXERCISE_GROUPS.map((group, idx) => {
           const items = exercises.filter((e) => e.group === group);
-          const style = getPastelStyle(idx % 6);
+          const accent = getPastelAccentVar(idx);
           const isAdding = addingToGroup === group;
           return (
             <div
               key={group}
-              className={cn(
-                "rounded-md border p-2 sm:rounded-lg sm:p-3",
-                style.border,
-                style.light
-              )}
+              className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3"
+              style={{ borderLeftWidth: 3, borderLeftColor: accent }}
             >
-              <h3 className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 sm:mb-2 sm:gap-2 sm:text-base">
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground sm:text-base">
                 {(() => {
                   const Icon = getGroupIcon(group);
-                  return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
+                  return (
+                    <Icon size={GROUP_ICON_SIZE} className="shrink-0 text-muted" aria-hidden />
+                  );
                 })()}
                 <span className="truncate">{group}</span>
               </h3>
-              <ul className="flex flex-col gap-1 sm:gap-1.5">
+              <ul className="flex flex-col gap-1.5 sm:gap-2">
                 {items.map((ex) => (
                   <li
                     key={ex.id}
                     className={cn(
-                      "flex items-center justify-between gap-1.5 text-sm sm:gap-2 sm:text-base",
-                      ex.muted && "opacity-60"
+                      "flex items-center justify-between gap-2 text-sm sm:text-base",
+                      ex.muted && "opacity-55"
                     )}
                   >
-                    <span className="truncate text-stone-700 dark:text-stone-300">
+                    <span className="min-w-0 truncate text-foreground">
                       {ex.label}
                       {ex.muted && (
-                        <span className="ml-0.5 text-xs text-stone-500 dark:text-stone-400 sm:ml-1 sm:text-sm">
-                          (muted)
-                        </span>
+                        <span className="ml-1 text-xs text-muted-fg sm:text-sm">(muted)</span>
                       )}
                     </span>
-                    <span className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+                    <span className="flex shrink-0 items-center gap-0.5">
                       <button
                         type="button"
                         onClick={() => toggleMuted(ex.id)}
                         title={ex.muted ? "Show in least hit" : "Hide from least hit"}
+                        aria-label={ex.muted ? "Unmute exercise" : "Mute exercise"}
                         className={cn(
-                          "rounded px-1.5 py-1 text-xs font-medium sm:px-2 sm:text-sm",
+                          "flex size-9 items-center justify-center rounded-lg",
                           ex.muted
-                            ? "bg-stone-300 text-stone-600 dark:bg-stone-600 dark:text-stone-300"
-                            : "bg-stone-200 text-stone-500 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-400 dark:hover:bg-stone-600"
+                            ? "bg-zinc-700 text-muted hover:text-foreground"
+                            : "text-muted hover:bg-surface hover:text-foreground"
                         )}
                       >
-                        {ex.muted ? "Unmute" : "Mute"}
+                        {ex.muted ? (
+                          <VolumeX className="size-4" aria-hidden />
+                        ) : (
+                          <Volume2 className="size-4" aria-hidden />
+                        )}
                       </button>
                       <button
                         type="button"
                         onClick={() => removeExercise(ex.id)}
-                        className="rounded px-1.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30 sm:px-2 sm:text-sm"
+                        className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
+                        aria-label="Remove exercise"
+                        title="Remove"
                       >
-                        Remove
+                        <Trash2 className="size-4" aria-hidden />
                       </button>
                     </span>
                   </li>
                 ))}
               </ul>
               {isAdding ? (
-                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <input
                     type="text"
                     value={newLabel}
@@ -175,14 +184,16 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                     }}
                     placeholder="Exercise name"
                     autoFocus
-                    className="min-w-0 flex-1 rounded border border-stone-300 bg-white px-2 py-1.5 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 sm:px-2 sm:py-2 sm:text-base"
+                    className="min-w-0 flex-1 rounded-lg border border-border-subtle bg-surface px-2 py-2 text-sm text-foreground outline-none ring-lime-400/20 focus:ring-2 sm:text-base"
                   />
                   <button
                     type="button"
                     onClick={() => addExerciseToGroup(group)}
-                    className="rounded bg-stone-700 px-2 py-1.5 text-xs font-medium text-white dark:bg-stone-300 dark:text-stone-800 sm:px-2 sm:py-2 sm:text-sm"
+                    className="flex size-10 items-center justify-center rounded-lg bg-lime-400 text-zinc-950 hover:bg-lime-300"
+                    aria-label="Add exercise"
+                    title="Add"
                   >
-                    Add
+                    <Plus className="size-5" aria-hidden />
                   </button>
                   <button
                     type="button"
@@ -190,18 +201,20 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                       setAddingToGroup(null);
                       setNewLabel("");
                     }}
-                    className="rounded px-2 py-1.5 text-xs text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700 sm:px-2 sm:py-2 sm:text-sm"
+                    className="flex size-10 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated"
+                    aria-label="Cancel add"
                   >
-                    Cancel
+                    <X className="size-5" aria-hidden />
                   </button>
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => setAddingToGroup(group)}
-                  className="mt-1.5 w-full rounded border border-dashed border-stone-300 py-2 text-xs font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 dark:border-stone-600 dark:text-stone-400 dark:hover:border-stone-500 dark:hover:text-stone-300 sm:mt-2 sm:py-2 sm:text-sm"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-subtle py-2.5 text-xs font-medium text-muted-fg hover:border-muted hover:text-foreground sm:text-sm"
                 >
-                  + Add exercise
+                  <Plus className="size-4" aria-hidden />
+                  Add exercise
                 </button>
               )}
             </div>

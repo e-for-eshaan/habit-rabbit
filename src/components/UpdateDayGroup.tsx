@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -18,36 +19,38 @@ export function UpdateDayGroup({ dateLabel, updates, onEdit, onDelete }: UpdateD
   const [open, setOpen] = useState(false);
   const isMultiple = updates.length > 1;
 
+  const dateHeading = (
+    <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-fg">
+      {dateLabel}
+    </span>
+  );
+
   if (!isMultiple) {
     const u = updates[0];
     return (
-      <div className="rounded-lg border border-stone-200 bg-white/60 p-2 dark:border-stone-600 dark:bg-stone-800/60">
-        <p className="mb-1 text-xs text-stone-500 dark:text-stone-400">{dateLabel}</p>
+      <div>
+        <div className="mb-2">{dateHeading}</div>
         <UpdateItem update={u} onEdit={onEdit} onDelete={onDelete} />
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-white/60 dark:border-stone-600 dark:bg-stone-800/60">
+    <div>
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
+        className="flex w-full items-center gap-2 py-1 text-left"
       >
-        <span className="text-xs text-stone-500 dark:text-stone-400">{dateLabel}</span>
-        <span className="text-xs text-stone-500 dark:text-stone-400">{updates.length} updates</span>
-        <span
-          className={cn(
-            "text-stone-500 transition-transform dark:text-stone-400",
-            open && "rotate-180"
-          )}
-        >
-          ▼
-        </span>
+        <span className="min-w-0 flex-1 text-left">{dateHeading}</span>
+        <span className="ml-auto text-xs tabular-nums text-muted-fg">{updates.length}</span>
+        <ChevronDown
+          className={cn("size-4 shrink-0 text-muted transition-transform", open && "rotate-180")}
+          aria-hidden
+        />
       </button>
       {open && (
-        <div className="flex flex-col gap-2 border-t border-stone-200 px-2 pb-2 pt-2 dark:border-stone-600">
+        <div className="mt-2 divide-y divide-border-subtle rounded-xl bg-surface-elevated/40">
           {updates.map((u) => (
             <UpdateItem key={u.id} update={u} onEdit={onEdit} onDelete={onDelete} />
           ))}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getPastelStyle, PASTEL_COLORS } from "./colors";
+import { getPastelAccentVar, getPastelStyle, PASTEL_ACCENT_VARS, PASTEL_COLORS } from "./colors";
 
 describe("colors", () => {
   describe("PASTEL_COLORS", () => {
@@ -25,6 +25,22 @@ describe("colors", () => {
     it("wraps index with modulo", () => {
       expect(getPastelStyle(6)).toEqual(PASTEL_COLORS[0]);
       expect(getPastelStyle(7)).toEqual(PASTEL_COLORS[1]);
+    });
+  });
+
+  describe("PASTEL_ACCENT_VARS", () => {
+    it("has 6 CSS var entries", () => {
+      expect(PASTEL_ACCENT_VARS).toHaveLength(6);
+    });
+  });
+
+  describe("getPastelAccentVar", () => {
+    it("returns var for key 0", () => {
+      expect(getPastelAccentVar(0)).toBe(PASTEL_ACCENT_VARS[0]);
+    });
+
+    it("wraps index with modulo", () => {
+      expect(getPastelAccentVar(6)).toBe(PASTEL_ACCENT_VARS[0]);
     });
   });
 });

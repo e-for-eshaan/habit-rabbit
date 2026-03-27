@@ -1,5 +1,6 @@
 "use client";
 
+import { GoogleOutlined } from "@ant-design/icons";
 import { Button, Card, Form, Input, message } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,9 +48,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card title={isSignUp ? "Create account" : "Sign in"} className="w-full max-w-md">
-        <Form name="auth" layout="vertical" onFinish={onFinish} autoComplete="off">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Habit Rabbit</h1>
+        <p className="mt-1.5 text-sm text-muted-fg">
+          Log habits, streaks, and fitness in one place.
+        </p>
+      </div>
+      <Card
+        title={isSignUp ? "Create account" : "Sign in"}
+        className="w-full max-w-md rounded-2xl border border-border-subtle bg-surface shadow-2xl shadow-black/40"
+        styles={{
+          header: {
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            fontSize: "1.05rem",
+            fontWeight: 600,
+          },
+        }}
+      >
+        <Form name="auth" layout="vertical" onFinish={onFinish} autoComplete="off" className="pt-1">
           <Form.Item
             label="Email"
             name="email"
@@ -58,36 +75,38 @@ export default function LoginPage() {
               { type: "email", message: "Enter a valid email" },
             ]}
           >
-            <Input type="email" placeholder="you@example.com" />
+            <Input type="email" size="large" placeholder="you@example.com" />
           </Form.Item>
           <Form.Item
             label="Password"
             name="password"
             rules={[{ required: true, message: "Enter your password" }]}
           >
-            <Input.Password placeholder="••••••••" />
+            <Input.Password size="large" placeholder="••••••••" />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={submitting}>
+          <Form.Item className="!mb-3">
+            <Button type="primary" htmlType="submit" block size="large" loading={submitting}>
               {isSignUp ? "Sign up" : "Sign in"}
             </Button>
           </Form.Item>
-          <Form.Item>
+          <Form.Item className="!mb-2">
             <Button
               type="default"
               block
+              size="large"
               loading={googleLoading}
               onClick={handleGoogleSignIn}
               disabled={submitting}
+              icon={<GoogleOutlined />}
             >
-              Sign in with Google
+              Continue with Google
             </Button>
           </Form.Item>
-          <div className="text-center text-sm text-stone-500">
+          <div className="text-center text-sm text-muted-fg">
             <button
               type="button"
               onClick={() => setIsSignUp((v) => !v)}
-              className="underline hover:text-stone-700 dark:hover:text-stone-300"
+              className="text-lime-400/90 underline-offset-2 hover:text-lime-300 hover:underline"
             >
               {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
             </button>

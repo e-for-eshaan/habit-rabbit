@@ -5,10 +5,5 @@ type SkeletonBlockProps = {
 };
 
 export function SkeletonBlock({ className }: SkeletonBlockProps) {
-  return (
-    <div
-      className={cn("animate-pulse rounded-md bg-stone-200/70 dark:bg-stone-700/50", className)}
-      aria-hidden
-    />
-  );
+  return <div className={cn("animate-pulse rounded-md bg-zinc-700/35", className)} aria-hidden />;
 }

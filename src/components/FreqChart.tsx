@@ -39,7 +39,7 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
         <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
             tickLine={false}
             axisLine={false}
             interval="preserveStartEnd"
@@ -49,7 +49,11 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,
+              background: "var(--surface-elevated)",
+              border: "1px solid var(--border-subtle)",
+              color: "var(--foreground)",
             }}
+            labelStyle={{ color: "var(--muted)" }}
             formatter={(value: number) => [
               value === 1 ? "1 update" : `${value} updates`,
               "Updates",

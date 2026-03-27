@@ -2,12 +2,12 @@ import { SkeletonBlock } from "@/components/skeletons/SkeletonBlock";
 
 export function NavbarSkeleton() {
   return (
-    <header className="sticky top-0 z-10 border-b border-stone-200 bg-background/95 px-4 py-3 backdrop-blur dark:border-stone-700">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-        <div className="min-w-0 max-w-md flex-1">
-          <SkeletonBlock className="h-10 w-full max-w-md rounded-xl" />
+    <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-3 py-3 backdrop-blur-md sm:px-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1 md:max-w-md">
+          <SkeletonBlock className="h-11 w-full rounded-xl" />
         </div>
-        <SkeletonBlock className="h-10 w-10 shrink-0 rounded-xl" />
+        <SkeletonBlock className="size-11 shrink-0 rounded-xl" />
       </div>
     </header>
   );

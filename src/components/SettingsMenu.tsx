@@ -51,19 +51,8 @@ function SettingsMenuSection({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "border-b border-stone-200 last:border-0 dark:border-stone-600",
-        "in-[.popover-dark-theme]:border-stone-600",
-        className
-      )}
-    >
-      <h3
-        className={cn(
-          "mb-2 px-3 pt-3 text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400",
-          "in-[.popover-dark-theme]:text-stone-400"
-        )}
-      >
+    <div className={cn("border-b border-zinc-700 last:border-0", className)}>
+      <h3 className="mb-2 px-3 pt-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
         {title}
       </h3>
       <div className="pb-3">{children}</div>
@@ -90,10 +79,10 @@ function OptionButton<T extends string>({
       type="button"
       onClick={() => onSelect(value)}
       className={cn(
-        "min-h-[44px] min-w-[44px] rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors touch-manipulation",
+        "min-h-[44px] min-w-[44px] touch-manipulation rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors",
         isActive
-          ? "bg-stone-200 text-stone-900 dark:bg-stone-600 dark:text-stone-100 in-[.popover-dark-theme]:bg-stone-600 in-[.popover-dark-theme]:text-stone-100"
-          : "text-stone-700 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-700 in-[.popover-dark-theme]:text-stone-300 in-[.popover-dark-theme]:hover:bg-stone-700",
+          ? "bg-zinc-700 text-zinc-50"
+          : "text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100",
         className
       )}
     >
@@ -133,7 +122,7 @@ export function SettingsMenu() {
 
   const popoverContent = (
     <ConfigProvider theme={popoverDarkTheme}>
-      <div className="popover-dark-theme w-[min(320px,calc(100vw-2rem))] max-h-[min(70vh,420px)] overflow-y-auto bg-transparent p-1 text-stone-100">
+      <div className="w-[min(320px,calc(100vw-2rem))] max-h-[min(70vh,420px)] overflow-y-auto p-1 text-zinc-100">
         <SettingsMenuSection title="Sort by">
           <div className="space-y-1 px-3">
             {SORT_OPTIONS.map((opt) => (
@@ -149,7 +138,7 @@ export function SettingsMenu() {
                   <button
                     type="button"
                     onClick={() => setSort(sortBy, sortDir === "asc" ? "desc" : "asc")}
-                    className="flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-lg text-stone-500 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-700 dark:hover:text-stone-200 in-[.popover-dark-theme]:text-stone-400 in-[.popover-dark-theme]:hover:bg-stone-700 in-[.popover-dark-theme]:hover:text-stone-200"
+                    className="flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
                     title={
                       sortDir === "desc"
                         ? "Descending (click for ascending)"
@@ -199,7 +188,7 @@ export function SettingsMenu() {
                 <button
                   type="button"
                   onClick={handleCollapseAll}
-                  className="min-h-[44px] w-full touch-manipulation rounded-lg border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-100 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-300 dark:hover:bg-stone-700 in-[.popover-dark-theme]:border-stone-600 in-[.popover-dark-theme]:bg-stone-800 in-[.popover-dark-theme]:text-stone-200 in-[.popover-dark-theme]:hover:bg-stone-700"
+                  className="min-h-[44px] w-full touch-manipulation rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-sm font-medium text-zinc-200 hover:bg-zinc-800"
                 >
                   {isGridCollapsed ? "Expand all" : "Collapse all"}
                 </button>
@@ -249,7 +238,7 @@ export function SettingsMenu() {
                 await signOut();
                 router.replace("/login");
               }}
-              className="flex min-h-[44px] w-full touch-manipulation items-center gap-2 rounded-lg text-left text-sm font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-700 in-[.popover-dark-theme]:text-stone-200 in-[.popover-dark-theme]:hover:bg-stone-700"
+              className="flex min-h-[44px] w-full touch-manipulation items-center gap-2 rounded-lg text-left text-sm font-medium text-zinc-200 hover:bg-zinc-800"
             >
               <LogoutOutlined />
               Log out
@@ -270,26 +259,24 @@ export function SettingsMenu() {
       arrow={{ pointAtCenter: false }}
       styles={{
         body: {
-          background: "rgb(28 25 23)",
-          border: "1px solid rgb(87 83 78)",
-          borderRadius: "0.5rem",
+          background: "#18181b",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "0.75rem",
+          padding: 4,
         },
       }}
     >
       <button
         type="button"
-        className="flex min-h-[44px] touch-manipulation items-center gap-2 rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-400 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700 dark:focus:ring-stone-500"
+        className="flex min-h-[44px] touch-manipulation items-center gap-2 rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40"
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="View and sort settings"
       >
-        <SlidersIcon className="shrink-0 text-stone-500 dark:text-stone-400" />
-        <span className="hidden sm:inline">View & sort</span>
+        <SlidersIcon className="shrink-0 text-muted-fg" />
+        <span className="hidden sm:inline">View &amp; sort</span>
         <DownOutlined
-          className={cn(
-            "shrink-0 text-stone-500 transition-transform dark:text-stone-400",
-            open && "rotate-180"
-          )}
+          className={cn("shrink-0 text-muted-fg transition-transform", open && "rotate-180")}
         />
       </button>
     </Popover>

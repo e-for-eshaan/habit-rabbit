@@ -28,7 +28,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (!user && pathname !== LOGIN_PATH) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <p className="text-stone-500 dark:text-stone-400">Redirecting to sign in...</p>
+        <p className="text-muted-fg">Redirecting to sign in…</p>
       </div>
     );
   }

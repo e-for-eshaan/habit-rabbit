@@ -1,9 +1,10 @@
 "use client";
 
 import { groupBy } from "lodash";
+import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { getPastelStyle } from "@/constants/colors";
+import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
 import { SECTIONS } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
 import type { DayLog, Exercise } from "@/types/fitness";
@@ -71,7 +72,7 @@ export function DayTemplate({
   return (
     <div className={cn("flex flex-col gap-3 sm:gap-4", className)}>
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
-        <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200 sm:text-xl">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
           Exercises for this day
         </h2>
         {canAddGroup && (
@@ -79,7 +80,7 @@ export function DayTemplate({
             <button
               type="button"
               onClick={() => setAddGroupOpen(!addGroupOpen)}
-              className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:bg-stone-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700 sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-base"
+              className="rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700 sm:text-base"
             >
               + Add group
             </button>
@@ -91,10 +92,10 @@ export function DayTemplate({
                   onClick={() => setAddGroupOpen(false)}
                 />
                 <ul
-                  className="absolute right-0 top-full z-20 mt-1 max-h-56 w-44 overflow-auto rounded-md border border-stone-200 bg-white py-0.5 shadow-lg dark:border-stone-600 dark:bg-stone-800 sm:max-h-64 sm:w-52 sm:rounded-lg sm:py-1"
+                  className="absolute right-0 top-full z-20 mt-1 max-h-56 w-44 overflow-auto rounded-xl border border-border-subtle bg-surface py-1 shadow-xl shadow-black/40 sm:max-h-64 sm:w-52"
                   role="listbox"
                 >
-                  <li className="px-2 py-1 text-xs font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-sm">
+                  <li className="px-2 py-1 text-xs font-medium text-muted-fg sm:py-1 sm:text-sm">
                     Groups
                   </li>
                   {groupsToAdd.map((group) => {
@@ -109,7 +110,7 @@ export function DayTemplate({
                             onAddGroup?.(group);
                             setAddGroupOpen(false);
                           }}
-                          className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-base"
+                          className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-base"
                         >
                           <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />
                           <span className="truncate">{group}</span>
@@ -119,8 +120,8 @@ export function DayTemplate({
                   })}
                   {sectionsToShow.length > 0 && (
                     <>
-                      <li className="my-0.5 border-t border-stone-200 dark:border-stone-600 sm:my-1" />
-                      <li className="px-2 py-1 text-xs font-medium text-stone-500 dark:text-stone-400 sm:py-1 sm:text-sm">
+                      <li className="my-0.5 border-t border-border-subtle sm:my-1" />
+                      <li className="px-2 py-1 text-xs font-medium text-muted-fg sm:py-1 sm:text-sm">
                         Sections
                       </li>
                       {sectionsToShow.map((section) => {
@@ -136,7 +137,7 @@ export function DayTemplate({
                                 onAddSection?.(toAdd);
                                 setAddGroupOpen(false);
                               }}
-                              className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-700 sm:px-3 sm:py-2 sm:text-base"
+                              className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-base"
                             >
                               {(() => {
                                 const Icon = getGroupIcon(section.groups[0]);
@@ -158,7 +159,7 @@ export function DayTemplate({
         )}
       </div>
       {byGroup.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/50 px-3 py-4 text-center text-sm text-stone-500 dark:border-stone-600 dark:bg-stone-800/50 dark:text-stone-400 sm:rounded-xl sm:px-8 sm:py-10 sm:text-base">
+        <p className="rounded-xl border border-dashed border-border-subtle bg-surface-elevated/30 px-3 py-4 text-center text-sm text-muted-fg sm:px-8 sm:py-10 sm:text-base">
           No groups selected. Use &quot;Add group&quot; to choose muscle groups, or for today start
           from the welcome screen.
         </p>
@@ -166,18 +167,16 @@ export function DayTemplate({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {byGroup.map(({ group, items }, idx) => {
             const style = getPastelStyle(idx % 6);
+            const accent = getPastelAccentVar(idx);
             const canRemove = !locked && onRemoveGroup && groupIsRemovable(group);
             return (
               <div
                 key={group}
-                className={cn(
-                  "rounded-lg border-2 p-2.5 shadow-sm sm:rounded-xl sm:p-3",
-                  style.border,
-                  style.light
-                )}
+                className="rounded-xl border border-border-subtle bg-surface-elevated/25 p-2.5 sm:p-3"
+                style={{ borderLeftWidth: 3, borderLeftColor: accent }}
               >
                 <div className="mb-1.5 flex items-center justify-between gap-1.5 sm:mb-2 sm:gap-2">
-                  <h3 className="flex min-w-0 items-center gap-1.5 text-base font-medium text-stone-800 dark:text-stone-200 sm:gap-2 sm:text-lg">
+                  <h3 className="flex min-w-0 items-center gap-1.5 text-base font-medium text-foreground sm:gap-2 sm:text-lg">
                     {(() => {
                       const Icon = getGroupIcon(group);
                       return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
@@ -188,10 +187,11 @@ export function DayTemplate({
                     <button
                       type="button"
                       onClick={() => onRemoveGroup?.(group)}
-                      className="shrink-0 rounded px-2 py-1 text-xs font-medium text-stone-500 hover:bg-stone-200 hover:text-stone-700 dark:hover:bg-stone-600 dark:hover:text-stone-200 sm:px-2 sm:text-sm"
-                      title="Remove group from view"
+                      className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
+                      title="Remove group"
+                      aria-label="Remove group from view"
                     >
-                      Remove group
+                      <X className="size-5" aria-hidden />
                     </button>
                   )}
                 </div>
@@ -206,11 +206,9 @@ export function DayTemplate({
                           onChange={(next) => onToggleExercise(ex.id, next)}
                           disabled={locked}
                           label={ex.label}
-                          labelClassName={cn(
-                            checked && "text-stone-500 line-through dark:text-stone-400"
-                          )}
+                          labelClassName={cn(checked && "text-muted line-through")}
                           accentClassName={cn(style.bg, style.border)}
-                          checkIconClassName="text-stone-800 dark:text-stone-200"
+                          checkIconClassName="text-foreground"
                         />
                       </li>
                     );

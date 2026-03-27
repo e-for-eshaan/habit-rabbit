@@ -4,6 +4,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { AppThemeProvider } from "@/components/AppThemeProvider";
 import { AuthGate } from "@/components/AuthGate";
 import { AuthProvider } from "@/contexts/AuthContext";
 import type { LayoutChildren } from "@/types";
@@ -25,12 +26,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<LayoutChildren>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AntdRegistry>
-          <AuthProvider>
-            <AuthGate>{children}</AuthGate>
-          </AuthProvider>
+          <AppThemeProvider>
+            <AuthProvider>
+              <AuthGate>{children}</AuthGate>
+            </AuthProvider>
+          </AppThemeProvider>
         </AntdRegistry>
       </body>
     </html>

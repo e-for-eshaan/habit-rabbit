@@ -47,7 +47,7 @@ function Cell({
   return (
     <div
       className={cn(
-        "aspect-square rounded-sm border border-stone-200/60 dark:border-stone-600/60",
+        "aspect-square rounded-sm border border-border-subtle",
         isPlaceholder && "invisible",
         isPlaceholder && "invisible",
         !isPlaceholder && level === 0 && "heat-0",
@@ -99,7 +99,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
             })
           )}
         </div>
-        <div className="flex justify-between text-fluid-xs text-stone-500 dark:text-stone-400">
+        <div className="flex justify-between text-fluid-xs text-muted-fg">
           <span>{startLabel}</span>
           <span>{endLabel}</span>
         </div>
@@ -128,7 +128,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
           return <Cell key={dateKey} dateKey={dateKey} count={count} level={level} />;
         })}
       </div>
-      <div className="flex justify-between text-fluid-xs text-stone-500 dark:text-stone-400">
+      <div className="flex justify-between text-fluid-xs text-muted-fg">
         <span>{startLabel}</span>
         <span>{endLabel}</span>
       </div>

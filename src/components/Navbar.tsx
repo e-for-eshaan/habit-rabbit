@@ -11,18 +11,19 @@ export function Navbar() {
   const setSearchQuery = useSectionsStore((s) => s.setSearchQuery);
 
   return (
-    <header className="sticky top-0 z-10 border-b border-stone-200 bg-background/95 px-4 py-3 backdrop-blur dark:border-stone-700">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-        <div className="min-w-0 max-w-md flex-1">
+    <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-3 py-3 backdrop-blur-md sm:px-4">
+      <div className="mx-auto flex max-w-6xl items-center gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1 md:max-w-md">
           <Input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search sections & updates..."
-            prefix={<SearchOutlined className="text-stone-400" />}
+            placeholder="Search habits & logs…"
+            prefix={<SearchOutlined className="text-muted-fg" />}
             allowClear
             aria-label="Search"
             className="rounded-xl"
+            size="large"
           />
         </div>
         <div className="shrink-0">

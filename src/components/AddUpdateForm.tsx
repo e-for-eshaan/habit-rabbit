@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 type AddUpdateFormProps = {
@@ -18,20 +19,23 @@ export function AddUpdateForm({ onSubmit }: AddUpdateFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-2">
       <input
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Worked on something..."
-        className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-stone-400 dark:border-stone-600 dark:bg-stone-800 dark:focus:ring-stone-500"
+        placeholder="Log what you did…"
+        className="min-w-0 flex-1 rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm text-foreground placeholder:text-muted-fg outline-none ring-lime-400/20 focus:ring-2"
         aria-label="Update"
       />
       <button
         type="submit"
-        className="rounded-lg bg-stone-200 py-2 text-sm font-medium text-stone-800 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-100 dark:hover:bg-stone-600"
+        disabled={!text.trim()}
+        className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-lime-400 text-zinc-950 shadow-sm hover:bg-lime-300 disabled:cursor-not-allowed disabled:opacity-40"
+        aria-label="Add update"
+        title="Add update"
       >
-        Add update
+        <Plus className="size-5" strokeWidth={2.5} aria-hidden />
       </button>
     </form>
   );

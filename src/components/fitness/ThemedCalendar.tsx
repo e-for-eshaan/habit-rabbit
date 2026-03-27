@@ -57,18 +57,13 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
   };
 
   return (
-    <div
-      className={cn(
-        "rounded-xl border border-stone-200 bg-stone-50 p-4 dark:border-stone-600 dark:bg-stone-800/80",
-        className
-      )}
-    >
+    <div className={cn("rounded-xl border border-border-subtle bg-surface p-4", className)}>
       <div className="mb-4 flex items-center justify-between">
         <button
           type="button"
           onClick={goPrevMonth}
           aria-label="Previous month"
-          className="rounded-lg p-2 text-stone-600 hover:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-700"
+          className="rounded-lg p-2 text-muted hover:bg-surface-elevated hover:text-foreground"
         >
           <svg
             width="20"
@@ -83,7 +78,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <span className="text-base font-semibold text-stone-800 dark:text-stone-200 sm:text-lg">
+        <span className="text-base font-semibold text-foreground sm:text-lg">
           {format(monthStart, "MMMM yyyy")}
         </span>
         <button
@@ -91,7 +86,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
           onClick={goNextMonth}
           disabled={!canGoNext()}
           aria-label="Next month"
-          className="rounded-lg p-2 text-stone-600 hover:bg-stone-200 disabled:opacity-40 disabled:hover:bg-transparent dark:text-stone-400 dark:hover:bg-stone-700"
+          className="rounded-lg p-2 text-muted hover:bg-surface-elevated hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
         >
           <svg
             width="20"
@@ -109,10 +104,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
       </div>
       <div className="grid grid-cols-7 gap-1">
         {WEEKDAYS.map((day) => (
-          <div
-            key={day}
-            className="py-1 text-center text-sm font-medium text-stone-500 dark:text-stone-400"
-          >
+          <div key={day} className="py-1 text-center text-sm font-medium text-muted-fg">
             {day}
           </div>
         ))}
@@ -129,13 +121,12 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
               onClick={() => !disabled && onSelect(day)}
               className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-lg text-base transition-colors sm:h-9 sm:w-9 sm:text-sm",
-                !inMonth && "text-stone-400 dark:text-stone-500",
-                inMonth && "text-stone-800 dark:text-stone-200",
+                !inMonth && "text-muted-fg",
+                inMonth && "text-foreground",
                 disabled && "cursor-not-allowed opacity-50",
-                !disabled && inMonth && "hover:bg-stone-200 dark:hover:bg-stone-700",
-                selected &&
-                  "bg-stone-800 text-white hover:bg-stone-700 dark:bg-stone-200 dark:text-stone-800 dark:hover:bg-stone-300",
-                today && !selected && "ring-1 ring-stone-400 dark:ring-stone-500"
+                !disabled && inMonth && "hover:bg-surface-elevated",
+                selected && "bg-lime-400 text-zinc-950 hover:bg-lime-300",
+                today && !selected && "ring-1 ring-lime-400/50"
               )}
             >
               {format(day, "d")}

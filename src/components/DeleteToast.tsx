@@ -1,5 +1,6 @@
 "use client";
 
+import { Undo2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type { PendingDelete } from "@/store/useSectionsStore";
@@ -37,7 +38,7 @@ function CountdownCircle({ deletedAt }: { deletedAt: number }) {
           fill="none"
           stroke="currentColor"
           strokeWidth={stroke}
-          className="text-stone-200 dark:text-stone-600"
+          className="text-zinc-700"
         />
         <circle
           cx={cx}
@@ -49,11 +50,11 @@ function CountdownCircle({ deletedAt }: { deletedAt: number }) {
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          className="text-stone-600 dark:text-stone-400"
+          className="text-lime-400/90"
           style={{ transition: `stroke-dashoffset ${TICK_MS}ms linear` }}
         />
       </svg>
-      <span className="absolute text-sm font-medium tabular-nums text-stone-700 dark:text-stone-300">
+      <span className="absolute text-sm font-medium tabular-nums text-foreground">
         {Math.ceil(remaining)}
       </span>
     </div>
@@ -63,18 +64,17 @@ function CountdownCircle({ deletedAt }: { deletedAt: number }) {
 function SingleDeleteToast({ pending, onUndo }: { pending: PendingDelete; onUndo: () => void }) {
   return (
     <div
-      className="flex items-center gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3 shadow-lg dark:border-stone-600 dark:bg-stone-800"
+      className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-elevated px-4 py-3 shadow-xl shadow-black/40"
       role="status"
     >
       <CountdownCircle deletedAt={pending.deletedAt} />
-      <span className="text-sm text-stone-700 dark:text-stone-300">
-        Deleted. Undo within {UNDO_SECONDS}s
-      </span>
+      <span className="min-w-0 flex-1 text-sm text-muted">Deleted. Undo soon.</span>
       <button
         type="button"
         onClick={onUndo}
-        className="rounded bg-stone-200 px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-300 dark:bg-stone-700 dark:text-stone-100 dark:hover:bg-stone-600"
+        className="flex shrink-0 items-center gap-1.5 rounded-xl bg-zinc-700 px-3 py-2 text-sm font-medium text-foreground hover:bg-zinc-600"
       >
+        <Undo2 className="size-4" aria-hidden />
         Undo
       </button>
     </div>
@@ -88,7 +88,7 @@ export function DeleteToast() {
   if (pendingDeletes.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2">
+    <div className="fixed bottom-6 left-1/2 z-50 flex max-w-[min(100vw-2rem,420px)] -translate-x-1/2 flex-col items-stretch gap-2 px-4">
       {pendingDeletes.map((pending) => (
         <SingleDeleteToast
           key={`${pending.sectionId}-${pending.updateId}`}
