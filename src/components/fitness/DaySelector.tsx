@@ -2,7 +2,7 @@
 
 import { addDays, format, subDays } from "date-fns";
 import { Calendar, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getFitnessCalendarMonth } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -26,20 +26,37 @@ function getTodayKey(): string {
 
 const ICON_SIZE = 22;
 
+function monthCacheKey(year: number, month1Based: number): string {
+  return `${year}-${month1Based}`;
+}
+
 export function DaySelector({ dateKey, onDateChange, className }: DaySelectorProps) {
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [calendarSummaries, setCalendarSummaries] = useState<
     Record<string, FitnessCalendarDaySummary>
   >({});
+  const fetchedMonthsRef = useRef<Set<string>>(new Set());
+  const inFlightMonthsRef = useRef<Set<string>>(new Set());
 
   const loadCalendarMonth = useCallback(async (year: number, month1Based: number) => {
+    const key = monthCacheKey(year, month1Based);
+    if (fetchedMonthsRef.current.has(key)) return;
+    if (inFlightMonthsRef.current.has(key)) return;
+    inFlightMonthsRef.current.add(key);
     try {
       const res = await getFitnessCalendarMonth(year, month1Based);
-      setCalendarSummaries(res.days);
+      fetchedMonthsRef.current.add(key);
+      setCalendarSummaries((prev) => ({ ...prev, ...res.days }));
     } catch {
-      setCalendarSummaries({});
+    } finally {
+      inFlightMonthsRef.current.delete(key);
     }
   }, []);
+
+  useEffect(() => {
+    const d = parseDateKey(dateKey);
+    loadCalendarMonth(d.getFullYear(), d.getMonth() + 1);
+  }, [dateKey, loadCalendarMonth]);
 
   const todayKey = getTodayKey();
   const d = parseDateKey(dateKey);
