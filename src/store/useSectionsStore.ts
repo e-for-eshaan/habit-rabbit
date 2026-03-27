@@ -6,9 +6,10 @@ import {
   createSection as createSectionApi,
   createUpdate,
   deleteUpdate as deleteUpdateApi,
-  getSections as fetchSectionsApi,
+  getBootstrap,
   updateUpdate,
 } from "@/lib/api";
+import { parseViewSettingsFromRecord } from "@/lib/viewSettingsStorage";
 import type { Section, Update } from "@/types";
 
 export type LayoutMode = "horizontal" | "grid";
@@ -111,8 +112,9 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   fetchSections: async () => {
     set({ error: null });
     try {
-      const data = await fetchSectionsApi();
-      set({ sections: data, loading: false });
+      const { sections, viewSettings } = await getBootstrap();
+      set({ sections, loading: false });
+      get().hydrateViewSettings(parseViewSettingsFromRecord(viewSettings));
     } catch (e) {
       set({
         error: e instanceof Error ? e.message : "Failed to load sections",

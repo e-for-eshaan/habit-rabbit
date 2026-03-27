@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 import type { StoredViewSettings } from "@/lib/viewSettingsStorage";
@@ -9,6 +10,7 @@ import { subscribeViewSettingsPersist, useSectionsStore } from "@/store/useSecti
 const PERSIST_DEBOUNCE_MS = 500;
 
 export function ViewSettingsPersistence() {
+  const pathname = usePathname();
   const hydrated = useRef(false);
   const hydrateViewSettings = useSectionsStore((s) => s.hydrateViewSettings);
   const persistTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -16,10 +18,11 @@ export function ViewSettingsPersistence() {
   useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
+    if (pathname === "/") return;
     getStoredViewSettings().then((stored) => {
       if (stored) hydrateViewSettings(stored);
     });
-  }, [hydrateViewSettings]);
+  }, [pathname, hydrateViewSettings]);
 
   useEffect(() => {
     const unsub = subscribeViewSettingsPersist((settings: StoredViewSettings) => {

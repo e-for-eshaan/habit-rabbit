@@ -48,7 +48,9 @@ function isCollapsedMap(v: unknown): v is Record<string, boolean> {
   return Object.entries(o).every(([k, val]) => typeof k === "string" && typeof val === "boolean");
 }
 
-function parseValidated(data: Record<string, unknown>): Partial<StoredViewSettings> {
+export function parseViewSettingsFromRecord(
+  data: Record<string, unknown>
+): Partial<StoredViewSettings> {
   const out: Partial<StoredViewSettings> = {};
   if (isLayoutMode(data.layoutMode)) out.layoutMode = data.layoutMode;
   if (isViewMode(data.viewMode)) out.viewMode = data.viewMode;
@@ -64,7 +66,7 @@ function parseValidated(data: Record<string, unknown>): Partial<StoredViewSettin
 export async function getStoredViewSettings(): Promise<Partial<StoredViewSettings> | null> {
   try {
     const data = await getViewSettings();
-    const out = parseValidated(data);
+    const out = parseViewSettingsFromRecord(data);
     return Object.keys(out).length > 0 ? out : null;
   } catch {
     return null;

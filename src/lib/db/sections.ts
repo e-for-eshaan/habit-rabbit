@@ -22,15 +22,22 @@ function getDefaultStore(): Store {
   return { sections: [...DEFAULT_SECTIONS] };
 }
 
+export function storeFromFirestoreDocument(exists: boolean, raw: unknown): Store {
+  if (!exists) return getDefaultStore();
+  if (!hasValidSections(raw)) return getDefaultStore();
+  return raw;
+}
+
 export async function readSectionsStore(uid: string): Promise<Store> {
   if (!adminApp) return getDefaultStore();
   const db = getFirestore(adminApp);
   const ref = db.collection("users").doc(uid).collection("data").doc("sections");
   const snap = await ref.get();
-  if (!snap.exists) return getDefaultStore();
-  const data = snap.data() as unknown;
-  if (!hasValidSections(data)) return getDefaultStore();
-  return data;
+  return storeFromFirestoreDocument(snap.exists, snap.data());
+}
+
+export function getDefaultSectionsStore(): Store {
+  return getDefaultStore();
 }
 
 export async function writeSectionsStore(uid: string, store: Store): Promise<void> {

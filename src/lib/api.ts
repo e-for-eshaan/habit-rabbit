@@ -35,6 +35,15 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export type BootstrapPayload = {
+  sections: Section[];
+  viewSettings: Record<string, unknown>;
+};
+
+export async function getBootstrap(): Promise<BootstrapPayload> {
+  return fetchJson<BootstrapPayload>(`${BASE}/api/bootstrap`);
+}
+
 export async function getSections(): Promise<Section[]> {
   return fetchJson<Section[]>(`${BASE}/api/sections`);
 }

@@ -47,6 +47,10 @@ vi.mock("@/lib/db/fitness", () => ({
   writeFitnessStore: vi.fn(),
 }));
 
+vi.mock("@/lib/db/bootstrap", () => ({
+  readHomeBootstrap: vi.fn(),
+}));
+
 function authRequest(url: string, init?: RequestInit): Request {
   return new Request(url, {
     ...init,
@@ -146,6 +150,46 @@ async function getFitnessDashboardResponse() {
   const { GET } = await import("@/app/api/fitness/dashboard/route");
   return GET(authRequest("http://localhost/api/fitness/dashboard"));
 }
+
+async function getBootstrapResponse() {
+  const { GET } = await import("@/app/api/bootstrap/route");
+  return GET(authRequest("http://localhost/api/bootstrap"));
+}
+
+describe("API bootstrap", () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    const admin = await import("@/lib/firebase/admin");
+    vi.mocked(admin.getAuthUserId).mockResolvedValue("test-uid");
+    const bootstrap = await import("@/lib/db/bootstrap");
+    vi.mocked(bootstrap.readHomeBootstrap).mockClear();
+    vi.mocked(bootstrap.readHomeBootstrap).mockResolvedValue({
+      store: mockStore,
+      viewSettings: { layoutMode: "grid", viewMode: "calendar" },
+    });
+  });
+
+  describe("GET /api/bootstrap", () => {
+    it("returns sections and viewSettings", async () => {
+      const res = await getBootstrapResponse();
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.sections).toEqual(mockSections);
+      expect(data.viewSettings).toMatchObject({ layoutMode: "grid", viewMode: "calendar" });
+      const bootstrap = await import("@/lib/db/bootstrap");
+      expect(bootstrap.readHomeBootstrap).toHaveBeenCalledWith("test-uid");
+    });
+
+    it("returns 401 when unauthorized", async () => {
+      const admin = await import("@/lib/firebase/admin");
+      vi.mocked(admin.getAuthUserId).mockResolvedValueOnce(null);
+      const res = await getBootstrapResponse();
+      expect(res.status).toBe(401);
+      const bootstrap = await import("@/lib/db/bootstrap");
+      expect(bootstrap.readHomeBootstrap).not.toHaveBeenCalled();
+    });
+  });
+});
 
 describe("API sections", () => {
   beforeEach(async () => {
