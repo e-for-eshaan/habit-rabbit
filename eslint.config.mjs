@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 
@@ -11,6 +12,7 @@ const eslintConfig = defineConfig([
   eslintConfigPrettier,
   {
     plugins: {
+      import: importPlugin,
       "simple-import-sort": simpleImportSort,
       "unused-imports": unusedImports,
     },
@@ -20,6 +22,7 @@ const eslintConfig = defineConfig([
       "no-multiple-empty-lines": ["warn", { max: 1, maxEOF: 1, maxBOF: 0 }],
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
+      "import/newline-after-import": ["warn", { count: 1 }],
       "@typescript-eslint/no-unused-vars": "off",
       "unused-imports/no-unused-imports": "warn",
       "unused-imports/no-unused-vars": [
