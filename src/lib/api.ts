@@ -2,7 +2,7 @@ import { get } from "lodash";
 
 import { getApiToken } from "@/lib/apiAuth";
 import type { Section, Update } from "@/types";
-import type { FitnessState } from "@/types/fitness";
+import type { FitnessCalendarMonthResponse, FitnessState } from "@/types/fitness";
 import type { FitnessDashboardData } from "@/types/fitnessDashboard";
 
 const BASE = "";
@@ -93,6 +93,14 @@ export async function updateFitness(payload: FitnessState): Promise<FitnessState
 
 export async function getFitnessDashboard(): Promise<FitnessDashboardData> {
   return fetchJson<FitnessDashboardData>(`${BASE}/api/fitness/dashboard`);
+}
+
+export async function getFitnessCalendarMonth(
+  year: number,
+  month: number
+): Promise<FitnessCalendarMonthResponse> {
+  const q = new URLSearchParams({ year: String(year), month: String(month) });
+  return fetchJson<FitnessCalendarMonthResponse>(`${BASE}/api/fitness/calendar?${q}`);
 }
 
 export async function getViewSettings(): Promise<Record<string, unknown>> {

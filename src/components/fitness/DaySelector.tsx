@@ -2,9 +2,11 @@
 
 import { addDays, format, subDays } from "date-fns";
 import { Calendar, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
+import { getFitnessCalendarMonth } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import type { FitnessCalendarDaySummary } from "@/types/fitness";
 
 import { ThemedCalendar } from "./ThemedCalendar";
 
@@ -26,6 +28,19 @@ const ICON_SIZE = 22;
 
 export function DaySelector({ dateKey, onDateChange, className }: DaySelectorProps) {
   const [accordionOpen, setAccordionOpen] = useState(false);
+  const [calendarSummaries, setCalendarSummaries] = useState<
+    Record<string, FitnessCalendarDaySummary>
+  >({});
+
+  const loadCalendarMonth = useCallback(async (year: number, month1Based: number) => {
+    try {
+      const res = await getFitnessCalendarMonth(year, month1Based);
+      setCalendarSummaries(res.days);
+    } catch {
+      setCalendarSummaries({});
+    }
+  }, []);
+
   const todayKey = getTodayKey();
   const d = parseDateKey(dateKey);
   const labelShort = format(d, "EEE d MMM");
@@ -131,6 +146,9 @@ export function DaySelector({ dateKey, onDateChange, className }: DaySelectorPro
             value={d}
             onSelect={handleCalendarSelect}
             maxDate={todayDate}
+            daySummaries={calendarSummaries}
+            onVisibleMonthChange={loadCalendarMonth}
+            monthDataEnabled={accordionOpen}
           />
         </div>
       </div>

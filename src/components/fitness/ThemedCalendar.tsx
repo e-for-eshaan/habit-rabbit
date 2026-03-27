@@ -12,9 +12,12 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import type { FitnessCalendarDaySummary } from "@/types/fitness";
+
+import { CalendarDayMarkers } from "./CalendarDayMarkers";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -23,6 +26,10 @@ type ThemedCalendarProps = {
   onSelect: (date: Date) => void;
   maxDate: Date;
   className?: string;
+  daySummaries?: Record<string, FitnessCalendarDaySummary>;
+  onVisibleMonthChange?: (year: number, month1Based: number) => void;
+  /** When false, month data is not requested (e.g. calendar panel closed). */
+  monthDataEnabled?: boolean;
 };
 
 function getMonthGrid(monthStart: Date): Date[] {
@@ -37,10 +44,25 @@ function getMonthGrid(monthStart: Date): Date[] {
   return days;
 }
 
-export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCalendarProps) {
+export function ThemedCalendar({
+  value,
+  onSelect,
+  maxDate,
+  className,
+  daySummaries,
+  onVisibleMonthChange,
+  monthDataEnabled = true,
+}: ThemedCalendarProps) {
   const [viewMonth, setViewMonth] = useState(() => startOfMonth(value));
   const monthStart = startOfMonth(viewMonth);
   const grid = getMonthGrid(monthStart);
+  const visibleYear = monthStart.getFullYear();
+  const visibleMonth1Based = monthStart.getMonth() + 1;
+
+  useEffect(() => {
+    if (!monthDataEnabled) return;
+    onVisibleMonthChange?.(visibleYear, visibleMonth1Based);
+  }, [visibleYear, visibleMonth1Based, monthDataEnabled, onVisibleMonthChange]);
 
   const goPrevMonth = () => {
     setViewMonth(new Date(monthStart.getFullYear(), monthStart.getMonth() - 1));
@@ -113,6 +135,8 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
           const selected = isSameDay(day, value);
           const today = isToday(day);
           const disabled = isAfter(day, maxDate);
+          const dateKey = format(day, "yyyy-MM-dd");
+          const summary = daySummaries?.[dateKey];
           return (
             <button
               key={day.toISOString()}
@@ -120,7 +144,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
               disabled={disabled}
               onClick={() => !disabled && onSelect(day)}
               className={cn(
-                "flex min-h-touch min-w-touch items-center justify-center rounded-lg text-body transition-colors sm:min-h-9 sm:min-w-9 sm:text-body-sm",
+                "flex min-h-[52px] flex-col items-center justify-start gap-0.5 rounded-lg px-0.5 pt-1 pb-1 text-body transition-colors sm:min-h-[48px] sm:text-body-sm",
                 !inMonth && "text-muted-fg",
                 inMonth && "text-foreground",
                 disabled && "cursor-not-allowed opacity-50",
@@ -129,7 +153,8 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
                 today && !selected && "ring-1 ring-lime-400/50"
               )}
             >
-              {format(day, "d")}
+              <span className="leading-none tabular-nums">{format(day, "d")}</span>
+              <CalendarDayMarkers summary={summary} markerId={dateKey.replace(/-/g, "")} />
             </button>
           );
         })}

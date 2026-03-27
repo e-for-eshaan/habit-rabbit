@@ -17,3 +17,15 @@ export type FitnessState = {
   exercises: Exercise[];
   dayLogs: DayLog[];
 };
+
+export type FitnessCalendarDaySummary = {
+  running: boolean;
+  swimming: boolean;
+  groupCount: number;
+};
+
+export type FitnessCalendarMonthResponse = {
+  year: number;
+  month: number;
+  days: Record<string, FitnessCalendarDaySummary>;
+};
