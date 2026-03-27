@@ -20,7 +20,11 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
     headers,
   });
   if (res.status === 401) {
-    if (typeof window !== "undefined") window.location.href = "/login";
+    if (typeof window !== "undefined") {
+      const onLoginPath =
+        window.location.pathname === "/login" || window.location.pathname.startsWith("/login/");
+      if (!onLoginPath) window.location.href = "/login";
+    }
     throw new Error("Unauthorized");
   }
   if (!res.ok) {

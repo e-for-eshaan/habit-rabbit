@@ -8,6 +8,7 @@ import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
 import { useAuth } from "@/contexts/AuthContext";
 
 const LOGIN_PATH = "/login";
+const HOME_PATH = "/";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -16,6 +17,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (loading) return;
+    if (user && pathname === LOGIN_PATH) {
+      router.replace(HOME_PATH);
+      return;
+    }
     if (!user && pathname !== LOGIN_PATH) {
       router.replace(LOGIN_PATH);
     }
@@ -33,9 +38,17 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
+  if (user && pathname === LOGIN_PATH) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-page py-section">
+        <p className="text-body text-muted-fg">Redirecting…</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      <ViewSettingsPersistence />
+      {user ? <ViewSettingsPersistence /> : null}
       {children}
     </>
   );

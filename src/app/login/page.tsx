@@ -11,6 +11,7 @@ export default function LoginPage() {
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 

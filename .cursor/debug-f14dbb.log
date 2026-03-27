@@ -1,0 +1,46 @@
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/login","branch":"loading_skip"},"timestamp":1774613877373}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":false,"uidLen":0},"timestamp":1774613877385}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613877420}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/login","branch":"noop"},"timestamp":1774613877421}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613877421}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613877422}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/","branch":"loading_skip"},"timestamp":1774613882823}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":false,"uidLen":0},"timestamp":1774613882843}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/","branch":"will_redirect_login"},"timestamp":1774613882847}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:replace","message":"router.replace(LOGIN_PATH)","data":{"pathname":"/"},"timestamp":1774613882847}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/","branch":"loading_skip"},"timestamp":1774613892889}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":false,"uidLen":0},"timestamp":1774613892901}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/","branch":"will_redirect_login"},"timestamp":1774613892902}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:replace","message":"router.replace(LOGIN_PATH)","data":{"pathname":"/"},"timestamp":1774613892903}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/login","branch":"noop"},"timestamp":1774613892922}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613893355}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613893356}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613893356}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/","branch":"loading_skip"},"timestamp":1774613896786}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":false,"uidLen":0},"timestamp":1774613896810}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/","branch":"will_redirect_login"},"timestamp":1774613896813}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:replace","message":"router.replace(LOGIN_PATH)","data":{"pathname":"/"},"timestamp":1774613896813}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/login","branch":"noop"},"timestamp":1774613896840}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613897207}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613897208}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613897209}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/fitness","branch":"loading_skip"},"timestamp":1774613916209}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/login","branch":"loading_skip"},"timestamp":1774613916878}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":false,"uidLen":0},"timestamp":1774613916891}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613916932}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":false,"pathname":"/login","branch":"noop"},"timestamp":1774613916933}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613916933}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613916934}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/fitness","branch":"loading_skip"},"timestamp":1774613917697}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/login","branch":"loading_skip"},"timestamp":1774613918852}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":true,"uidLen":28},"timestamp":1774613919619}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613919659}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":true,"pathname":"/login","branch":"noop"},"timestamp":1774613919659}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613919660}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613919660}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":true,"hasUser":false,"pathname":"/login","branch":"loading_skip"},"timestamp":1774613927263}
+{"sessionId":"f14dbb","hypothesisId":"B","location":"AuthContext.tsx:onAuthStateChanged","message":"firebase auth state","data":{"hasUser":true,"uidLen":28},"timestamp":1774613927659}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613927693}
+{"sessionId":"f14dbb","hypothesisId":"A","location":"AuthGate.tsx:useEffect","message":"auth gate redirect check","data":{"loading":false,"hasUser":true,"pathname":"/login","branch":"noop"},"timestamp":1774613927694}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:unmount","message":"LoginPage unmounted","data":{},"timestamp":1774613927694}
+{"sessionId":"f14dbb","hypothesisId":"C","location":"login/page.tsx:mount","message":"LoginPage mounted","data":{},"timestamp":1774613927695}
