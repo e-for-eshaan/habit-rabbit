@@ -11,8 +11,8 @@ export function Navbar() {
   const setSearchQuery = useSectionsStore((s) => s.setSearchQuery);
 
   return (
-    <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-3 py-3 backdrop-blur-md sm:px-4">
-      <div className="mx-auto flex max-w-6xl items-center gap-2 sm:gap-3">
+    <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-page py-inline backdrop-blur-md sm:py-3">
+      <div className="mx-auto flex max-w-6xl items-center gap-tight sm:gap-inline">
         <div className="min-w-0 flex-1 md:max-w-md">
           <Input
             type="search"

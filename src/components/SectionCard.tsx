@@ -55,7 +55,7 @@ export function SectionCard({
           aria-expanded={!collapsed}
           aria-label={`${section.title}, ${section.updates.length} update${section.updates.length !== 1 ? "s" : ""}`}
           className={cn(
-            "flex min-h-[48px] flex-1 items-center gap-3 px-4 py-3 text-left",
+            "flex min-h-touch flex-1 items-center gap-inline px-4 py-3 text-left",
             style.light
           )}
         >
@@ -66,10 +66,10 @@ export function SectionCard({
             )}
             aria-hidden
           />
-          <span className="min-w-0 flex-1 truncate font-semibold text-foreground">
+          <span className="min-w-0 flex-1 truncate text-title font-semibold text-foreground">
             {section.title}
           </span>
-          <span className="shrink-0 text-xs tabular-nums text-muted-fg">
+          <span className="shrink-0 text-caption tabular-nums text-muted-fg">
             {section.updates.length}
           </span>
         </button>
@@ -77,7 +77,7 @@ export function SectionCard({
           <Link
             href={openDashboardHref}
             className={cn(
-              "flex min-h-[48px] min-w-[48px] items-center justify-center border-l border-border-subtle text-muted hover:bg-surface-elevated hover:text-foreground"
+              "flex min-h-touch min-w-touch items-center justify-center border-l border-border-subtle text-muted hover:bg-surface-elevated hover:text-foreground"
             )}
             aria-label="Open fitness dashboard"
             title="Dashboard"
@@ -87,10 +87,10 @@ export function SectionCard({
         )}
       </div>
       {!collapsed && (
-        <div className="flex flex-1 flex-col gap-3 p-3">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-inline p-card">
+          <div className="flex flex-col gap-stack">
             {isEmpty(dayGroups) ? (
-              <p className="py-6 text-center text-sm text-muted-fg">
+              <p className="py-6 text-center text-body-sm text-muted-fg">
                 No updates yet. Add one below.
               </p>
             ) : (

@@ -48,10 +48,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Habit Rabbit</h1>
-        <p className="mt-1.5 text-sm text-muted-fg">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-page py-section sm:py-12">
+      <div className="mb-section text-center">
+        <h1 className="text-display font-bold tracking-tight text-foreground">Habit Rabbit</h1>
+        <p className="mt-inline text-body-sm text-muted-fg">
           Log habits, streaks, and fitness in one place.
         </p>
       </div>
@@ -61,12 +61,16 @@ export default function LoginPage() {
         styles={{
           header: {
             borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-            fontSize: "1.05rem",
-            fontWeight: 600,
           },
         }}
       >
-        <Form name="auth" layout="vertical" onFinish={onFinish} autoComplete="off" className="pt-1">
+        <Form
+          name="auth"
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off"
+          className="pt-tight"
+        >
           <Form.Item
             label="Email"
             name="email"
@@ -84,12 +88,12 @@ export default function LoginPage() {
           >
             <Input.Password size="large" placeholder="••••••••" />
           </Form.Item>
-          <Form.Item className="!mb-3">
+          <Form.Item className="!mb-inline">
             <Button type="primary" htmlType="submit" block size="large" loading={submitting}>
               {isSignUp ? "Sign up" : "Sign in"}
             </Button>
           </Form.Item>
-          <Form.Item className="!mb-2">
+          <Form.Item className="!mb-tight">
             <Button
               type="default"
               block
@@ -102,7 +106,7 @@ export default function LoginPage() {
               Continue with Google
             </Button>
           </Form.Item>
-          <div className="text-center text-sm text-muted-fg">
+          <div className="text-center text-body-sm text-muted-fg">
             <button
               type="button"
               onClick={() => setIsSignUp((v) => !v)}

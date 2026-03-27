@@ -198,18 +198,18 @@ function FitnessPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-3 sm:gap-4 sm:p-4">
-        <p className="text-center text-base text-red-400 sm:text-lg">{error}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-inline px-page py-section sm:gap-stack">
+        <p className="text-center text-title text-red-400">{error}</p>
         <button
           type="button"
           onClick={fetchState}
-          className="rounded-xl bg-surface-elevated px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700 sm:text-base"
+          className="min-h-touch rounded-xl bg-surface-elevated px-4 py-2.5 text-body-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700"
         >
           Retry
         </button>
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-sm text-muted-fg hover:text-foreground sm:text-base"
+          className="flex min-h-touch items-center gap-tight text-body-sm text-muted-fg hover:text-foreground"
         >
           <ArrowLeft className="size-4" aria-hidden />
           Habits
@@ -220,24 +220,24 @@ function FitnessPage() {
 
   return (
     <div className="min-h-screen font-sans">
-      <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-3 py-2 backdrop-blur-md sm:px-4 sm:py-3">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 sm:gap-4">
+      <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/90 px-page py-2 backdrop-blur-md sm:py-3">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-tight sm:gap-stack">
           <Link
             href="/"
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-xl text-muted-fg hover:bg-surface-elevated hover:text-foreground sm:min-w-0 sm:justify-start sm:gap-2 sm:px-2"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-xl text-muted-fg hover:bg-surface-elevated hover:text-foreground sm:min-w-0 sm:justify-start sm:gap-inline sm:px-2"
             aria-label="Back to habits"
           >
             <ArrowLeft className="size-5 shrink-0" aria-hidden />
-            <span className="hidden text-sm font-medium sm:inline">Habits</span>
+            <span className="hidden text-body-sm font-medium sm:inline">Habits</span>
           </Link>
-          <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+          <h1 className="text-title font-semibold tracking-tight text-foreground sm:text-display">
             Fitness
           </h1>
           <button
             type="button"
             onClick={() => setEditExercisesMode(!editExercisesMode)}
             className={cn(
-              "flex min-h-10 min-w-10 items-center justify-center rounded-xl sm:min-w-0 sm:gap-2 sm:px-3",
+              "flex min-h-touch min-w-touch items-center justify-center rounded-xl sm:min-w-0 sm:gap-inline sm:px-3",
               editExercisesMode
                 ? "bg-lime-400/20 text-lime-300 ring-1 ring-lime-400/40"
                 : "bg-surface-elevated text-muted hover:bg-zinc-700 hover:text-foreground ring-1 ring-border-subtle"
@@ -250,14 +250,14 @@ function FitnessPage() {
             ) : (
               <Pencil className="size-5" aria-hidden />
             )}
-            <span className="hidden text-sm font-medium sm:inline">
+            <span className="hidden text-body-sm font-medium sm:inline">
               {editExercisesMode ? "Done" : "Edit"}
             </span>
           </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-4 p-3 sm:space-y-6 sm:p-4 md:p-6">
+      <main className="mx-auto max-w-5xl space-y-stack px-page py-section sm:space-y-section">
         {editExercisesMode ? (
           <ExerciseEditMode
             state={state}
@@ -268,12 +268,12 @@ function FitnessPage() {
           <>
             <DaySelector dateKey={selectedDateKey} onDateChange={setSelectedDateKey} />
             {!isCurrentDay && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-inline">
                 {isEditingThisDay ? (
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(null)}
-                    className="flex items-center gap-2 rounded-xl bg-lime-400/15 px-3 py-2 text-sm font-medium text-lime-200 ring-1 ring-lime-400/35"
+                    className="flex min-h-touch items-center gap-inline rounded-xl bg-lime-400/15 px-3 py-2 text-body-sm font-medium text-lime-200 ring-1 ring-lime-400/35"
                     aria-label="Done editing this day"
                   >
                     <Check className="size-4" aria-hidden />
@@ -283,7 +283,7 @@ function FitnessPage() {
                   <button
                     type="button"
                     onClick={() => setEditingDayKey(selectedDateKey)}
-                    className="flex items-center gap-2 rounded-xl bg-surface-elevated px-3 py-2 text-sm font-medium text-muted ring-1 ring-border-subtle hover:bg-zinc-700 hover:text-foreground"
+                    className="flex min-h-touch items-center gap-inline rounded-xl bg-surface-elevated px-3 py-2 text-body-sm font-medium text-muted ring-1 ring-border-subtle hover:bg-zinc-700 hover:text-foreground"
                     aria-label="Edit this day"
                   >
                     <PenLine className="size-4" aria-hidden />

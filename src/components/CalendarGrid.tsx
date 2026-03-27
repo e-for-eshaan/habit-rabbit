@@ -99,7 +99,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
             })
           )}
         </div>
-        <div className="flex justify-between text-fluid-xs text-muted-fg">
+        <div className="flex justify-between text-caption text-muted-fg">
           <span>{startLabel}</span>
           <span>{endLabel}</span>
         </div>
@@ -114,7 +114,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
     ? formatCalendarRangeLabel(toDateKey(days[days.length - 1]!), includeYear)
     : "";
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col gap-tight", className)}>
       <div
         className="grid gap-0.5"
         style={{
@@ -128,7 +128,7 @@ export function CalendarGrid({ section, range, className }: CalendarGridProps) {
           return <Cell key={dateKey} dateKey={dateKey} count={count} level={level} />;
         })}
       </div>
-      <div className="flex justify-between text-fluid-xs text-muted-fg">
+      <div className="flex justify-between text-caption text-muted-fg">
         <span>{startLabel}</span>
         <span>{endLabel}</span>
       </div>

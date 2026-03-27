@@ -54,7 +54,7 @@ function CountdownCircle({ deletedAt }: { deletedAt: number }) {
           style={{ transition: `stroke-dashoffset ${TICK_MS}ms linear` }}
         />
       </svg>
-      <span className="absolute text-sm font-medium tabular-nums text-foreground">
+      <span className="absolute text-body-sm font-medium tabular-nums text-foreground">
         {Math.ceil(remaining)}
       </span>
     </div>
@@ -64,15 +64,15 @@ function CountdownCircle({ deletedAt }: { deletedAt: number }) {
 function SingleDeleteToast({ pending, onUndo }: { pending: PendingDelete; onUndo: () => void }) {
   return (
     <div
-      className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-elevated px-4 py-3 shadow-xl shadow-black/40"
+      className="flex items-center gap-inline rounded-2xl border border-border-subtle bg-surface-elevated px-4 py-3 shadow-xl shadow-black/40"
       role="status"
     >
       <CountdownCircle deletedAt={pending.deletedAt} />
-      <span className="min-w-0 flex-1 text-sm text-muted">Deleted. Undo soon.</span>
+      <span className="min-w-0 flex-1 text-body-sm text-muted">Deleted. Undo soon.</span>
       <button
         type="button"
         onClick={onUndo}
-        className="flex shrink-0 items-center gap-1.5 rounded-xl bg-zinc-700 px-3 py-2 text-sm font-medium text-foreground hover:bg-zinc-600"
+        className="flex min-h-touch shrink-0 items-center gap-tight rounded-xl bg-zinc-700 px-3 py-2 text-body-sm font-medium text-foreground hover:bg-zinc-600"
       >
         <Undo2 className="size-4" aria-hidden />
         Undo
@@ -88,7 +88,7 @@ export function DeleteToast() {
   if (pendingDeletes.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 flex max-w-[min(100vw-2rem,420px)] -translate-x-1/2 flex-col items-stretch gap-2 px-4">
+    <div className="fixed bottom-fab left-1/2 z-50 flex max-w-[min(100vw-2rem,420px)] -translate-x-1/2 flex-col items-stretch gap-inline px-page">
       {pendingDeletes.map((pending) => (
         <SingleDeleteToast
           key={`${pending.sectionId}-${pending.updateId}`}

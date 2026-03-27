@@ -39,7 +39,7 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
         <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
+            tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
             tickLine={false}
             axisLine={false}
             interval="preserveStartEnd"
@@ -47,7 +47,7 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
           <YAxis hide domain={[0, "auto"]} />
           <RechartsTooltip
             contentStyle={{
-              fontSize: 12,
+              fontSize: "var(--chart-label)",
               borderRadius: 8,
               background: "var(--surface-elevated)",
               border: "1px solid var(--border-subtle)",

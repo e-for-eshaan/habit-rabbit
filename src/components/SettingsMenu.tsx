@@ -52,10 +52,10 @@ function SettingsMenuSection({
 }) {
   return (
     <div className={cn("border-b border-zinc-700 last:border-0", className)}>
-      <h3 className="mb-2 px-3 pt-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+      <h3 className="mb-inline px-inline pt-inline text-caption font-semibold uppercase tracking-wider text-zinc-400">
         {title}
       </h3>
-      <div className="pb-3">{children}</div>
+      <div className="pb-inline">{children}</div>
     </div>
   );
 }
@@ -79,7 +79,7 @@ function OptionButton<T extends string>({
       type="button"
       onClick={() => onSelect(value)}
       className={cn(
-        "min-h-[44px] min-w-[44px] touch-manipulation rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors",
+        "min-h-touch min-w-touch touch-manipulation rounded-lg px-3 py-2.5 text-left text-body-sm font-medium transition-colors",
         isActive
           ? "bg-zinc-700 text-zinc-50"
           : "text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100",
@@ -92,7 +92,7 @@ function OptionButton<T extends string>({
 }
 
 function OptionRow({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-wrap gap-2 px-3">{children}</div>;
+  return <div className="flex flex-wrap gap-inline px-inline">{children}</div>;
 }
 
 export function SettingsMenu() {
@@ -122,23 +122,23 @@ export function SettingsMenu() {
 
   const popoverContent = (
     <ConfigProvider theme={popoverDarkTheme}>
-      <div className="w-[min(320px,calc(100vw-2rem))] max-h-[min(70vh,420px)] overflow-y-auto p-1 text-zinc-100">
+      <div className="w-[min(320px,calc(100vw-2rem))] max-h-[min(70vh,420px)] overflow-y-auto p-px text-zinc-100">
         <SettingsMenuSection title="Sort by">
-          <div className="space-y-1 px-3">
+          <div className="space-y-px px-inline">
             {SORT_OPTIONS.map((opt) => (
-              <div key={opt.value} className="flex items-center gap-2">
+              <div key={opt.value} className="flex items-center gap-inline">
                 <OptionButton
                   value={opt.value}
                   current={sortBy}
                   label={opt.label}
                   onSelect={(v) => setSort(v, opt.hasDirection ? sortDir : "asc")}
-                  className="min-h-[44px] flex-1"
+                  className="min-h-touch flex-1"
                 />
                 {opt.hasDirection && sortBy === opt.value && (
                   <button
                     type="button"
                     onClick={() => setSort(sortBy, sortDir === "asc" ? "desc" : "asc")}
-                    className="flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+                    className="flex min-h-touch min-w-touch touch-manipulation items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
                     title={
                       sortDir === "desc"
                         ? "Descending (click for ascending)"
@@ -147,9 +147,9 @@ export function SettingsMenu() {
                     aria-label={sortDir === "desc" ? "Switch to ascending" : "Switch to descending"}
                   >
                     {sortDir === "desc" ? (
-                      <DownOutlined className="text-sm" />
+                      <DownOutlined className="text-body-sm" />
                     ) : (
-                      <UpOutlined className="text-sm" />
+                      <UpOutlined className="text-body-sm" />
                     )}
                   </button>
                 )}
@@ -159,7 +159,7 @@ export function SettingsMenu() {
         </SettingsMenuSection>
 
         <SettingsMenuSection title="View">
-          <div className="px-3">
+          <div className="px-inline">
             <Segmented
               value={viewMode}
               onChange={(v) => setViewMode(v as ViewMode)}
@@ -184,11 +184,11 @@ export function SettingsMenu() {
               ))}
             </OptionRow>
             {layoutMode === "grid" && (
-              <div className="mt-2 px-3">
+              <div className="mt-inline px-inline">
                 <button
                   type="button"
                   onClick={handleCollapseAll}
-                  className="min-h-[44px] w-full touch-manipulation rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-sm font-medium text-zinc-200 hover:bg-zinc-800"
+                  className="min-h-touch w-full touch-manipulation rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-body-sm font-medium text-zinc-200 hover:bg-zinc-800"
                 >
                   {isGridCollapsed ? "Expand all" : "Collapse all"}
                 </button>
@@ -230,7 +230,7 @@ export function SettingsMenu() {
         )}
 
         <SettingsMenuSection title="Account">
-          <div className="px-3">
+          <div className="px-inline">
             <button
               type="button"
               onClick={async () => {
@@ -238,7 +238,7 @@ export function SettingsMenu() {
                 await signOut();
                 router.replace("/login");
               }}
-              className="flex min-h-[44px] w-full touch-manipulation items-center gap-2 rounded-lg text-left text-sm font-medium text-zinc-200 hover:bg-zinc-800"
+              className="flex min-h-touch w-full touch-manipulation items-center gap-inline rounded-lg text-left text-body-sm font-medium text-zinc-200 hover:bg-zinc-800"
             >
               <LogoutOutlined />
               Log out
@@ -268,7 +268,7 @@ export function SettingsMenu() {
     >
       <button
         type="button"
-        className="flex min-h-[44px] touch-manipulation items-center gap-2 rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40"
+        className="flex min-h-touch touch-manipulation items-center gap-inline rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2.5 text-body-sm font-medium text-foreground shadow-sm transition-colors hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40"
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="View and sort settings"

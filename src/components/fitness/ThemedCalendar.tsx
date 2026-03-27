@@ -57,13 +57,13 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
   };
 
   return (
-    <div className={cn("rounded-xl border border-border-subtle bg-surface p-4", className)}>
-      <div className="mb-4 flex items-center justify-between">
+    <div className={cn("rounded-xl border border-border-subtle bg-surface p-card", className)}>
+      <div className="mb-stack flex items-center justify-between">
         <button
           type="button"
           onClick={goPrevMonth}
           aria-label="Previous month"
-          className="rounded-lg p-2 text-muted hover:bg-surface-elevated hover:text-foreground"
+          className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
         >
           <svg
             width="20"
@@ -78,7 +78,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <span className="text-base font-semibold text-foreground sm:text-lg">
+        <span className="text-body font-semibold text-foreground sm:text-title">
           {format(monthStart, "MMMM yyyy")}
         </span>
         <button
@@ -86,7 +86,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
           onClick={goNextMonth}
           disabled={!canGoNext()}
           aria-label="Next month"
-          className="rounded-lg p-2 text-muted hover:bg-surface-elevated hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
+          className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
         >
           <svg
             width="20"
@@ -102,9 +102,9 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
           </svg>
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-tight">
         {WEEKDAYS.map((day) => (
-          <div key={day} className="py-1 text-center text-sm font-medium text-muted-fg">
+          <div key={day} className="py-1 text-center text-body-sm font-medium text-muted-fg">
             {day}
           </div>
         ))}
@@ -120,7 +120,7 @@ export function ThemedCalendar({ value, onSelect, maxDate, className }: ThemedCa
               disabled={disabled}
               onClick={() => !disabled && onSelect(day)}
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg text-base transition-colors sm:h-9 sm:w-9 sm:text-sm",
+                "flex min-h-touch min-w-touch items-center justify-center rounded-lg text-body transition-colors sm:min-h-9 sm:min-w-9 sm:text-body-sm",
                 !inMonth && "text-muted-fg",
                 inMonth && "text-foreground",
                 disabled && "cursor-not-allowed opacity-50",

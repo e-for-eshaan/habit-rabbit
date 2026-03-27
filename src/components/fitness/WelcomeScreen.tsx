@@ -29,20 +29,22 @@ function SectionRow({
 }: SectionRowProps) {
   return (
     <div
-      className="rounded-xl border border-border-subtle bg-surface-elevated/20 p-3 sm:p-4"
+      className="rounded-xl border border-border-subtle bg-surface-elevated/20 p-inline sm:p-card"
       style={{ borderLeftWidth: 3, borderLeftColor: accentVar }}
     >
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-2">
-        <span className="text-sm font-medium text-foreground sm:text-base">{section.name}</span>
+      <div className="mb-inline flex flex-wrap items-center justify-between gap-inline border-b border-border-subtle pb-inline">
+        <span className="text-body-sm font-medium text-foreground sm:text-body">
+          {section.name}
+        </span>
         <button
           type="button"
           onClick={() => onStartSection([...section.groups])}
-          className="rounded-lg bg-lime-400 px-3 py-1.5 text-sm font-semibold text-zinc-950 hover:bg-lime-300"
+          className="min-h-touch rounded-lg bg-lime-400 px-3 py-1.5 text-body-sm font-semibold text-zinc-950 hover:bg-lime-300"
         >
           Start
         </button>
       </div>
-      <div className="flex flex-wrap gap-2 sm:gap-2.5">
+      <div className="flex flex-wrap gap-inline sm:gap-stack">
         {section.groups.map((group, groupIdx) => {
           const style = getPastelStyle((sectionIdx * 3 + groupIdx) % 6);
           const GroupIcon = getGroupIcon(group);
@@ -54,14 +56,14 @@ function SectionRow({
                 selected.has(group) && "ring-2 ring-lime-400/50 ring-offset-2 ring-offset-zinc-950"
               )}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-inline">
                 <GroupIcon size={GROUP_ICON_SIZE} className="shrink-0 text-muted" aria-hidden />
                 <FitnessCheckbox
                   id={`welcome-${group}`}
                   checked={selected.has(group)}
                   onChange={() => onToggleGroup(group)}
                   label={group}
-                  labelClassName="text-sm font-medium text-foreground sm:text-base"
+                  labelClassName="text-body-sm font-medium text-foreground sm:text-body"
                   accentClassName={cn(style.bg, style.border)}
                   checkIconClassName="text-foreground"
                 />
@@ -103,17 +105,17 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border-subtle bg-surface p-4 sm:p-5 md:p-6",
+        "rounded-2xl border border-border-subtle bg-surface p-card sm:p-section md:p-section",
         className
       )}
     >
-      <h2 className="mb-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+      <h2 className="mb-tight text-title font-semibold tracking-tight text-foreground sm:text-display">
         Welcome back
       </h2>
-      <p className="mb-4 text-sm text-muted-fg sm:mb-6 sm:text-base">
+      <p className="mb-stack text-body-sm text-muted-fg sm:mb-section sm:text-body">
         Start a section with one tap, or pick individual groups below.
       </p>
-      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:gap-4">
+      <div className="mb-stack flex flex-col gap-inline sm:mb-section sm:gap-stack">
         {SECTIONS.map((section, sectionIdx) => (
           <SectionRow
             key={section.name}
@@ -131,7 +133,7 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
         onClick={handleStart}
         disabled={selected.size === 0}
         className={cn(
-          "w-full rounded-xl py-3 text-sm font-semibold transition-colors sm:py-3.5 sm:text-base",
+          "min-h-touch w-full rounded-xl py-3 text-body-sm font-semibold transition-colors sm:py-3.5 sm:text-body",
           selected.size > 0
             ? "bg-lime-400 text-zinc-950 hover:bg-lime-300"
             : "cursor-not-allowed bg-zinc-800 text-muted-fg"

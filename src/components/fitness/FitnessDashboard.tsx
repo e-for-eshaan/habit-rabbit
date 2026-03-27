@@ -40,7 +40,7 @@ const CHART_TOOLTIP = {
     background: "var(--surface-elevated)",
     border: "1px solid var(--border-subtle)",
     borderRadius: 8,
-    fontSize: 12,
+    fontSize: "var(--chart-label)",
     color: "var(--foreground)",
   },
   labelStyle: { color: "var(--muted)" },
@@ -77,15 +77,15 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
   return (
     <div className={cn("min-w-0 overflow-x-hidden", className)}>
-      <h2 className="mb-3 text-base font-semibold tracking-tight text-foreground sm:mb-4 sm:text-lg md:text-xl">
+      <h2 className="mb-inline text-title font-semibold tracking-tight text-foreground sm:mb-stack sm:text-display">
         Dashboard
       </h2>
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 md:grid-cols-4 md:gap-3 lg:grid-cols-6 lg:gap-4">
+      <div className="grid grid-cols-1 gap-tight sm:grid-cols-2 sm:gap-inline md:grid-cols-4 md:gap-inline lg:grid-cols-6 lg:gap-stack">
         {kpis && (
           <>
             <div className="sm:col-span-2 md:col-span-4 lg:col-span-6">
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2 md:gap-3">
+              <div className="grid grid-cols-2 gap-tight sm:grid-cols-4 sm:gap-tight md:gap-inline">
                 <KPICard
                   label="This week"
                   value={`${kpis.thisWeekDays} days`}
@@ -111,7 +111,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-3 lg:col-span-4">
           <ChartCard title="Weekly volume (last 12 weeks)" pastelKey={2}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-sm text-muted-fg sm:text-base">No weekly data yet.</p>
+              <p className="text-body-sm text-muted-fg sm:text-body">No weekly data yet.</p>
             ) : (
               <div className="h-[120px] w-full min-w-0 sm:h-[140px] md:h-[160px] lg:h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -119,7 +119,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
+                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -153,7 +153,9 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       fill={PASTEL_VARS[3]}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 12, color: "var(--muted)" }} />
+                    <Legend
+                      wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -164,7 +166,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Swim vs run (last 12 weeks)" pastelKey={3}>
             {weeklyVolume.length === 0 ? (
-              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
+              <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -172,7 +174,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
+                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -198,7 +200,9 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       dot={{ r: 3 }}
                       name="Run"
                     />
-                    <Legend wrapperStyle={{ fontSize: 12, color: "var(--muted)" }} />
+                    <Legend
+                      wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -209,7 +213,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Workout days per week" pastelKey={4}>
             {workoutDaysPerWeek.length === 0 ? (
-              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
+              <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
               <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -220,7 +224,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                       dataKey="label"
-                      tick={{ fontSize: 11, fill: "var(--chart-axis)" }}
+                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
                       tickLine={false}
                       axisLine={false}
                     />
@@ -247,7 +251,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="By muscle group (total completions)" pastelKey={1}>
             {groupFreq.every((g) => g.count === 0) ? (
-              <p className="text-sm text-muted-fg sm:text-base">No data yet.</p>
+              <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
               <div className="h-[120px] w-full min-w-0 sm:h-[140px] md:h-[160px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -260,7 +264,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="group"
-                      tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
+                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
                       width={72}
                       tickLine={false}
                       axisLine={false}
@@ -286,7 +290,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
         <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
           <ChartCard title="Least hit exercises (days done)" pastelKey={0}>
             {leastHit.length === 0 ? (
-              <p className="text-sm text-muted-fg sm:text-base">
+              <p className="text-body-sm text-muted-fg sm:text-body">
                 Complete exercises on a day to see stats.
               </p>
             ) : (
@@ -301,7 +305,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis
                       type="category"
                       dataKey="label"
-                      tick={{ fontSize: 10, fill: "var(--chart-axis)" }}
+                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
                       width={80}
                       tickLine={false}
                       axisLine={false}
@@ -348,16 +352,16 @@ function KPICard({
   const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3"
+      className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-card"
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-fg sm:text-sm">
+      <p className="text-caption font-medium uppercase tracking-wide text-muted-fg sm:text-body-sm">
         {label}
       </p>
-      <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-base md:text-lg">
+      <p className="mt-0.5 text-body-sm font-semibold text-foreground sm:text-body md:text-title">
         {value}
       </p>
-      {sub && <p className="mt-0.5 text-xs text-muted sm:text-sm">{sub}</p>}
+      {sub && <p className="mt-0.5 text-caption text-muted sm:text-body-sm">{sub}</p>}
     </div>
   );
 }
@@ -379,14 +383,16 @@ function ActivityHeatmap({
 
   return (
     <div
-      className="flex min-h-full min-w-0 flex-col rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      className="flex min-h-full min-w-0 flex-col rounded-xl border border-border-subtle bg-surface-elevated/30 p-card"
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">
+      <h3 className="mb-tight text-body-sm font-medium text-muted sm:mb-inline sm:text-body">
         Activity (last 12 weeks)
       </h3>
       {!hasAny ? (
-        <p className="text-sm text-muted-fg sm:text-base">Log activity to see your calendar.</p>
+        <p className="text-body-sm text-muted-fg sm:text-body">
+          Log activity to see your calendar.
+        </p>
       ) : (
         <div
           className="flex w-full max-w-[98px] flex-wrap gap-px sm:max-w-[112px] md:max-w-[126px] lg:max-w-[140px]"
@@ -447,10 +453,12 @@ function ChartCard({
   const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-card"
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">{title}</h3>
+      <h3 className="mb-tight text-body-sm font-medium text-muted sm:mb-inline sm:text-body">
+        {title}
+      </h3>
       {children}
     </div>
   );
@@ -466,17 +474,17 @@ function MissedExercisesCard({
   const accent = getPastelAccentVar(pastelKey);
   return (
     <div
-      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3 md:p-4"
+      className="min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-card"
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-1.5 text-sm font-medium text-muted sm:mb-2 sm:text-base">
+      <h3 className="mb-tight text-body-sm font-medium text-muted sm:mb-inline sm:text-body">
         Haven’t done in 14+ days
       </h3>
-      <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2">
+      <div className="flex flex-wrap gap-px sm:gap-tight md:gap-inline">
         {items.map((item) => (
           <span
             key={item.id}
-            className="inline-flex max-w-full items-center rounded-md border border-border-subtle bg-surface px-2 py-1 text-xs font-medium text-foreground sm:max-w-none sm:text-sm"
+            className="inline-flex max-w-full items-center rounded-md border border-border-subtle bg-surface px-2 py-1 text-caption font-medium text-foreground sm:max-w-none sm:text-body-sm"
             title={`${item.label} (${item.group}) · ${item.daysSinceLastDone} days ago`}
           >
             <span className="max-w-[80px] truncate sm:max-w-[120px] md:max-w-[160px]">

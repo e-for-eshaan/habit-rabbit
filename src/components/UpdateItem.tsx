@@ -51,7 +51,7 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
   const isEditing = editingText || editingTimestamp;
 
   return (
-    <div className={cn("flex items-start gap-2 py-3 first:pt-2", !isEditing && "min-h-[52px]")}>
+    <div className={cn("flex items-start gap-inline py-3 first:pt-2", !isEditing && "min-h-touch")}>
       <div className="min-w-0 flex-1">
         {editingText ? (
           <textarea
@@ -61,7 +61,7 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && commitText()}
             placeholder="What did you do?"
             rows={2}
-            className="w-full resize-none rounded-lg border border-border-subtle bg-surface-elevated px-3 py-2 text-sm text-foreground outline-none ring-lime-400/30 focus:ring-2"
+            className="w-full resize-none rounded-lg border border-border-subtle bg-surface-elevated px-3 py-2 text-body-sm text-foreground outline-none ring-lime-400/30 focus:ring-2"
             autoFocus
           />
         ) : (
@@ -71,7 +71,7 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
               setTextValue(update.text);
               setEditingText(true);
             }}
-            className="w-full text-left text-sm font-medium leading-snug text-foreground"
+            className="w-full text-left text-body-sm font-medium leading-snug text-foreground"
           >
             {hasText ? update.text : formatDate(update.createdAt)}
           </button>
@@ -83,24 +83,24 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
             onChange={(e) => setTimestampValue(e.target.value)}
             onBlur={commitTimestamp}
             onKeyDown={(e) => e.key === "Enter" && commitTimestamp()}
-            className="mt-2 w-full rounded-lg border border-border-subtle bg-surface-elevated px-2 py-1.5 text-xs text-foreground outline-none ring-lime-400/30 focus:ring-2"
+            className="mt-2 w-full rounded-lg border border-border-subtle bg-surface-elevated px-2 py-1.5 text-caption text-foreground outline-none ring-lime-400/30 focus:ring-2"
             autoFocus
           />
         ) : (
           !editingText && (
-            <p className="mt-0.5 text-xs text-muted-fg">{formatTime(update.createdAt)}</p>
+            <p className="mt-0.5 text-caption text-muted-fg">{formatTime(update.createdAt)}</p>
           )
         )}
       </div>
       {!isEditing && (
-        <div className="flex shrink-0 items-center gap-0.5 pt-0.5">
+        <div className="flex shrink-0 items-center gap-px pt-0.5">
           <button
             type="button"
             onClick={() => {
               setTextValue(update.text);
               setEditingText(true);
             }}
-            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
             aria-label="Edit text"
             title="Edit text"
           >
@@ -112,7 +112,7 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
               setTimestampValue(update.createdAt.slice(0, 16));
               setEditingTimestamp(true);
             }}
-            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-surface-elevated hover:text-foreground"
             aria-label="Edit time"
             title="Edit time"
           >
@@ -121,7 +121,7 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
           <button
             type="button"
             onClick={() => onDelete(update.id)}
-            className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-red-950/40 hover:text-red-400"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-red-950/40 hover:text-red-400"
             aria-label="Delete update"
             title="Delete"
           >

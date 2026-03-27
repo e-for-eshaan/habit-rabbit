@@ -39,7 +39,7 @@ export function FitnessCheckbox({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-11 cursor-pointer items-center gap-2.5 py-0.5 transition-opacity sm:min-h-0 sm:gap-3 sm:py-0",
+        "flex cursor-pointer items-center gap-2 py-1 transition-opacity sm:gap-2.5 sm:py-0.5",
         disabled && "cursor-default opacity-70"
       )}
     >
@@ -81,7 +81,7 @@ export function FitnessCheckbox({
           />
         )}
       </span>
-      <span className={cn("select-none text-sm sm:text-base", labelClassName)}>{label}</span>
+      <span className={cn("select-none text-body-sm sm:text-body", labelClassName)}>{label}</span>
     </label>
   );
 }

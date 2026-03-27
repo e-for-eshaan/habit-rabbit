@@ -72,19 +72,19 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-2xl border border-amber-500/25 bg-amber-950/20 p-3 ring-1 ring-amber-500/15 sm:gap-4 sm:p-4",
+        "flex flex-col gap-inline rounded-2xl border border-amber-500/25 bg-amber-950/20 p-inline ring-1 ring-amber-500/15 sm:gap-stack sm:p-card",
         className
       )}
     >
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+      <div className="flex items-center justify-between gap-inline">
+        <h2 className="text-title font-semibold tracking-tight text-foreground sm:text-display">
           Edit exercises
         </h2>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-tight">
           <button
             type="button"
             onClick={onClose}
-            className="flex size-10 items-center justify-center rounded-xl text-muted hover:bg-surface-elevated hover:text-foreground"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-xl text-muted hover:bg-surface-elevated hover:text-foreground"
             aria-label="Cancel"
             title="Cancel"
           >
@@ -93,7 +93,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
           <button
             type="button"
             onClick={handleSave}
-            className="flex size-10 items-center justify-center rounded-xl bg-lime-400 text-zinc-950 hover:bg-lime-300"
+            className="flex min-h-touch min-w-touch items-center justify-center rounded-xl bg-lime-400 text-zinc-950 hover:bg-lime-300"
             aria-label="Done"
             title="Done"
           >
@@ -102,7 +102,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-tight sm:grid-cols-2 sm:gap-inline lg:grid-cols-3">
         {EXERCISE_GROUPS.map((group, idx) => {
           const items = exercises.filter((e) => e.group === group);
           const accent = getPastelAccentVar(idx);
@@ -110,10 +110,10 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
           return (
             <div
               key={group}
-              className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-2.5 sm:p-3"
+              className="rounded-xl border border-border-subtle bg-surface-elevated/30 p-card"
               style={{ borderLeftWidth: 3, borderLeftColor: accent }}
             >
-              <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground sm:text-base">
+              <h3 className="mb-inline flex items-center gap-inline text-body-sm font-medium text-foreground sm:text-body">
                 {(() => {
                   const Icon = getGroupIcon(group);
                   return (
@@ -122,29 +122,31 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                 })()}
                 <span className="truncate">{group}</span>
               </h3>
-              <ul className="flex flex-col gap-1.5 sm:gap-2">
+              <ul className="flex flex-col gap-tight sm:gap-tight">
                 {items.map((ex) => (
                   <li
                     key={ex.id}
                     className={cn(
-                      "flex items-center justify-between gap-2 text-sm sm:text-base",
+                      "flex items-center justify-between gap-inline text-body-sm sm:text-body",
                       ex.muted && "opacity-55"
                     )}
                   >
                     <span className="min-w-0 truncate text-foreground">
                       {ex.label}
                       {ex.muted && (
-                        <span className="ml-1 text-xs text-muted-fg sm:text-sm">(muted)</span>
+                        <span className="ml-1 text-caption text-muted-fg sm:text-body-sm">
+                          (muted)
+                        </span>
                       )}
                     </span>
-                    <span className="flex shrink-0 items-center gap-0.5">
+                    <span className="flex shrink-0 items-center gap-px">
                       <button
                         type="button"
                         onClick={() => toggleMuted(ex.id)}
                         title={ex.muted ? "Show in least hit" : "Hide from least hit"}
                         aria-label={ex.muted ? "Unmute exercise" : "Mute exercise"}
                         className={cn(
-                          "flex size-9 items-center justify-center rounded-lg",
+                          "flex min-h-touch min-w-touch items-center justify-center rounded-lg",
                           ex.muted
                             ? "bg-zinc-700 text-muted hover:text-foreground"
                             : "text-muted hover:bg-surface hover:text-foreground"
@@ -159,7 +161,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                       <button
                         type="button"
                         onClick={() => removeExercise(ex.id)}
-                        className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
+                        className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
                         aria-label="Remove exercise"
                         title="Remove"
                       >
@@ -170,7 +172,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                 ))}
               </ul>
               {isAdding ? (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="mt-inline flex flex-wrap items-center gap-inline">
                   <input
                     type="text"
                     value={newLabel}
@@ -184,12 +186,12 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                     }}
                     placeholder="Exercise name"
                     autoFocus
-                    className="min-w-0 flex-1 rounded-lg border border-border-subtle bg-surface px-2 py-2 text-sm text-foreground outline-none ring-lime-400/20 focus:ring-2 sm:text-base"
+                    className="min-h-touch min-w-0 flex-1 rounded-lg border border-border-subtle bg-surface px-2 py-2 text-body-sm text-foreground outline-none ring-lime-400/20 focus:ring-2 sm:text-body"
                   />
                   <button
                     type="button"
                     onClick={() => addExerciseToGroup(group)}
-                    className="flex size-10 items-center justify-center rounded-lg bg-lime-400 text-zinc-950 hover:bg-lime-300"
+                    className="flex min-h-touch min-w-touch items-center justify-center rounded-lg bg-lime-400 text-zinc-950 hover:bg-lime-300"
                     aria-label="Add exercise"
                     title="Add"
                   >
@@ -201,7 +203,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                       setAddingToGroup(null);
                       setNewLabel("");
                     }}
-                    className="flex size-10 items-center justify-center rounded-lg text-muted hover:bg-surface-elevated"
+                    className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted hover:bg-surface-elevated"
                     aria-label="Cancel add"
                   >
                     <X className="size-5" aria-hidden />
@@ -211,7 +213,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
                 <button
                   type="button"
                   onClick={() => setAddingToGroup(group)}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-subtle py-2.5 text-xs font-medium text-muted-fg hover:border-muted hover:text-foreground sm:text-sm"
+                  className="mt-inline flex min-h-touch w-full items-center justify-center gap-inline rounded-lg border border-dashed border-border-subtle py-2.5 text-caption font-medium text-muted-fg hover:border-muted hover:text-foreground sm:text-body-sm"
                 >
                   <Plus className="size-4" aria-hidden />
                   Add exercise

@@ -10,10 +10,6 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --muted: #a1a1aa;
   --muted-fg: #71717a;
-  --text-fluid-min: 14px;
-  --text-fluid-max: 18px;
-  --text-fluid-sm-min: 12px;
-  --text-fluid-sm-max: 14px;
   --pastel-1: #7f4e4e;
   --pastel-2: #3d4f66;
   --pastel-3: #3d6652;
@@ -28,6 +24,10 @@
   --heat-5: #9be9a8;
   --chart-grid: #3f3f46;
   --chart-axis: #a1a1aa;
+  --chart-tick: 11px;
+  --chart-label: 12px;
+  --chart-legend: 12px;
+  --page-gutter: 1rem;
 }
 
 @theme inline {
@@ -46,21 +46,66 @@
   --color-pastel-4: var(--pastel-4);
   --color-pastel-5: var(--pastel-5);
   --color-pastel-6: var(--pastel-6);
+
+  --spacing-section: 1.5rem;
+  --spacing-card: 1rem;
+  --spacing-stack: 1rem;
+  --spacing-inline: 0.75rem;
+  --spacing-tight: 0.5rem;
+  --spacing-touch: 2.75rem;
+  --spacing-fab-offset: 1.5rem;
+
+  --text-display: 1.5rem;
+  --text-display--line-height: 2rem;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.75rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.375rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+@utility px-page {
+  padding-left: max(var(--page-gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--page-gutter), env(safe-area-inset-right, 0px));
+}
+
+@utility py-section {
+  padding-top: var(--spacing-section);
+  padding-bottom: var(--spacing-section);
+}
+
+@utility pb-safe {
+  padding-bottom: max(var(--spacing-section), env(safe-area-inset-bottom, 0px));
+}
+
+@utility bottom-fab {
+  bottom: max(var(--spacing-fab-offset), env(safe-area-inset-bottom, 0px));
+}
+
+@utility right-fab {
+  right: max(var(--spacing-fab-offset), env(safe-area-inset-right, 0px));
 }
 
 html {
-  font-size: clamp(var(--text-fluid-min), 0.5vw + 13px, var(--text-fluid-max));
+  font-size: 100%;
   color-scheme: dark;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 106.25%;
+  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-}
-
-.text-fluid-xs {
-  font-size: clamp(var(--text-fluid-sm-min), 0.35vw + 11px, var(--text-fluid-sm-max));
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .heat-0 {

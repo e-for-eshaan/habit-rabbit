@@ -48,15 +48,15 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
-        <p className="text-center text-red-400">{error}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-stack px-page py-section">
+        <p className="text-center text-body text-red-400">{error}</p>
         <button
           type="button"
           onClick={() => {
             useSectionsStore.setState({ loading: true });
             fetchSections();
           }}
-          className="rounded-xl bg-surface-elevated px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700"
+          className="min-h-touch rounded-xl bg-surface-elevated px-4 py-2.5 text-body-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700"
         >
           Retry
         </button>
@@ -68,8 +68,8 @@ export default function Home() {
     return (
       <div className="min-h-screen font-sans">
         <Navbar />
-        <div className="flex min-h-[60vh] items-center justify-center p-4">
-          <p className="text-muted-fg">No habits yet. Tap + to add one.</p>
+        <div className="flex min-h-[60vh] items-center justify-center px-page py-section">
+          <p className="text-body text-muted-fg">No habits yet. Tap + to add one.</p>
         </div>
         <AddHabitFab />
       </div>
@@ -80,13 +80,15 @@ export default function Home() {
     <div className="min-h-screen font-sans">
       <Navbar />
 
-      <main className="mx-auto max-w-7xl p-4">
+      <main className="mx-auto max-w-7xl px-page py-section">
         {isEmpty(filteredAndSortedSections) ? (
-          <p className="py-8 text-center text-muted-fg">No sections match your search.</p>
+          <p className="py-section text-center text-body text-muted-fg">
+            No sections match your search.
+          </p>
         ) : viewMode === "list" ? (
           <div
             className={cn(
-              "flex gap-4",
+              "flex gap-stack",
               layoutMode === "horizontal"
                 ? "flex-nowrap overflow-x-auto pb-2"
                 : "grid grid-cols-1 flex-wrap sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -113,7 +115,7 @@ export default function Home() {
             ))}
           </div>
         ) : viewMode === "freq" ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-stack sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredAndSortedSections.map((section) => (
               <ViewChartPanel key={section.id} title={section.title} colorKey={section.colorKey}>
                 <FreqChart section={section} freqRange={freqRange} />
@@ -121,7 +123,7 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-stack sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredAndSortedSections.map((section) => (
               <ViewChartPanel key={section.id} title={section.title} colorKey={section.colorKey}>
                 <CalendarGrid section={section} range={calendarRange} />

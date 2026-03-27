@@ -15,8 +15,8 @@ export function SectionCardSkeleton({ className }: SectionCardSkeletonProps) {
       style={{ borderLeftWidth: 4, borderLeftColor: "var(--pastel-2)" }}
       aria-hidden
     >
-      <SkeletonBlock className="h-12 w-full rounded-none" />
-      <div className="flex flex-col gap-3 p-4">
+      <SkeletonBlock className="h-touch w-full rounded-none" />
+      <div className="flex flex-col gap-inline p-card">
         <SkeletonBlock className="h-3 w-[80%]" />
         <SkeletonBlock className="h-3 w-full" />
         <SkeletonBlock className="h-3 w-2/3" />

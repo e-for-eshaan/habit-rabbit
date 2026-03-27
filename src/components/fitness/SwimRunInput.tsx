@@ -28,11 +28,11 @@ export function SwimRunInput({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-4 rounded-xl border border-border-subtle bg-surface-elevated/25 p-3 sm:gap-6 sm:p-4",
+        "flex flex-wrap items-center gap-stack rounded-xl border border-border-subtle bg-surface-elevated/25 p-inline sm:gap-section sm:p-card",
         className
       )}
     >
-      <h2 className="flex w-full items-center gap-2 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+      <h2 className="flex w-full items-center gap-inline text-title font-semibold tracking-tight text-foreground sm:text-display">
         <Heart size={22} className="shrink-0 text-red-400/90" aria-hidden />
         Cardio
       </h2>

@@ -16,10 +16,13 @@ export function ViewChartPanel({ title, colorKey, children, className }: ViewCha
   const accent = getPastelAccentVar(colorKey);
   return (
     <div
-      className={cn("rounded-2xl border border-border-subtle bg-surface p-4 shadow-sm", className)}
+      className={cn(
+        "rounded-2xl border border-border-subtle bg-surface p-card shadow-sm",
+        className
+      )}
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h2 className="mb-3 truncate text-sm font-semibold tracking-tight text-foreground">
+      <h2 className="mb-inline truncate text-title font-semibold tracking-tight text-foreground">
         {title}
       </h2>
       {children}

@@ -69,10 +69,29 @@ export function DayTemplate({
   const groupIsRemovable = (group: string) =>
     pendingGroups.includes(group) || (dayLog.selectedGroups ?? []).includes(group);
 
+  const renderExerciseCheckboxes = (subset: Exercise[], style: ReturnType<typeof getPastelStyle>) =>
+    subset.map((ex) => {
+      const checked = doneSet.has(ex.id);
+      return (
+        <li key={ex.id}>
+          <FitnessCheckbox
+            id={`ex-${dayLog.dateKey}-${ex.id}`}
+            checked={checked}
+            onChange={(next) => onToggleExercise(ex.id, next)}
+            disabled={locked}
+            label={ex.label}
+            labelClassName={cn(checked && "text-muted line-through")}
+            accentClassName={cn(style.bg, style.border)}
+            checkIconClassName="text-foreground"
+          />
+        </li>
+      );
+    });
+
   return (
-    <div className={cn("flex flex-col gap-3 sm:gap-4", className)}>
-      <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
-        <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+    <div className={cn("flex flex-col gap-inline sm:gap-stack", className)}>
+      <div className="flex flex-wrap items-center justify-between gap-tight sm:gap-tight">
+        <h2 className="text-title font-semibold tracking-tight text-foreground sm:text-display">
           Exercises for this day
         </h2>
         {canAddGroup && (
@@ -80,7 +99,7 @@ export function DayTemplate({
             <button
               type="button"
               onClick={() => setAddGroupOpen(!addGroupOpen)}
-              className="rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2 text-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700 sm:text-base"
+              className="min-h-touch rounded-xl border border-border-subtle bg-surface-elevated px-3 py-2 text-body-sm font-medium text-foreground ring-1 ring-border-subtle hover:bg-zinc-700 sm:text-body"
             >
               + Add group
             </button>
@@ -95,7 +114,7 @@ export function DayTemplate({
                   className="absolute right-0 top-full z-20 mt-1 max-h-56 w-44 overflow-auto rounded-xl border border-border-subtle bg-surface py-1 shadow-xl shadow-black/40 sm:max-h-64 sm:w-52"
                   role="listbox"
                 >
-                  <li className="px-2 py-1 text-xs font-medium text-muted-fg sm:py-1 sm:text-sm">
+                  <li className="px-2 py-1 text-caption font-medium text-muted-fg sm:py-1 sm:text-body-sm">
                     Groups
                   </li>
                   {groupsToAdd.map((group) => {
@@ -110,7 +129,7 @@ export function DayTemplate({
                             onAddGroup?.(group);
                             setAddGroupOpen(false);
                           }}
-                          className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-base"
+                          className="flex min-h-touch w-full items-center gap-inline px-2.5 py-2 text-left text-body-sm text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-body"
                         >
                           <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />
                           <span className="truncate">{group}</span>
@@ -121,7 +140,7 @@ export function DayTemplate({
                   {sectionsToShow.length > 0 && (
                     <>
                       <li className="my-0.5 border-t border-border-subtle sm:my-1" />
-                      <li className="px-2 py-1 text-xs font-medium text-muted-fg sm:py-1 sm:text-sm">
+                      <li className="px-2 py-1 text-caption font-medium text-muted-fg sm:py-1 sm:text-body-sm">
                         Sections
                       </li>
                       {sectionsToShow.map((section) => {
@@ -137,7 +156,7 @@ export function DayTemplate({
                                 onAddSection?.(toAdd);
                                 setAddGroupOpen(false);
                               }}
-                              className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-base"
+                              className="flex min-h-touch w-full items-center gap-inline px-2.5 py-2 text-left text-body-sm font-medium text-foreground hover:bg-surface-elevated sm:px-3 sm:py-2 sm:text-body"
                             >
                               {(() => {
                                 const Icon = getGroupIcon(section.groups[0]);
@@ -159,12 +178,12 @@ export function DayTemplate({
         )}
       </div>
       {byGroup.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-border-subtle bg-surface-elevated/30 px-3 py-4 text-center text-sm text-muted-fg sm:px-8 sm:py-10 sm:text-base">
+        <p className="rounded-xl border border-dashed border-border-subtle bg-surface-elevated/30 px-inline py-section text-center text-body-sm text-muted-fg sm:px-8 sm:py-10 sm:text-body">
           No groups selected. Use &quot;Add group&quot; to choose muscle groups, or for today start
           from the welcome screen.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-inline sm:grid-cols-2 sm:gap-stack lg:grid-cols-3">
           {byGroup.map(({ group, items }, idx) => {
             const style = getPastelStyle(idx % 6);
             const accent = getPastelAccentVar(idx);
@@ -172,11 +191,11 @@ export function DayTemplate({
             return (
               <div
                 key={group}
-                className="rounded-xl border border-border-subtle bg-surface-elevated/25 p-2.5 sm:p-3"
+                className="rounded-xl border border-border-subtle bg-surface-elevated/25 p-card"
                 style={{ borderLeftWidth: 3, borderLeftColor: accent }}
               >
-                <div className="mb-1.5 flex items-center justify-between gap-1.5 sm:mb-2 sm:gap-2">
-                  <h3 className="flex min-w-0 items-center gap-1.5 text-base font-medium text-foreground sm:gap-2 sm:text-lg">
+                <div className="mb-tight flex items-center justify-between gap-tight sm:mb-inline sm:gap-tight">
+                  <h3 className="flex min-w-0 items-center gap-tight text-body font-medium text-foreground sm:gap-inline sm:text-title">
                     {(() => {
                       const Icon = getGroupIcon(group);
                       return <Icon size={GROUP_ICON_SIZE} className="shrink-0" aria-hidden />;
@@ -187,7 +206,7 @@ export function DayTemplate({
                     <button
                       type="button"
                       onClick={() => onRemoveGroup?.(group)}
-                      className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
+                      className="flex min-h-touch min-w-touch shrink-0 items-center justify-center rounded-lg text-muted hover:bg-red-950/50 hover:text-red-400"
                       title="Remove group"
                       aria-label="Remove group from view"
                     >
@@ -195,25 +214,20 @@ export function DayTemplate({
                     </button>
                   )}
                 </div>
-                <ul className="flex flex-col gap-2 sm:gap-2.5">
-                  {items.map((ex) => {
-                    const checked = doneSet.has(ex.id);
-                    return (
-                      <li key={ex.id}>
-                        <FitnessCheckbox
-                          id={`ex-${dayLog.dateKey}-${ex.id}`}
-                          checked={checked}
-                          onChange={(next) => onToggleExercise(ex.id, next)}
-                          disabled={locked}
-                          label={ex.label}
-                          labelClassName={cn(checked && "text-muted line-through")}
-                          accentClassName={cn(style.bg, style.border)}
-                          checkIconClassName="text-foreground"
-                        />
-                      </li>
-                    );
-                  })}
-                </ul>
+                {items.length <= 1 ? (
+                  <ul className="flex flex-col gap-1.5">
+                    {renderExerciseCheckboxes(items, style)}
+                  </ul>
+                ) : (
+                  <div className="grid min-w-0 grid-cols-2 gap-0">
+                    <ul className="flex min-w-0 flex-col gap-1.5 pr-2 sm:pr-3">
+                      {renderExerciseCheckboxes(items.slice(0, Math.ceil(items.length / 2)), style)}
+                    </ul>
+                    <ul className="flex min-w-0 flex-col gap-1.5 border-l border-border-subtle pl-2 sm:pl-3">
+                      {renderExerciseCheckboxes(items.slice(Math.ceil(items.length / 2)), style)}
+                    </ul>
+                  </div>
+                )}
               </div>
             );
           })}
