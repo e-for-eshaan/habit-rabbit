@@ -11,6 +11,7 @@ type UpdateItemProps = {
   update: Update;
   onEdit: (id: string, payload: { text?: string; createdAt?: string }) => void;
   onDelete: (id: string) => void;
+  className?: string;
 };
 
 function formatTime(iso: string) {
@@ -28,7 +29,7 @@ function formatDate(iso: string) {
   });
 }
 
-export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
+export function UpdateItem({ update, onEdit, onDelete, className }: UpdateItemProps) {
   const [editingTimestamp, setEditingTimestamp] = useState(false);
   const [editingText, setEditingText] = useState(false);
   const [timestampValue, setTimestampValue] = useState(update.createdAt.slice(0, 16));
@@ -51,7 +52,13 @@ export function UpdateItem({ update, onEdit, onDelete }: UpdateItemProps) {
   const isEditing = editingText || editingTimestamp;
 
   return (
-    <div className={cn("flex items-start gap-inline py-3 first:pt-2", !isEditing && "min-h-touch")}>
+    <div
+      className={cn(
+        "flex items-start gap-inline py-3 first:pt-2",
+        !isEditing && "min-h-touch",
+        className
+      )}
+    >
       <div className="min-w-0 flex-1">
         {editingText ? (
           <textarea
