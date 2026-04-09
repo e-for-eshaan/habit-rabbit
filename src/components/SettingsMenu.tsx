@@ -165,7 +165,8 @@ export function SettingsMenu() {
               onChange={(v) => setViewMode(v as ViewMode)}
               options={VIEW_MODES}
               block
-              size="large"
+              size="middle"
+              className="[&_.ant-segmented-item-label]:text-caption sm:[&_.ant-segmented-item-label]:text-body-sm"
             />
           </div>
         </SettingsMenuSection>
@@ -207,6 +208,7 @@ export function SettingsMenu() {
                   current={calendarRange}
                   label={r.label}
                   onSelect={setCalendarRange}
+                  className="text-caption sm:text-body-sm"
                 />
               ))}
             </OptionRow>
@@ -223,6 +225,7 @@ export function SettingsMenu() {
                   current={freqRange}
                   label={r.label}
                   onSelect={setFreqRange}
+                  className="text-caption sm:text-body-sm"
                 />
               ))}
             </OptionRow>
