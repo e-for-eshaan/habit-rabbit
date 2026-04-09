@@ -3,11 +3,12 @@
 import { isEmpty } from "lodash";
 import { ChevronDown, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
 import { groupUpdatesByDay } from "@/lib/groupUpdatesByDay";
 import { cn } from "@/lib/utils";
+import { useSectionsStore } from "@/store/useSectionsStore";
 import type { Section } from "@/types";
 
 import { AddUpdateForm } from "./AddUpdateForm";
@@ -39,15 +40,29 @@ export function SectionCard({
   const style = getPastelStyle(section.colorKey);
   const accentVar = getPastelAccentVar(section.colorKey);
   const dayGroups = useMemo(() => groupUpdatesByDay(section.updates), [section.updates]);
+  const [activeEditUpdateId, setActiveEditUpdateId] = useState<string | null>(null);
+  const onEditSessionChange = useCallback((updateId: string | null) => {
+    setActiveEditUpdateId(updateId);
+  }, []);
+
+  const pendingSave = useSectionsStore((s) => s.pendingUpdateSave);
+  const savingUpdateId =
+    pendingSave !== null && pendingSave.sectionId === section.id ? pendingSave.updateId : null;
+
+  const isEditLocked = activeEditUpdateId !== null;
 
   return (
     <section
-      className={cn(
-        "flex min-w-[280px] max-w-[380px] flex-1 flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface shadow-sm"
-      )}
+      className="relative flex min-w-[280px] max-w-[380px] flex-1 flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface shadow-sm transition-opacity"
       style={{ borderLeftWidth: 4, borderLeftColor: accentVar }}
+      aria-busy={isEditLocked}
     >
-      <div className="flex items-stretch gap-0 border-b border-border-subtle">
+      <div
+        className={cn(
+          "flex items-stretch gap-0 border-b border-border-subtle transition-opacity",
+          isEditLocked && "pointer-events-none opacity-45"
+        )}
+      >
         <button
           type="button"
           onClick={() => onToggleCollapse(section.id)}
@@ -101,11 +116,18 @@ export function SectionCard({
                   updates={g.updates}
                   onEdit={(updateId, payload) => onEditUpdate(section.id, updateId, payload)}
                   onDelete={(updateId) => onDeleteUpdate(section.id, updateId)}
+                  onEditSessionChange={onEditSessionChange}
+                  activeEditUpdateId={activeEditUpdateId}
+                  savingUpdateId={savingUpdateId}
                 />
               ))
             )}
           </div>
-          <AddUpdateForm onSubmit={(text) => onAddUpdate(section.id, text)} />
+          <div
+            className={cn("transition-opacity", isEditLocked && "pointer-events-none opacity-45")}
+          >
+            <AddUpdateForm onSubmit={(text) => onAddUpdate(section.id, text)} />
+          </div>
         </div>
       )}
     </section>

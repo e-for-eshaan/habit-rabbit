@@ -1,9 +1,9 @@
 "use client";
 
-import { isNil } from "lodash";
+import { isEqual, isNil } from "lodash";
 import { ArrowLeft, Check, Pencil, PenLine } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { DaySelector } from "@/components/fitness/DaySelector";
 import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
@@ -35,6 +35,7 @@ function FitnessPage() {
   const [state, setState] = useState<FitnessState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const lastPersistedFitnessRef = useRef<FitnessState | null>(null);
   const [selectedDateKey, setSelectedDateKey] = useState(() => toDateKey(new Date()));
   const [editingDayKey, setEditingDayKey] = useState<string | null>(null);
   const [editExercisesMode, setEditExercisesMode] = useState(false);
@@ -58,6 +59,7 @@ function FitnessPage() {
     try {
       const data = await getFitness();
       setState(data);
+      lastPersistedFitnessRef.current = data;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load fitness data");
     } finally {
@@ -71,8 +73,15 @@ function FitnessPage() {
 
   const persistState = useCallback(async (next: FitnessState) => {
     setState(next);
+    if (
+      lastPersistedFitnessRef.current !== null &&
+      isEqual(lastPersistedFitnessRef.current, next)
+    ) {
+      return;
+    }
     try {
       await updateFitness(next);
+      lastPersistedFitnessRef.current = next;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save");
     }

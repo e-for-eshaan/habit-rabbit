@@ -1,5 +1,6 @@
 "use client";
 
+import { isNil } from "lodash";
 import { create } from "zustand";
 
 import {
@@ -42,10 +43,16 @@ export type PendingDelete = {
   timeoutId: ReturnType<typeof setTimeout>;
 };
 
+export type PendingUpdateSave = {
+  sectionId: string;
+  updateId: string;
+};
+
 type SectionsState = {
   sections: Section[];
   loading: boolean;
   error: string | null;
+  pendingUpdateSave: PendingUpdateSave | null;
   layoutMode: LayoutMode;
   viewMode: ViewMode;
   calendarRange: CalendarRange;
@@ -104,6 +111,7 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   sections: [],
   loading: true,
   error: null,
+  pendingUpdateSave: null,
   layoutMode: "horizontal",
   viewMode: "list",
   calendarRange: "last7",
@@ -190,9 +198,25 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   },
 
   editUpdate: async (sectionId, updateId, payload) => {
+    const sec = get().sections.find((s) => s.id === sectionId);
+    const prev = sec?.updates.find((u) => u.id === updateId);
+    if (!prev) return;
+
+    const hasText = !isNil(payload.text);
+    const hasCreatedAt = !isNil(payload.createdAt);
+    if (!hasText && !hasCreatedAt) return;
+
+    const textUnchanged = !hasText || payload.text === (prev.text ?? "");
+    const timeUnchanged =
+      !hasCreatedAt ||
+      new Date(payload.createdAt!).getTime() === new Date(prev.createdAt).getTime();
+    if (textUnchanged && timeUnchanged) return;
+
+    set({ pendingUpdateSave: { sectionId, updateId } });
     try {
       await updateUpdate(sectionId, updateId, payload);
       set((state) => ({
+        pendingUpdateSave: null,
         sections: state.sections.map((s) =>
           s.id === sectionId
             ? {
@@ -204,6 +228,7 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       }));
     } catch (e) {
       set({
+        pendingUpdateSave: null,
         error: e instanceof Error ? e.message : "Failed to save update",
       });
     }
