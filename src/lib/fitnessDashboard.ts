@@ -4,6 +4,7 @@ import { getHeatLevel } from "@/lib/calendarHeatmap";
 import { toDateKey } from "@/lib/dateRange";
 import type { DayLog, Exercise, FitnessState } from "@/types/fitness";
 import type {
+  ActivityDayBreakdown,
   DashboardKPIs,
   FitnessDashboardData,
   GroupFreqItem,
@@ -112,20 +113,30 @@ function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
     .slice(-WEEK_COUNT);
 }
 
-function computeActivityByDay(state: FitnessState): Record<string, number> {
+function computeActivityHeatmap(state: FitnessState): {
+  activityByDay: Record<string, number>;
+  activityBreakdownByDay: Record<string, ActivityDayBreakdown>;
+} {
   const end = new Date();
   const start = subDays(end, HEATMAP_DAYS - 1);
   const days = eachDayOfInterval({ start, end });
-  const byDay: Record<string, number> = {};
+  const activityByDay: Record<string, number> = {};
+  const activityBreakdownByDay: Record<string, ActivityDayBreakdown> = {};
   for (const d of days) {
-    byDay[toDateKey(d)] = 0;
+    const key = toDateKey(d);
+    activityByDay[key] = 0;
+    activityBreakdownByDay[key] = { exercises: 0, swimming: 0, running: 0 };
   }
   for (const log of state.dayLogs) {
-    if (log.dateKey in byDay) {
-      byDay[log.dateKey] = getActivityCount(log);
+    if (log.dateKey in activityByDay) {
+      const exercises = log.exerciseIds.length;
+      const swimming = log.swimmingSessions ?? 0;
+      const running = log.runningSessions ?? 0;
+      activityBreakdownByDay[log.dateKey] = { exercises, swimming, running };
+      activityByDay[log.dateKey] = exercises + swimming + running;
     }
   }
-  return byDay;
+  return { activityByDay, activityBreakdownByDay };
 }
 
 function computeWorkoutDaysPerWeek(state: FitnessState): WorkoutDaysPerWeekItem[] {
@@ -215,10 +226,12 @@ function computeMissedExercises(state: FitnessState): MissedExerciseItem[] {
 
 export function computeFitnessDashboard(state: FitnessState): FitnessDashboardData {
   const exerciseById = new Map(state.exercises.map((e) => [e.id, e]));
+  const { activityByDay, activityBreakdownByDay } = computeActivityHeatmap(state);
   return {
     kpis: computeKPIs(state),
     weeklyVolume: computeWeeklyVolume(state),
-    activityByDay: computeActivityByDay(state),
+    activityByDay,
+    activityBreakdownByDay,
     workoutDaysPerWeek: computeWorkoutDaysPerWeek(state),
     groupFrequency: computeGroupFrequency(state),
     leastHit: computeLeastHit(state, exerciseById),

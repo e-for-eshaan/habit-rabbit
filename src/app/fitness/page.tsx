@@ -3,7 +3,7 @@
 import { isNil } from "lodash";
 import { ArrowLeft, Check, Pencil, PenLine } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DaySelector } from "@/components/fitness/DaySelector";
 import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
@@ -11,9 +11,11 @@ import { FitnessDashboard } from "@/components/fitness/FitnessDashboard";
 import { SwimRunInput } from "@/components/fitness/SwimRunInput";
 import { DayTemplate } from "@/components/fitness/WeeklyTemplate";
 import { WelcomeScreen } from "@/components/fitness/WelcomeScreen";
+import { WellBeingInput } from "@/components/fitness/WellBeingInput";
 import { FitnessPageSkeleton } from "@/components/skeletons";
 import { getFitness, updateFitness } from "@/lib/api";
 import { toDateKey } from "@/lib/dateRange";
+import { computeNfStreak } from "@/lib/fitnessNfStreak";
 import { cn } from "@/lib/utils";
 import type { DayLog, FitnessState } from "@/types/fitness";
 
@@ -25,6 +27,7 @@ function getOrCreateDayLog(dayLogs: DayLog[], dateKey: string): DayLog {
     exerciseIds: [],
     swimmingSessions: 0,
     runningSessions: 0,
+    nfCompleted: false,
   };
 }
 
@@ -46,13 +49,8 @@ function FitnessPage() {
   const isCurrentDay = selectedDateKey === todayKey;
   const isEditingThisDay = editingDayKey === selectedDateKey;
   const locked = !isCurrentDay && !isEditingThisDay;
-  const hasNoInput =
-    dayLog &&
-    dayLog.exerciseIds.length === 0 &&
-    (dayLog.swimmingSessions ?? 0) === 0 &&
-    (dayLog.runningSessions ?? 0) === 0;
   const hasNoSelectedGroups = !dayLog?.selectedGroups?.length;
-  const showWelcome = isCurrentDay && hasNoInput && hasNoSelectedGroups;
+  const showExerciseWelcome = isCurrentDay && hasNoSelectedGroups;
 
   const fetchState = useCallback(async () => {
     setLoading(true);
@@ -89,6 +87,7 @@ function FitnessPage() {
       exerciseIds: [],
       swimmingSessions: 0,
       runningSessions: 0,
+      nfCompleted: false,
     };
     return {
       ...state,
@@ -151,6 +150,28 @@ function FitnessPage() {
       persistState({ ...next, dayLogs: logs });
     },
     [ensureDayLogInState, selectedDateKey, pendingGroups, persistState]
+  );
+
+  const handleNfChange = useCallback(
+    (checked: boolean) => {
+      const next = ensureDayLogInState();
+      if (!next) return;
+      const log = next.dayLogs.find((l) => l.dateKey === selectedDateKey);
+      const selectedWithPending = [...new Set([...(log?.selectedGroups ?? []), ...pendingGroups])];
+      const logs = next.dayLogs.map((l) =>
+        l.dateKey === selectedDateKey
+          ? { ...l, selectedGroups: selectedWithPending, nfCompleted: checked }
+          : l
+      );
+      setPendingGroups([]);
+      persistState({ ...next, dayLogs: logs });
+    },
+    [ensureDayLogInState, selectedDateKey, pendingGroups, persistState]
+  );
+
+  const nfStreak = useMemo(
+    () => (state ? computeNfStreak(state.dayLogs, selectedDateKey) : 0),
+    [state, selectedDateKey]
   );
 
   const handleSelectGroups = useCallback(
@@ -292,32 +313,37 @@ function FitnessPage() {
                 )}
               </div>
             )}
-            {showWelcome ? (
+            {showExerciseWelcome && (
               <WelcomeScreen
                 selectedGroups={dayLog?.selectedGroups ?? []}
                 onStart={handleSelectGroups}
               />
-            ) : (
-              <>
-                <DayTemplate
-                  exercises={state.exercises}
-                  dayLog={dayLog!}
-                  pendingGroups={pendingGroups}
-                  onToggleExercise={handleToggleExercise}
-                  onAddGroup={handleAddGroup}
-                  onAddSection={handleAddGroups}
-                  onRemoveGroup={handleRemoveGroup}
-                  locked={locked}
-                />
-                <SwimRunInput
-                  dayLog={dayLog!}
-                  onSwimmingChange={handleSwimmingChange}
-                  onRunningChange={handleRunningChange}
-                  locked={locked}
-                />
-                <FitnessDashboard state={state} />
-              </>
             )}
+            {!showExerciseWelcome && (
+              <DayTemplate
+                exercises={state.exercises}
+                dayLog={dayLog!}
+                pendingGroups={pendingGroups}
+                onToggleExercise={handleToggleExercise}
+                onAddGroup={handleAddGroup}
+                onAddSection={handleAddGroups}
+                onRemoveGroup={handleRemoveGroup}
+                locked={locked}
+              />
+            )}
+            <SwimRunInput
+              dayLog={dayLog!}
+              onSwimmingChange={handleSwimmingChange}
+              onRunningChange={handleRunningChange}
+              locked={locked}
+            />
+            <WellBeingInput
+              dayLog={dayLog!}
+              nfStreak={nfStreak}
+              onNfChange={handleNfChange}
+              locked={locked}
+            />
+            <FitnessDashboard state={state} />
           </>
         )}
       </main>

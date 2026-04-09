@@ -18,13 +18,15 @@ function validateDayLog(log: unknown): log is DayLog {
     l.selectedGroups === undefined ||
     (Array.isArray(l.selectedGroups) &&
       l.selectedGroups.every((g: unknown) => typeof g === "string"));
+  const hasNf = l.nfCompleted === undefined || typeof l.nfCompleted === "boolean";
   return (
     isValidDateKey(l.dateKey) &&
     Array.isArray(l.exerciseIds) &&
     l.exerciseIds.every((id) => typeof id === "string") &&
     typeof l.swimmingSessions === "number" &&
     typeof l.runningSessions === "number" &&
-    hasSelectedGroups
+    hasSelectedGroups &&
+    hasNf
   );
 }
 

@@ -40,10 +40,17 @@ export type MissedExerciseItem = {
   lastDoneDateKey: string | null;
 };
 
+export type ActivityDayBreakdown = {
+  exercises: number;
+  swimming: number;
+  running: number;
+};
+
 export type FitnessDashboardData = {
   kpis: DashboardKPIs;
   weeklyVolume: WeeklyVolumeItem[];
   activityByDay: Record<string, number>;
+  activityBreakdownByDay: Record<string, ActivityDayBreakdown>;
   workoutDaysPerWeek: WorkoutDaysPerWeekItem[];
   groupFrequency: GroupFreqItem[];
   leastHit: LeastHitItem[];

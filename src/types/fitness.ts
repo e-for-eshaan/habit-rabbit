@@ -10,6 +10,7 @@ export type DayLog = {
   exerciseIds: string[];
   swimmingSessions: number;
   runningSessions: number;
+  nfCompleted?: boolean;
   selectedGroups?: string[];
 };
 
