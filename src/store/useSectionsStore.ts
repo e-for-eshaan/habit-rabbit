@@ -8,8 +8,10 @@ import {
   createUpdate,
   deleteUpdate as deleteUpdateApi,
   getBootstrap,
+  getSectionUpdatesPage,
   updateUpdate,
 } from "@/lib/api";
+import { SECTION_UPDATES_PAGE_SIZE } from "@/lib/sectionUpdates";
 import { parseViewSettingsFromRecord, setStoredViewSettings } from "@/lib/viewSettingsStorage";
 import type { Section, Update } from "@/types";
 
@@ -48,11 +50,17 @@ export type PendingUpdateSave = {
   updateId: string;
 };
 
+export type PendingDeleteInFlight = {
+  sectionId: string;
+  updateId: string;
+};
+
 type SectionsState = {
   sections: Section[];
   loading: boolean;
   error: string | null;
   pendingUpdateSave: PendingUpdateSave | null;
+  pendingDeleteInFlight: PendingDeleteInFlight | null;
   layoutMode: LayoutMode;
   viewMode: ViewMode;
   calendarRange: CalendarRange;
@@ -68,6 +76,8 @@ type SectionsState = {
   setCalendarRange: (range: CalendarRange) => void;
   setFreqRange: (range: FreqRange) => void;
   fetchSections: () => Promise<void>;
+  fetchMoreSectionUpdates: (sectionId: string) => Promise<void>;
+  loadRemainingUpdatesForChartView: () => Promise<void>;
   addSection: (title: string) => Promise<void>;
   addUpdate: (sectionId: string, text: string) => Promise<void>;
   editUpdate: (
@@ -112,6 +122,7 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   loading: true,
   error: null,
   pendingUpdateSave: null,
+  pendingDeleteInFlight: null,
   layoutMode: "horizontal",
   viewMode: "list",
   calendarRange: "last7",
@@ -166,6 +177,63 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
     }
   },
 
+  fetchMoreSectionUpdates: async (sectionId) => {
+    const s = get().sections.find((x) => x.id === sectionId);
+    if (!s) return;
+    const total = s.updateCount ?? s.updates.length;
+    const loaded = s.updates.length;
+    if (loaded >= total) return;
+    try {
+      const { updates, total: t } = await getSectionUpdatesPage(
+        sectionId,
+        loaded,
+        SECTION_UPDATES_PAGE_SIZE
+      );
+      set((state) => ({
+        sections: state.sections.map((sec) =>
+          sec.id === sectionId
+            ? { ...sec, updates: [...sec.updates, ...updates], updateCount: t }
+            : sec
+        ),
+      }));
+    } catch (e) {
+      set({
+        error: e instanceof Error ? e.message : "Failed to load updates",
+      });
+    }
+  },
+
+  loadRemainingUpdatesForChartView: async () => {
+    const { sections } = get();
+    const needs = sections.filter((s) => (s.updateCount ?? s.updates.length) > s.updates.length);
+    if (needs.length === 0) return;
+    try {
+      const batches = await Promise.all(
+        needs.map(async (s) => {
+          const total = s.updateCount ?? s.updates.length;
+          const loaded = s.updates.length;
+          const { updates, total: t } = await getSectionUpdatesPage(s.id, loaded, total - loaded);
+          return { sectionId: s.id, updates, total: t };
+        })
+      );
+      set((state) => ({
+        sections: state.sections.map((sec) => {
+          const b = batches.find((x) => x.sectionId === sec.id);
+          if (!b) return sec;
+          return {
+            ...sec,
+            updates: [...sec.updates, ...b.updates],
+            updateCount: b.total,
+          };
+        }),
+      }));
+    } catch (e) {
+      set({
+        error: e instanceof Error ? e.message : "Failed to load updates",
+      });
+    }
+  },
+
   addSection: async (title) => {
     const trimmed = title.trim();
     if (!trimmed) return;
@@ -187,7 +255,13 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       const update = await createUpdate(sectionId, { text });
       set((state) => ({
         sections: state.sections.map((s) =>
-          s.id === sectionId ? { ...s, updates: [update, ...s.updates] } : s
+          s.id === sectionId
+            ? {
+                ...s,
+                updates: [update, ...s.updates],
+                updateCount: (s.updateCount ?? s.updates.length) + 1,
+              }
+            : s
         ),
       }));
     } catch (e) {
@@ -239,10 +313,12 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
     const section = state.sections.find((s) => s.id === sectionId);
     const update = section?.updates.find((u) => u.id === updateId);
     if (!section || !update) return;
+    set({ pendingDeleteInFlight: { sectionId, updateId } });
     try {
       await deleteUpdateApi(sectionId, updateId);
     } catch (e) {
       set({
+        pendingDeleteInFlight: null,
         error: e instanceof Error ? e.message : "Failed to delete update",
       });
       return;
@@ -256,8 +332,15 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       }));
     }, 10000);
     set((prev) => ({
+      pendingDeleteInFlight: null,
       sections: prev.sections.map((s) =>
-        s.id === sectionId ? { ...s, updates: s.updates.filter((u) => u.id !== updateId) } : s
+        s.id === sectionId
+          ? {
+              ...s,
+              updates: s.updates.filter((u) => u.id !== updateId),
+              updateCount: Math.max(0, (s.updateCount ?? s.updates.length) - 1),
+            }
+          : s
       ),
       pendingDeletes: [
         ...prev.pendingDeletes,
@@ -285,7 +368,13 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       });
       set((s) => ({
         sections: s.sections.map((sec) =>
-          sec.id === sectionId ? { ...sec, updates: [restored, ...sec.updates] } : sec
+          sec.id === sectionId
+            ? {
+                ...sec,
+                updates: [restored, ...sec.updates],
+                updateCount: (sec.updateCount ?? sec.updates.length) + 1,
+              }
+            : sec
         ),
       }));
     } catch (e) {

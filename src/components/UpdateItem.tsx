@@ -14,6 +14,7 @@ type UpdateItemProps = {
   onEditSessionChange?: (updateId: string | null) => void;
   activeEditUpdateId?: string | null;
   savingUpdateId?: string | null;
+  deletingUpdateId?: string | null;
 };
 
 function formatTime(iso: string) {
@@ -45,6 +46,7 @@ export function UpdateItem({
   onEditSessionChange,
   activeEditUpdateId,
   savingUpdateId,
+  deletingUpdateId,
 }: UpdateItemProps) {
   const [editingTimestamp, setEditingTimestamp] = useState(false);
   const [editingText, setEditingText] = useState(false);
@@ -100,8 +102,13 @@ export function UpdateItem({
   }
 
   const hasText = !isNil(update.text) && update.text.trim() !== "";
-  const dimAsPeer = !isNil(activeEditUpdateId) && activeEditUpdateId !== update.id;
+  const dimAsPeer =
+    (!isNil(activeEditUpdateId) && activeEditUpdateId !== update.id) ||
+    (!isNil(savingUpdateId) && savingUpdateId !== update.id) ||
+    (!isNil(deletingUpdateId) && deletingUpdateId !== update.id);
   const isSavingThisRow = savingUpdateId === update.id;
+  const isDeletingThisRow = deletingUpdateId === update.id;
+  const isRowBusy = isSavingThisRow || isDeletingThisRow;
 
   return (
     <div
@@ -110,9 +117,9 @@ export function UpdateItem({
         !isEditing && "min-h-touch",
         dimAsPeer && "pointer-events-none opacity-45",
         isEditing && "z-20 opacity-100 pointer-events-auto",
-        isSavingThisRow && "z-30"
+        isRowBusy && "z-30"
       )}
-      aria-busy={isSavingThisRow}
+      aria-busy={isRowBusy}
     >
       <div className="min-w-0 flex-1 pt-0">
         {editingText ? (
@@ -194,13 +201,13 @@ export function UpdateItem({
           </button>
         </div>
       )}
-      {isSavingThisRow && (
+      {isRowBusy && (
         <div
           className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60 backdrop-blur-[1px]"
           role="status"
         >
           <Loader2 className="size-7 shrink-0 animate-spin text-lime-400" aria-hidden />
-          <span className="sr-only">Saving</span>
+          <span className="sr-only">{isDeletingThisRow ? "Deleting" : "Saving"}</span>
         </div>
       )}
     </div>

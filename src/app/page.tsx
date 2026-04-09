@@ -32,6 +32,9 @@ export default function Home() {
   const editUpdate = useSectionsStore((s) => s.editUpdate);
   const scheduleDeleteUpdate = useSectionsStore((s) => s.scheduleDeleteUpdate);
   const toggleSectionCollapse = useSectionsStore((s) => s.toggleSectionCollapse);
+  const loadRemainingUpdatesForChartView = useSectionsStore(
+    (s) => s.loadRemainingUpdatesForChartView
+  );
 
   const filteredAndSortedSections = useMemo(() => {
     const filtered = filterSectionsBySearch(sections, searchQuery);
@@ -41,6 +44,11 @@ export default function Home() {
   useEffect(() => {
     fetchSections();
   }, [fetchSections]);
+
+  useEffect(() => {
+    if (viewMode === "list") return;
+    void loadRemainingUpdatesForChartView();
+  }, [viewMode, loadRemainingUpdatesForChartView]);
 
   if (loading) {
     return <HomePageSkeleton />;

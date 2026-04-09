@@ -15,4 +15,6 @@ export type Section = {
   title: string;
   colorKey: number;
   updates: Update[];
+  /** Total updates in storage (may exceed updates.length when list is paginated). */
+  updateCount?: number;
 };

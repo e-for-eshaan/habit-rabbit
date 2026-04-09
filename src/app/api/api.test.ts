@@ -174,7 +174,10 @@ describe("API bootstrap", () => {
       const res = await getBootstrapResponse();
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.sections).toEqual(mockSections);
+      expect(data.sections).toEqual([
+        { ...mockSections[0], updateCount: 0 },
+        { ...mockSections[1], updateCount: 1 },
+      ]);
       expect(data.viewSettings).toMatchObject({ layoutMode: "grid", viewMode: "calendar" });
       const bootstrap = await import("@/lib/db/bootstrap");
       expect(bootstrap.readHomeBootstrap).toHaveBeenCalledWith("test-uid");

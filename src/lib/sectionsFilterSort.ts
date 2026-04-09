@@ -37,7 +37,11 @@ export function sortSections(sections: Section[], sortBy: SortBy, sortDir: SortD
 
   switch (sortBy) {
     case "most-all-time":
-      sorted.sort((a, b) => dir * (b.updates.length - a.updates.length));
+      sorted.sort((a, b) => {
+        const ca = a.updateCount ?? a.updates.length;
+        const cb = b.updateCount ?? b.updates.length;
+        return dir * (cb - ca);
+      });
       break;
     case "most-today":
       sorted.sort((a, b) => dir * (countTodayUpdates(b) - countTodayUpdates(a)));

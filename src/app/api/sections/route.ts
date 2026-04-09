@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       title,
       colorKey,
       updates: [],
+      updateCount: 0,
     };
     store.sections = [...store.sections, section];
     await writeSectionsStore(uid, store);

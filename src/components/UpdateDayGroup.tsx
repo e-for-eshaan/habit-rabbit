@@ -16,6 +16,7 @@ type UpdateDayGroupProps = {
   onEditSessionChange?: (updateId: string | null) => void;
   activeEditUpdateId?: string | null;
   savingUpdateId?: string | null;
+  deletingUpdateId?: string | null;
 };
 
 export function UpdateDayGroup({
@@ -26,6 +27,7 @@ export function UpdateDayGroup({
   onEditSessionChange,
   activeEditUpdateId,
   savingUpdateId,
+  deletingUpdateId,
 }: UpdateDayGroupProps) {
   const [open, setOpen] = useState(false);
   const isMultiple = updates.length > 1;
@@ -36,11 +38,15 @@ export function UpdateDayGroup({
     </span>
   );
 
-  const lockDayChrome = activeEditUpdateId != null;
+  const lockDayChrome =
+    activeEditUpdateId != null || savingUpdateId != null || deletingUpdateId != null;
 
   if (!isMultiple) {
     const u = updates[0];
-    const dimDateOnly = activeEditUpdateId != null && activeEditUpdateId !== u.id;
+    const dimDateOnly =
+      (activeEditUpdateId != null && activeEditUpdateId !== u.id) ||
+      (savingUpdateId != null && savingUpdateId !== u.id) ||
+      (deletingUpdateId != null && deletingUpdateId !== u.id);
     return (
       <div>
         <div className={cn("mb-0 leading-none transition-opacity", dimDateOnly && "opacity-45")}>
@@ -53,6 +59,7 @@ export function UpdateDayGroup({
           onEditSessionChange={onEditSessionChange}
           activeEditUpdateId={activeEditUpdateId}
           savingUpdateId={savingUpdateId}
+          deletingUpdateId={deletingUpdateId}
         />
       </div>
     );
@@ -86,6 +93,7 @@ export function UpdateDayGroup({
               onEditSessionChange={onEditSessionChange}
               activeEditUpdateId={activeEditUpdateId}
               savingUpdateId={savingUpdateId}
+              deletingUpdateId={deletingUpdateId}
             />
           ))}
         </div>

@@ -84,6 +84,26 @@ export async function deleteUpdate(sectionId: string, updateId: string): Promise
   await fetchJson(`${BASE}/api/sections/${sectionId}/updates/${updateId}`, { method: "DELETE" });
 }
 
+export type SectionUpdatesPageResponse = {
+  updates: Update[];
+  total: number;
+  offset: number;
+  limit: number;
+  hasMore: boolean;
+};
+
+export async function getSectionUpdatesPage(
+  sectionId: string,
+  offset: number,
+  limit: number
+): Promise<SectionUpdatesPageResponse> {
+  const q = new URLSearchParams({
+    offset: String(offset),
+    limit: String(limit),
+  });
+  return fetchJson<SectionUpdatesPageResponse>(`${BASE}/api/sections/${sectionId}/updates?${q}`);
+}
+
 export async function getFitness(): Promise<FitnessState> {
   return fetchJson<FitnessState>(`${BASE}/api/fitness`);
 }
