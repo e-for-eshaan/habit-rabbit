@@ -29,8 +29,8 @@ export function UpdateDayGroup({ dateLabel, updates, onEdit, onDelete }: UpdateD
     const u = updates[0];
     return (
       <div>
-        <div className="mb-1 leading-none">{dateHeading}</div>
-        <UpdateItem className="pt-1.5! pb-3!" update={u} onEdit={onEdit} onDelete={onDelete} />
+        <div className="mb-0 leading-none">{dateHeading}</div>
+        <UpdateItem update={u} onEdit={onEdit} onDelete={onDelete} />
       </div>
     );
   }
