@@ -9,7 +9,7 @@ import {
   getBootstrap,
   updateUpdate,
 } from "@/lib/api";
-import { parseViewSettingsFromRecord } from "@/lib/viewSettingsStorage";
+import { parseViewSettingsFromRecord, setStoredViewSettings } from "@/lib/viewSettingsStorage";
 import type { Section, Update } from "@/types";
 
 export type LayoutMode = "horizontal" | "grid";
@@ -77,6 +77,29 @@ type SectionsState = {
   hydrateViewSettings: (partial: Partial<StoredViewSettings>) => void;
 };
 
+function pickViewSettings(state: SectionsState): StoredViewSettings {
+  return {
+    layoutMode: state.layoutMode,
+    viewMode: state.viewMode,
+    calendarRange: state.calendarRange,
+    freqRange: state.freqRange,
+    sortBy: state.sortBy,
+    sortDir: state.sortDir,
+    collapsedBySectionId: state.collapsedBySectionId,
+  };
+}
+
+const PERSIST_DEBOUNCE_MS = 500;
+let persistDebounce: ReturnType<typeof setTimeout> | null = null;
+
+function queuePersistViewSettings(get: () => SectionsState) {
+  if (persistDebounce) clearTimeout(persistDebounce);
+  persistDebounce = setTimeout(() => {
+    persistDebounce = null;
+    void setStoredViewSettings(pickViewSettings(get()));
+  }, PERSIST_DEBOUNCE_MS);
+}
+
 export const useSectionsStore = create<SectionsState>((set, get) => ({
   sections: [],
   loading: true,
@@ -91,10 +114,22 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   sortBy: "recently-updated",
   sortDir: "desc",
   setSearchQuery: (q) => set({ searchQuery: q }),
-  setSort: (sortBy, sortDir) => set({ sortBy, sortDir }),
-  setViewMode: (mode) => set({ viewMode: mode }),
-  setCalendarRange: (range) => set({ calendarRange: range }),
-  setFreqRange: (range) => set({ freqRange: range }),
+  setSort: (sortBy, sortDir) => {
+    set({ sortBy, sortDir });
+    queuePersistViewSettings(get);
+  },
+  setViewMode: (mode) => {
+    set({ viewMode: mode });
+    queuePersistViewSettings(get);
+  },
+  setCalendarRange: (range) => {
+    set({ calendarRange: range });
+    queuePersistViewSettings(get);
+  },
+  setFreqRange: (range) => {
+    set({ freqRange: range });
+    queuePersistViewSettings(get);
+  },
   hydrateViewSettings: (partial) =>
     set((state) => ({
       ...state,
@@ -235,44 +270,35 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
     }
   },
 
-  setLayoutMode: (mode) => set({ layoutMode: mode }),
+  setLayoutMode: (mode) => {
+    set({ layoutMode: mode });
+    queuePersistViewSettings(get);
+  },
 
-  toggleSectionCollapse: (sectionId) =>
+  toggleSectionCollapse: (sectionId) => {
     set((state) => ({
       collapsedBySectionId: {
         ...state.collapsedBySectionId,
         [sectionId]: !state.collapsedBySectionId[sectionId],
       },
-    })),
+    }));
+    queuePersistViewSettings(get);
+  },
 
-  collapseAll: () =>
+  collapseAll: () => {
     set((state) => ({
       collapsedBySectionId: Object.fromEntries(state.sections.map((s) => [s.id, true])),
-    })),
+    }));
+    queuePersistViewSettings(get);
+  },
 
-  expandAll: () =>
+  expandAll: () => {
     set((state) => ({
       collapsedBySectionId: Object.fromEntries(state.sections.map((s) => [s.id, false])),
-    })),
+    }));
+    queuePersistViewSettings(get);
+  },
 }));
-
-function pickViewSettings(state: SectionsState): StoredViewSettings {
-  return {
-    layoutMode: state.layoutMode,
-    viewMode: state.viewMode,
-    calendarRange: state.calendarRange,
-    freqRange: state.freqRange,
-    sortBy: state.sortBy,
-    sortDir: state.sortDir,
-    collapsedBySectionId: state.collapsedBySectionId,
-  };
-}
-
-export function subscribeViewSettingsPersist(
-  persist: (settings: StoredViewSettings) => void
-): () => void {
-  return useSectionsStore.subscribe((state) => persist(pickViewSettings(state)));
-}
 
 export const selectIsGridCollapsed = (state: SectionsState): boolean =>
   state.sections.length > 0 && state.sections.every((s) => state.collapsedBySectionId[s.id]);
