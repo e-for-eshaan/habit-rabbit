@@ -166,8 +166,16 @@ function FitnessPage() {
   }, [state, persistState]);
 
   const handleNfFail = useCallback(() => {
-    if (!state) return;
-    persistState({ ...state, nfStreakStartedAt: undefined });
+    if (!state?.nfStreakStartedAt) return;
+    const start = Date.parse(state.nfStreakStartedAt);
+    if (Number.isNaN(start)) {
+      persistState({ ...state, nfStreakStartedAt: undefined });
+      return;
+    }
+    const endedSeconds = Math.floor((Date.now() - start) / 1000);
+    const prevPb = state.nfPersonalBestSeconds ?? 0;
+    const nfPersonalBestSeconds = Math.max(prevPb, endedSeconds);
+    persistState({ ...state, nfStreakStartedAt: undefined, nfPersonalBestSeconds });
   }, [state, persistState]);
 
   const handleSelectGroups = useCallback(
@@ -334,7 +342,9 @@ function FitnessPage() {
               locked={locked}
             />
             <WellBeingInput
+              key={state.nfStreakStartedAt ?? "nf-idle"}
               nfStreakStartedAt={state.nfStreakStartedAt}
+              nfPersonalBestSeconds={state.nfPersonalBestSeconds}
               onStartStreak={handleNfStart}
               onFailStreak={handleNfFail}
               canMutateNf={!locked}

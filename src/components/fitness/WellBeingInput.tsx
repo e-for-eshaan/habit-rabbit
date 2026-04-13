@@ -1,15 +1,20 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { Sparkles, Trophy } from "lucide-react";
 import { useLayoutEffect, useState } from "react";
 
-import { formatNfElapsedFromStart } from "@/lib/nfElapsed";
+import {
+  formatNfElapsedFromStart,
+  formatNfElapsedFromTotalSeconds,
+  nfElapsedSecondsFromStart,
+} from "@/lib/nfElapsed";
 import { cn } from "@/lib/utils";
 
 const WELLBEING_LEFT_ACCENT = "#a78bfa";
 
 type WellBeingInputProps = {
   nfStreakStartedAt: string | undefined;
+  nfPersonalBestSeconds?: number;
   onStartStreak: () => void;
   onFailStreak: () => void;
   canMutateNf: boolean;
@@ -18,12 +23,16 @@ type WellBeingInputProps = {
 
 export function WellBeingInput({
   nfStreakStartedAt,
+  nfPersonalBestSeconds,
   onStartStreak,
   onFailStreak,
   canMutateNf,
   className,
 }: WellBeingInputProps) {
   const streakActive = Boolean(nfStreakStartedAt);
+  const [showFailConfirm, setShowFailConfirm] = useState(false);
+  const pbSeconds = nfPersonalBestSeconds ?? 0;
+  const pbLabel = pbSeconds > 0 ? formatNfElapsedFromTotalSeconds(pbSeconds) : "—";
 
   return (
     <div
@@ -37,64 +46,123 @@ export function WellBeingInput({
         <Sparkles size={22} className="shrink-0 text-violet-300/90" aria-hidden />
         Well-being
       </h2>
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-3 sm:gap-y-2">
-        {!streakActive && (
-          <button
-            type="button"
-            onClick={onStartStreak}
-            disabled={!canMutateNf}
-            className={cn(
-              "min-h-touch w-full rounded-xl px-4 py-2.5 text-body-sm font-semibold tabular-nums ring-1 transition sm:w-auto",
-              canMutateNf
-                ? "bg-violet-500/20 text-violet-100 ring-violet-400/40 hover:bg-violet-500/30"
-                : "cursor-not-allowed bg-surface-elevated/50 text-muted ring-border-subtle"
-            )}
-            aria-label="Start NF streak"
-          >
-            Start streak
-          </button>
-        )}
-        {streakActive && nfStreakStartedAt && (
-          <>
-            <NfStreakElapsedLive startedAtIso={nfStreakStartedAt} />
-            <button
-              type="button"
-              onClick={onFailStreak}
-              disabled={!canMutateNf}
-              className={cn(
-                "min-h-touch w-full rounded-xl px-4 py-2.5 text-body-sm font-semibold ring-1 transition sm:w-auto",
-                canMutateNf
-                  ? "bg-red-500/15 text-red-200 ring-red-400/35 hover:bg-red-500/25"
-                  : "cursor-not-allowed bg-surface-elevated/50 text-muted ring-border-subtle"
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-3">
+          {!streakActive && (
+            <>
+              <div className="flex min-h-touch min-w-0 flex-1 items-center rounded-xl bg-surface-elevated/20 px-3 py-2.5 text-body-sm text-muted ring-1 ring-border-subtle">
+                No active streak
+              </div>
+              <button
+                type="button"
+                onClick={onStartStreak}
+                disabled={!canMutateNf}
+                className={cn(
+                  "min-h-touch shrink-0 whitespace-nowrap rounded-xl px-4 py-2.5 text-body-sm font-semibold tabular-nums ring-1 transition",
+                  canMutateNf
+                    ? "bg-violet-500/20 text-violet-100 ring-violet-400/40 hover:bg-violet-500/30"
+                    : "cursor-not-allowed bg-surface-elevated/50 text-muted ring-border-subtle"
+                )}
+                aria-label="Start NF streak"
+              >
+                Start streak
+              </button>
+            </>
+          )}
+          {streakActive && nfStreakStartedAt && (
+            <>
+              <NfStreakElapsedLive
+                startedAtIso={nfStreakStartedAt}
+                personalBestSeconds={pbSeconds}
+              />
+              {showFailConfirm ? (
+                <div className="flex min-h-touch shrink-0 flex-nowrap items-stretch gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowFailConfirm(false)}
+                    className="rounded-xl px-3 py-2.5 text-body-sm font-semibold text-muted ring-1 ring-border-subtle transition hover:bg-surface-elevated hover:text-foreground"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onFailStreak();
+                      setShowFailConfirm(false);
+                    }}
+                    disabled={!canMutateNf}
+                    className={cn(
+                      "whitespace-nowrap rounded-xl px-3 py-2.5 text-body-sm font-semibold ring-1 transition",
+                      canMutateNf
+                        ? "bg-red-500/25 text-red-100 ring-red-400/45 hover:bg-red-500/35"
+                        : "cursor-not-allowed bg-surface-elevated/50 text-muted ring-border-subtle"
+                    )}
+                  >
+                    End streak
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowFailConfirm(true)}
+                  disabled={!canMutateNf}
+                  className={cn(
+                    "min-h-touch shrink-0 whitespace-nowrap rounded-xl px-4 py-2.5 text-body-sm font-semibold ring-1 transition",
+                    canMutateNf
+                      ? "bg-red-500/15 text-red-200 ring-red-400/35 hover:bg-red-500/25"
+                      : "cursor-not-allowed bg-surface-elevated/50 text-muted ring-border-subtle"
+                  )}
+                  aria-label="End streak, I failed"
+                >
+                  I failed
+                </button>
               )}
-              aria-label="End streak, I failed"
-            >
-              I failed
-            </button>
-          </>
-        )}
+            </>
+          )}
+        </div>
+        <p className="text-body-xs tabular-nums text-muted-fg">
+          Personal best · <span className="text-muted">{pbLabel}</span>
+        </p>
       </div>
     </div>
   );
 }
 
-function NfStreakElapsedLive({ startedAtIso }: { startedAtIso: string }) {
+function NfStreakElapsedLive({
+  startedAtIso,
+  personalBestSeconds,
+}: {
+  startedAtIso: string;
+  personalBestSeconds: number;
+}) {
   const [label, setLabel] = useState("");
+  const [isPr, setIsPr] = useState(false);
 
   useLayoutEffect(() => {
-    const tick = () => setLabel(formatNfElapsedFromStart(startedAtIso, Date.now()));
+    const tick = () => {
+      const now = Date.now();
+      setLabel(formatNfElapsedFromStart(startedAtIso, now));
+      const elapsed = nfElapsedSecondsFromStart(startedAtIso, now);
+      setIsPr(elapsed >= personalBestSeconds);
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [startedAtIso]);
+  }, [startedAtIso, personalBestSeconds]);
 
   return (
     <span
-      className="flex min-h-touch w-full min-w-0 items-center justify-center rounded-xl bg-orange-500/10 px-4 py-2.5 text-body font-medium tabular-nums text-orange-300 ring-1 ring-orange-400/30 sm:flex-1 sm:justify-start sm:py-2"
+      className="flex min-h-touch min-w-0 flex-1 items-center justify-between gap-2 rounded-xl bg-orange-500/10 px-3 py-2.5 text-body font-medium tabular-nums text-orange-300 ring-1 ring-orange-400/30 sm:px-4 sm:py-2"
       aria-live="polite"
       aria-label={`NF streak elapsed ${label}`}
     >
-      {label}
+      <span className="min-w-0 truncate">{label}</span>
+      {isPr && (
+        <span className="flex shrink-0 items-center gap-1 text-body-xs font-semibold uppercase tracking-wide text-amber-300">
+          <Trophy className="size-4 shrink-0 text-amber-400" aria-hidden />
+          PR
+        </span>
+      )}
     </span>
   );
 }

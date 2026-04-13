@@ -18,6 +18,8 @@ export type FitnessState = {
   exercises: Exercise[];
   dayLogs: DayLog[];
   nfStreakStartedAt?: string;
+  /** Longest completed NF streak duration in whole seconds. */
+  nfPersonalBestSeconds?: number;
 };
 
 export type FitnessCalendarDaySummary = {

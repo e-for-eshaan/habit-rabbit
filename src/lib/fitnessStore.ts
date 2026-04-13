@@ -63,7 +63,7 @@ const DEFAULT_EXERCISES: Exercise[] = [
 ];
 
 export function getDefaultFitnessState(): FitnessState {
-  return { exercises: [...DEFAULT_EXERCISES], dayLogs: [] };
+  return { exercises: [...DEFAULT_EXERCISES], dayLogs: [], nfPersonalBestSeconds: 0 };
 }
 
 function isValidDateKey(s: unknown): s is string {
@@ -76,6 +76,12 @@ export function isValidOptionalNfStreakStartedAt(value: unknown): boolean {
   if (value === undefined) return true;
   if (typeof value !== "string") return false;
   return !Number.isNaN(Date.parse(value));
+}
+
+export function isValidOptionalNfPersonalBestSeconds(value: unknown): boolean {
+  if (value === undefined) return true;
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return false;
+  return Number.isInteger(value);
 }
 
 function hasValidDayLog(log: unknown): log is DayLog {
@@ -104,6 +110,7 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
   const hasDayLogs = Array.isArray(o.dayLogs) && (o.dayLogs as unknown[]).every(hasValidDayLog);
   if (hasDayLogs) {
     if (!isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt)) return false;
+    if (!isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds)) return false;
     for (const ex of o.exercises as unknown[]) {
       if (
         isNil(ex) ||
@@ -137,7 +144,10 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
     )
       return false;
   }
-  return isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt);
+  return (
+    isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt) &&
+    isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds)
+  );
 }
 
 export function migrateWeekLogsToDayLogs(data: Record<string, unknown>): FitnessState {
