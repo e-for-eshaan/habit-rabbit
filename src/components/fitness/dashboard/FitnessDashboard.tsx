@@ -48,8 +48,8 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
       peak = Math.max(peak, w.workoutDays, w.cardioDays, w.runDays, w.swimDays);
     }
     const fromData = peak + 1;
-    const fromGoals = Math.max(WORKOUT_DAYS_PER_WEEK_GOAL, CARDIO_DAYS_PER_WEEK_GOAL) + 1;
-    return Math.min(7, Math.max(fromData, fromGoals));
+    const goalMax = Math.max(WORKOUT_DAYS_PER_WEEK_GOAL, CARDIO_DAYS_PER_WEEK_GOAL);
+    return Math.min(7, Math.max(fromData, goalMax));
   }, [weeklyActivityDays]);
 
   const workoutDaysPerWeekYAxisMax = useMemo(() => {
