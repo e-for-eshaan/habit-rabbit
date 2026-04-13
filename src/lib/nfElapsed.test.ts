@@ -35,10 +35,19 @@ describe("computeNfElapsedParts", () => {
 });
 
 describe("formatNfElapsedDisplay", () => {
-  it("uses min sec under one day", () => {
-    expect(formatNfElapsedDisplay({ days: 0, hours: 3, minutes: 7, seconds: 9 })).toBe("187m 9s");
+  it("uses seconds only under one minute", () => {
+    expect(formatNfElapsedDisplay({ days: 0, hours: 0, minutes: 0, seconds: 43 })).toBe("43s");
+    expect(formatNfElapsedDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 })).toBe("0s");
+  });
+
+  it("uses min sec from 1m through 59m 59s", () => {
+    expect(formatNfElapsedDisplay({ days: 0, hours: 0, minutes: 1, seconds: 43 })).toBe("1m 43s");
     expect(formatNfElapsedDisplay({ days: 0, hours: 0, minutes: 2, seconds: 1 })).toBe("2m 1s");
-    expect(formatNfElapsedDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 })).toBe("0m 0s");
+  });
+
+  it("uses hour minute under one day when at least one hour", () => {
+    expect(formatNfElapsedDisplay({ days: 0, hours: 3, minutes: 7, seconds: 9 })).toBe("3h 7m");
+    expect(formatNfElapsedDisplay({ days: 0, hours: 1, minutes: 0, seconds: 0 })).toBe("1h 0m");
   });
 
   it("uses day hour from 1d through 6d", () => {
@@ -64,11 +73,11 @@ describe("formatNfElapsedFromStart", () => {
   it("formats from ISO start to now", () => {
     const start = "2025-03-01T12:00:00.000Z";
     const now = Date.parse("2025-03-01T15:30:45.000Z");
-    expect(formatNfElapsedFromStart(start, now)).toBe("210m 45s");
+    expect(formatNfElapsedFromStart(start, now)).toBe("3h 30m");
   });
 
   it("returns safe fallback for invalid ISO", () => {
-    expect(formatNfElapsedFromStart("not-a-date", Date.now())).toBe("0m 0s");
+    expect(formatNfElapsedFromStart("not-a-date", Date.now())).toBe("0s");
   });
 });
 

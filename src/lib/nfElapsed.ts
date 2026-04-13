@@ -35,11 +35,14 @@ function totalSecondsFromParts(parts: NfElapsedParts): number {
   );
 }
 
-/** Always two units: month+day, week+day, day+hour, or min+sec. */
-export function formatNfElapsedDisplay(parts: NfElapsedParts): string {
-  const totalSeconds = totalSecondsFromParts(parts);
-  const totalDays = Math.floor(totalSeconds / secondsInDay);
-  const remAfterDays = totalSeconds % secondsInDay;
+/**
+ * Two units only, from total elapsed seconds:
+ * `43s` · `1m 43s` · `1h 2m` · `1d 2h` · `1w 2d` · `1mo 0d`
+ */
+function formatElapsedTotalSeconds(totalSeconds: number): string {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const totalDays = Math.floor(s / secondsInDay);
+  const remAfterDays = s % secondsInDay;
 
   if (totalDays >= DISPLAY_DAYS_PER_MONTH) {
     const months = Math.floor(totalDays / DISPLAY_DAYS_PER_MONTH);
@@ -55,16 +58,31 @@ export function formatNfElapsedDisplay(parts: NfElapsedParts): string {
     const h = Math.floor(remAfterDays / secondsInHour);
     return `${totalDays}d ${h}h`;
   }
-  const m = Math.floor(totalSeconds / secondsInMinute);
-  const s = totalSeconds % secondsInMinute;
-  return `${m}m ${s}s`;
+
+  const totalHours = Math.floor(s / secondsInHour);
+  if (totalHours >= 1) {
+    const m = Math.floor((s % secondsInHour) / secondsInMinute);
+    return `${totalHours}h ${m}m`;
+  }
+
+  const totalMinutes = Math.floor(s / secondsInMinute);
+  if (totalMinutes >= 1) {
+    const sec = s % secondsInMinute;
+    return `${totalMinutes}m ${sec}s`;
+  }
+
+  return `${s}s`;
+}
+
+export function formatNfElapsedDisplay(parts: NfElapsedParts): string {
+  return formatElapsedTotalSeconds(totalSecondsFromParts(parts));
 }
 
 export function formatNfElapsedFromStart(startedAtIso: string, nowMs: number): string {
   const start = new Date(startedAtIso);
-  if (Number.isNaN(start.getTime())) return "0m 0s";
+  if (Number.isNaN(start.getTime())) return "0s";
   const totalSeconds = Math.max(0, differenceInSeconds(new Date(nowMs), start));
-  return formatNfElapsedDisplay(partsFromTotalSeconds(totalSeconds));
+  return formatElapsedTotalSeconds(totalSeconds);
 }
 
 export function nfElapsedSecondsFromStart(startedAtIso: string, nowMs: number): number {
@@ -74,5 +92,5 @@ export function nfElapsedSecondsFromStart(startedAtIso: string, nowMs: number): 
 }
 
 export function formatNfElapsedFromTotalSeconds(totalSeconds: number): string {
-  return formatNfElapsedDisplay(partsFromTotalSeconds(totalSeconds));
+  return formatElapsedTotalSeconds(totalSeconds);
 }
