@@ -132,7 +132,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
         <div className="flex min-h-0 flex-col sm:col-span-1 md:col-span-3 lg:col-span-4">
           <ChartCard
-            title="Workout & cardio days (last 12 weeks)"
+            title="Workout & cardio days"
             pastelKey={2}
             className="flex h-full min-h-0 flex-1 flex-col"
             trailing={
