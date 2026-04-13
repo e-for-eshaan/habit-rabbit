@@ -27,6 +27,8 @@ export type SortBy = "most-all-time" | "most-today" | "recently-updated" | "name
 
 export type SortDir = "asc" | "desc";
 
+export type FitnessCardioDisplay = "combined" | "split";
+
 export type StoredViewSettings = {
   layoutMode: LayoutMode;
   viewMode: ViewMode;
@@ -35,6 +37,7 @@ export type StoredViewSettings = {
   sortBy: SortBy;
   sortDir: SortDir;
   collapsedBySectionId: Record<string, boolean>;
+  fitnessCardioDisplay: FitnessCardioDisplay;
 };
 
 export type PendingDelete = {
@@ -70,6 +73,7 @@ type SectionsState = {
   searchQuery: string;
   sortBy: SortBy;
   sortDir: SortDir;
+  fitnessCardioDisplay: FitnessCardioDisplay;
   setSearchQuery: (q: string) => void;
   setSort: (sortBy: SortBy, sortDir: SortDir) => void;
   setViewMode: (mode: ViewMode) => void;
@@ -91,6 +95,7 @@ type SectionsState = {
   toggleSectionCollapse: (sectionId: string) => void;
   collapseAll: () => void;
   expandAll: () => void;
+  setFitnessCardioDisplay: (mode: FitnessCardioDisplay) => void;
   hydrateViewSettings: (partial: Partial<StoredViewSettings>) => void;
 };
 
@@ -103,6 +108,7 @@ function pickViewSettings(state: SectionsState): StoredViewSettings {
     sortBy: state.sortBy,
     sortDir: state.sortDir,
     collapsedBySectionId: state.collapsedBySectionId,
+    fitnessCardioDisplay: state.fitnessCardioDisplay,
   };
 }
 
@@ -132,6 +138,7 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
   searchQuery: "",
   sortBy: "recently-updated",
   sortDir: "desc",
+  fitnessCardioDisplay: "combined",
   setSearchQuery: (q) => set({ searchQuery: q }),
   setSort: (sortBy, sortDir) => {
     set({ sortBy, sortDir });
@@ -160,6 +167,9 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       ...(partial.sortDir !== undefined && { sortDir: partial.sortDir }),
       ...(partial.collapsedBySectionId !== undefined && {
         collapsedBySectionId: partial.collapsedBySectionId,
+      }),
+      ...(partial.fitnessCardioDisplay !== undefined && {
+        fitnessCardioDisplay: partial.fitnessCardioDisplay,
       }),
     })),
 
@@ -410,6 +420,11 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
     set((state) => ({
       collapsedBySectionId: Object.fromEntries(state.sections.map((s) => [s.id, false])),
     }));
+    queuePersistViewSettings(get);
+  },
+
+  setFitnessCardioDisplay: (mode) => {
+    set({ fitnessCardioDisplay: mode });
     queuePersistViewSettings(get);
   },
 }));

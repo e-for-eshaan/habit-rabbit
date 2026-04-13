@@ -1,6 +1,7 @@
 import { getViewSettings, updateViewSettings } from "@/lib/api";
 import type {
   CalendarRange,
+  FitnessCardioDisplay,
   FreqRange,
   LayoutMode,
   SortBy,
@@ -23,6 +24,7 @@ const SORT_BY_VALUES: SortBy[] = [
   "name-za",
 ];
 const SORT_DIR_VALUES: SortDir[] = ["asc", "desc"];
+const FITNESS_CARDIO_DISPLAY: FitnessCardioDisplay[] = ["combined", "split"];
 
 function isLayoutMode(v: unknown): v is LayoutMode {
   return typeof v === "string" && LAYOUT_MODES.includes(v as LayoutMode);
@@ -42,6 +44,9 @@ function isSortBy(v: unknown): v is SortBy {
 function isSortDir(v: unknown): v is SortDir {
   return typeof v === "string" && SORT_DIR_VALUES.includes(v as SortDir);
 }
+function isFitnessCardioDisplay(v: unknown): v is FitnessCardioDisplay {
+  return typeof v === "string" && FITNESS_CARDIO_DISPLAY.includes(v as FitnessCardioDisplay);
+}
 function isCollapsedMap(v: unknown): v is Record<string, boolean> {
   if (v === null || typeof v !== "object") return false;
   const o = v as Record<string, unknown>;
@@ -60,6 +65,8 @@ export function parseViewSettingsFromRecord(
   if (isSortDir(data.sortDir)) out.sortDir = data.sortDir;
   if (isCollapsedMap(data.collapsedBySectionId))
     out.collapsedBySectionId = data.collapsedBySectionId;
+  if (isFitnessCardioDisplay(data.fitnessCardioDisplay))
+    out.fitnessCardioDisplay = data.fitnessCardioDisplay;
   return out;
 }
 

@@ -24,5 +24,5 @@ export async function writeViewSettings(uid: string, data: Record<string, unknow
   if (!adminApp) return;
   const db = getFirestore(adminApp);
   const ref = db.collection("users").doc(uid).collection("data").doc(DOC_ID);
-  await ref.set(data);
+  await ref.set(data, { merge: true });
 }
