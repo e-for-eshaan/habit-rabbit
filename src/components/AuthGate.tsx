@@ -1,12 +1,13 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
 import { AppBottomToasts } from "@/components/AppBottomToasts";
 import { AuthShellSkeleton } from "@/components/skeletons";
 import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
 import { useAuth } from "@/contexts/AuthContext";
+import { setViewSettingsSyncUserId } from "@/lib/viewSettingsStorage";
 
 const LOGIN_PATH = "/login";
 const HOME_PATH = "/";
@@ -15,6 +16,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  useLayoutEffect(() => {
+    if (loading) return;
+    setViewSettingsSyncUserId(user?.uid ?? null);
+  }, [loading, user?.uid]);
 
   useEffect(() => {
     if (loading) return;

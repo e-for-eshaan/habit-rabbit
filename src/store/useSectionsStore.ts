@@ -12,7 +12,14 @@ import {
   updateUpdate,
 } from "@/lib/api";
 import { SECTION_UPDATES_PAGE_SIZE } from "@/lib/sectionUpdates";
-import { parseViewSettingsFromRecord, setStoredViewSettings } from "@/lib/viewSettingsStorage";
+import {
+  flushViewSettingsToApi,
+  parseViewSettingsFromRecord,
+  readLocalViewSettingsBundle,
+  resolveViewSettingsPersistUid,
+  saveViewSettingsLocalImmediate,
+  syncViewSettingsWithRemote,
+} from "@/lib/viewSettingsStorage";
 import { useAppDataStore } from "@/store/useAppDataStore";
 import type { Section, Update } from "@/types";
 
@@ -113,14 +120,23 @@ function pickViewSettings(state: SectionsState): StoredViewSettings {
   };
 }
 
-const PERSIST_DEBOUNCE_MS = 500;
+const PERSIST_DEBOUNCE_MS = 1000;
 let persistDebounce: ReturnType<typeof setTimeout> | null = null;
 
 function queuePersistViewSettings(get: () => SectionsState) {
+  const uid = resolveViewSettingsPersistUid();
+  if (uid) {
+    saveViewSettingsLocalImmediate(pickViewSettings(get()));
+  }
   if (persistDebounce) clearTimeout(persistDebounce);
   persistDebounce = setTimeout(() => {
     persistDebounce = null;
-    void setStoredViewSettings(pickViewSettings(get()));
+    const u = resolveViewSettingsPersistUid();
+    if (!u) return;
+    const settings = pickViewSettings(get());
+    const bundle = readLocalViewSettingsBundle(u);
+    const updatedAt = bundle?.updatedAt ?? Date.now();
+    void flushViewSettingsToApi(settings, updatedAt);
   }, PERSIST_DEBOUNCE_MS);
 }
 
@@ -179,7 +195,13 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
     try {
       const { sections, viewSettings } = await getBootstrap();
       set({ sections, loading: false });
-      get().hydrateViewSettings(parseViewSettingsFromRecord(viewSettings));
+      const uid = resolveViewSettingsPersistUid();
+      if (uid) {
+        const synced = await syncViewSettingsWithRemote(viewSettings, uid);
+        if (synced) get().hydrateViewSettings(synced);
+      } else {
+        get().hydrateViewSettings(parseViewSettingsFromRecord(viewSettings));
+      }
       useAppDataStore.getState().markSynced();
     } catch (e) {
       set({

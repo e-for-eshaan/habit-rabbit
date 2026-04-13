@@ -1,4 +1,7 @@
-import { getViewSettings, updateViewSettings } from "@/lib/api";
+import { isNumber, isObject } from "lodash";
+
+import { updateViewSettings } from "@/lib/api";
+import { auth } from "@/lib/firebase/client";
 import type {
   CalendarRange,
   FitnessCardioDisplay,
@@ -26,6 +29,48 @@ const SORT_BY_VALUES: SortBy[] = [
 const SORT_DIR_VALUES: SortDir[] = ["asc", "desc"];
 const FITNESS_CARDIO_DISPLAY: FitnessCardioDisplay[] = ["combined", "split"];
 
+const STORAGE_PREFIX = "habit-rabbit:viewSettings:";
+
+export const VIEW_SETTINGS_DEFAULTS: StoredViewSettings = {
+  layoutMode: "horizontal",
+  viewMode: "list",
+  calendarRange: "last7",
+  freqRange: "1m",
+  sortBy: "recently-updated",
+  sortDir: "desc",
+  collapsedBySectionId: {},
+  fitnessCardioDisplay: "combined",
+};
+
+let activeUid: string | null = null;
+
+export function setViewSettingsSyncUserId(uid: string | null) {
+  activeUid = uid;
+}
+
+export function getViewSettingsSyncUserId(): string | null {
+  return activeUid;
+}
+
+export function resolveViewSettingsPersistUid(): string | null {
+  if (typeof window === "undefined") return null;
+  if (activeUid) return activeUid;
+  const uid = auth?.currentUser?.uid ?? null;
+  if (uid) {
+    setViewSettingsSyncUserId(uid);
+  }
+  return uid;
+}
+
+export type LocalViewSettingsBundle = {
+  settings: StoredViewSettings;
+  updatedAt: number;
+};
+
+function storageKey(uid: string) {
+  return `${STORAGE_PREFIX}${uid}`;
+}
+
 function isLayoutMode(v: unknown): v is LayoutMode {
   return typeof v === "string" && LAYOUT_MODES.includes(v as LayoutMode);
 }
@@ -48,7 +93,7 @@ function isFitnessCardioDisplay(v: unknown): v is FitnessCardioDisplay {
   return typeof v === "string" && FITNESS_CARDIO_DISPLAY.includes(v as FitnessCardioDisplay);
 }
 function isCollapsedMap(v: unknown): v is Record<string, boolean> {
-  if (v === null || typeof v !== "object") return false;
+  if (!isObject(v) || v === null) return false;
   const o = v as Record<string, unknown>;
   return Object.entries(o).every(([k, val]) => typeof k === "string" && typeof val === "boolean");
 }
@@ -70,20 +115,94 @@ export function parseViewSettingsFromRecord(
   return out;
 }
 
-export async function getStoredViewSettings(): Promise<Partial<StoredViewSettings> | null> {
+export function getViewSettingsUpdatedAt(data: Record<string, unknown>): number {
+  const v = data.updatedAt;
+  if (isNumber(v) && Number.isFinite(v)) return v;
+  return 0;
+}
+
+export function mergePartialWithDefaults(partial: Partial<StoredViewSettings>): StoredViewSettings {
+  return { ...VIEW_SETTINGS_DEFAULTS, ...partial };
+}
+
+export function readLocalViewSettingsBundle(uid: string): LocalViewSettingsBundle | null {
+  if (typeof window === "undefined") return null;
   try {
-    const data = await getViewSettings();
-    const out = parseViewSettingsFromRecord(data);
-    return Object.keys(out).length > 0 ? out : null;
+    const raw = window.localStorage.getItem(storageKey(uid));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isObject(parsed) || parsed === null) return null;
+    const o = parsed as Record<string, unknown>;
+    const updatedAt = o.updatedAt;
+    if (!isNumber(updatedAt) || !Number.isFinite(updatedAt)) return null;
+    const settingsVal = o.settings;
+    if (!isObject(settingsVal) || settingsVal === null) return null;
+    const partial = parseViewSettingsFromRecord(settingsVal as Record<string, unknown>);
+    const settings = mergePartialWithDefaults(partial);
+    return { settings, updatedAt };
   } catch {
     return null;
   }
 }
 
-export async function setStoredViewSettings(settings: StoredViewSettings): Promise<void> {
+export function writeLocalViewSettingsBundle(uid: string, bundle: LocalViewSettingsBundle): void {
+  if (typeof window === "undefined") return;
   try {
-    await updateViewSettings(settings);
+    window.localStorage.setItem(storageKey(uid), JSON.stringify(bundle));
+  } catch {
+    // quota / private mode
+  }
+}
+
+export function saveViewSettingsLocalImmediate(settings: StoredViewSettings): number {
+  const uid = resolveViewSettingsPersistUid();
+  if (!uid) return Date.now();
+  const updatedAt = Date.now();
+  writeLocalViewSettingsBundle(uid, { settings, updatedAt });
+  return updatedAt;
+}
+
+export async function flushViewSettingsToApi(
+  settings: StoredViewSettings,
+  updatedAt: number
+): Promise<void> {
+  try {
+    await updateViewSettings({ ...settings, updatedAt });
   } catch {
     // ignore network/API errors
   }
+}
+
+export async function syncViewSettingsWithRemote(
+  remote: Record<string, unknown>,
+  uid: string
+): Promise<Partial<StoredViewSettings> | null> {
+  const remoteUpdatedAt = getViewSettingsUpdatedAt(remote);
+  const local = readLocalViewSettingsBundle(uid);
+
+  if (local && local.updatedAt > remoteUpdatedAt) {
+    try {
+      await updateViewSettings({
+        ...local.settings,
+        updatedAt: local.updatedAt,
+      });
+    } catch {
+      // offline: caller still hydrates from local
+    }
+    return { ...local.settings };
+  }
+
+  const remotePartial = parseViewSettingsFromRecord(remote);
+  const remoteHasNoPayload = Object.keys(remotePartial).length === 0 && remoteUpdatedAt === 0;
+  if (remoteHasNoPayload && !local) {
+    return null;
+  }
+
+  const merged = mergePartialWithDefaults(remotePartial);
+  writeLocalViewSettingsBundle(uid, { settings: merged, updatedAt: remoteUpdatedAt });
+
+  if (Object.keys(remotePartial).length === 0) {
+    return null;
+  }
+  return remotePartial;
 }
