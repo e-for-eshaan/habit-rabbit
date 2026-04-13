@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
-import { SECTIONS } from "@/lib/fitnessConstants";
+import { getGroupPastelKey, SECTIONS } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
 import type { DayLog, Exercise } from "@/types/fitness";
 
@@ -184,9 +184,10 @@ export function DayTemplate({
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-inline sm:grid-cols-2 sm:gap-stack lg:grid-cols-3">
-          {byGroup.map(({ group, items }, idx) => {
-            const style = getPastelStyle(idx % 6);
-            const accent = getPastelAccentVar(idx);
+          {byGroup.map(({ group, items }) => {
+            const pastelKey = getGroupPastelKey(group);
+            const style = getPastelStyle(pastelKey);
+            const accent = getPastelAccentVar(pastelKey);
             const canRemove = !locked && onRemoveGroup && groupIsRemovable(group);
             return (
               <div

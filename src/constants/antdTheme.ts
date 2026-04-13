@@ -1,6 +1,8 @@
 import type { ThemeConfig } from "antd";
 import { theme } from "antd";
 
+import { ACTION_GREEN } from "@/constants/colors";
+
 export const appDarkTheme: ThemeConfig = {
   algorithm: theme.darkAlgorithm,
   token: {
@@ -12,7 +14,7 @@ export const appDarkTheme: ThemeConfig = {
     colorText: "#fafafa",
     colorTextSecondary: "#a1a1aa",
     colorTextTertiary: "#71717a",
-    colorPrimary: "#a3e635",
+    colorPrimary: ACTION_GREEN,
     borderRadius: 12,
     borderRadiusLG: 16,
     fontFamily: "var(--font-geist-sans), system-ui, sans-serif",

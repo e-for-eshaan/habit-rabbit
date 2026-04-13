@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { getPastelAccentVar, getPastelStyle } from "@/constants/colors";
 import type { SectionDef } from "@/lib/fitnessConstants";
-import { SECTIONS } from "@/lib/fitnessConstants";
+import { getGroupPastelKey, SECTIONS } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
 
 import { FitnessCheckbox } from "./FitnessCheckbox";
@@ -13,7 +13,6 @@ import { getGroupIcon, GROUP_ICON_SIZE } from "./groupIcons";
 type SectionRowProps = {
   section: SectionDef;
   accentVar: string;
-  sectionIdx: number;
   selected: Set<string>;
   onToggleGroup: (group: string) => void;
   onStartSection: (groups: string[]) => void;
@@ -22,7 +21,6 @@ type SectionRowProps = {
 function SectionRow({
   section,
   accentVar,
-  sectionIdx,
   selected,
   onToggleGroup,
   onStartSection,
@@ -45,8 +43,8 @@ function SectionRow({
         </button>
       </div>
       <div className="flex flex-wrap gap-inline sm:gap-stack">
-        {section.groups.map((group, groupIdx) => {
-          const style = getPastelStyle((sectionIdx * 3 + groupIdx) % 6);
+        {section.groups.map((group) => {
+          const style = getPastelStyle(getGroupPastelKey(group));
           const GroupIcon = getGroupIcon(group);
           return (
             <div
@@ -121,7 +119,6 @@ export function WelcomeScreen({ selectedGroups: initial, onStart, className }: W
             key={section.name}
             section={section}
             accentVar={getPastelAccentVar(sectionIdx)}
-            sectionIdx={sectionIdx}
             selected={selected}
             onToggleGroup={toggleGroup}
             onStartSection={handleStartSection}

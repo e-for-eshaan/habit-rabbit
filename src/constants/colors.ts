@@ -1,3 +1,6 @@
+/** Primary / CTAs — same as `colorPrimary` in antd theme */
+export const ACTION_GREEN = "#a3e635";
+
 /** Swim / run — same hex as calendar heart markers */
 export const CARDIO_SWIM_COLOR = "#3b82f6";
 export const CARDIO_RUN_COLOR = "#ef4444";

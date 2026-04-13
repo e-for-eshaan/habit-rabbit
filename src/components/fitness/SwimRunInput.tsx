@@ -2,12 +2,11 @@
 
 import { Heart } from "lucide-react";
 
+import { ACTION_GREEN } from "@/constants/colors";
 import { cn } from "@/lib/utils";
 import type { DayLog } from "@/types/fitness";
 
 import { FitnessCheckbox } from "./FitnessCheckbox";
-
-const CARDIO_LEFT_ACCENT = "#a3e635";
 
 type SwimRunInputProps = {
   dayLog: DayLog;
@@ -33,7 +32,7 @@ export function SwimRunInput({
         "flex flex-col gap-inline rounded-xl border border-border-subtle bg-surface-elevated/25 p-inline sm:gap-stack sm:p-card",
         className
       )}
-      style={{ borderLeftWidth: 3, borderLeftColor: CARDIO_LEFT_ACCENT }}
+      style={{ borderLeftWidth: 3, borderLeftColor: ACTION_GREEN }}
     >
       <h2 className="flex w-full items-center gap-inline text-title font-semibold tracking-tight text-foreground sm:text-display">
         <Heart size={22} className="shrink-0 text-red-400/90" aria-hidden />

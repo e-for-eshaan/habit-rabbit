@@ -18,7 +18,12 @@ import {
   YAxis,
 } from "recharts";
 
-import { CARDIO_RUN_COLOR, CARDIO_SWIM_COLOR, getPastelAccentVar } from "@/constants/colors";
+import {
+  ACTION_GREEN,
+  CARDIO_RUN_COLOR,
+  CARDIO_SWIM_COLOR,
+  getPastelAccentVar,
+} from "@/constants/colors";
 import { getCalendarGrid, toDateKey } from "@/lib/dateRange";
 import { EXERCISE_GROUPS } from "@/lib/fitnessConstants";
 import { computeFitnessDashboard, getActivityHeatLevel } from "@/lib/fitnessDashboard";
@@ -56,6 +61,12 @@ function getHeatmapGrid(): (Date | null)[][] {
   const start = subDays(end, HEATMAP_DAYS - 1);
   const days = eachDayOfInterval({ start, end });
   return getCalendarGrid(days);
+}
+
+function chartSeriesSentenceCase(raw: string): string {
+  if (!isString(raw) || raw.length === 0) return raw;
+  const lower = raw.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
 
 type FitnessDashboardProps = {
@@ -170,19 +181,22 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       <YAxis hide domain={[0, 7]} />
                       <RechartsTooltip
                         {...CHART_TOOLTIP}
-                        formatter={(value: number, name: string) => [`${name}: ${value}`, null]}
+                        formatter={(value: number, name: string) => [
+                          `${chartSeriesSentenceCase(name)}: ${value}`,
+                          null,
+                        ]}
                         labelFormatter={(label) => label}
                       />
                       <Bar
                         dataKey="workoutDays"
-                        fill={PASTEL_VARS[0]}
+                        fill={ACTION_GREEN}
                         radius={[2, 2, 0, 0]}
                         name="workout"
                       />
                       {cardioDisplay === "combined" ? (
                         <Bar
                           dataKey="cardioDays"
-                          fill={PASTEL_VARS[2]}
+                          fill={PASTEL_VARS[4]}
                           radius={[2, 2, 0, 0]}
                           name="cardio"
                         />
@@ -205,7 +219,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       ) : null}
                       <Legend
                         formatter={(value) =>
-                          isString(value) ? value.slice(0, 1).toUpperCase() + value.slice(1) : value
+                          isString(value) ? chartSeriesSentenceCase(value) : value
                         }
                         wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
                       />
@@ -425,9 +439,6 @@ function KPICard({
 const HEATMAP_GAP = 1;
 const HEATMAP_COLS = 7;
 
-const HEATMAP_SWIM_COLOR = "#0369a1";
-const HEATMAP_RUN_COLOR = "#f87171";
-
 function heatmapCellBackground(level: number): string {
   return `var(--heat-${level})`;
 }
@@ -531,13 +542,13 @@ function ActivityHeatmap({
                     <span
                       className="min-h-0 min-w-0"
                       style={{
-                        backgroundColor: hasSwim ? HEATMAP_SWIM_COLOR : heatBg,
+                        backgroundColor: hasSwim ? CARDIO_SWIM_COLOR : heatBg,
                       }}
                     />
                     <span
                       className="min-h-0 min-w-0"
                       style={{
-                        backgroundColor: hasRun ? HEATMAP_RUN_COLOR : heatBg,
+                        backgroundColor: hasRun ? CARDIO_RUN_COLOR : heatBg,
                       }}
                     />
                     <span className="min-h-0 min-w-0" style={{ backgroundColor: heatBg }} />

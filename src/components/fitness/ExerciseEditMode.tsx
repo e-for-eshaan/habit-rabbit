@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { getGroupIcon, GROUP_ICON_SIZE } from "@/components/fitness/groupIcons";
 import { getPastelAccentVar } from "@/constants/colors";
-import { EXERCISE_GROUPS, labelToId } from "@/lib/fitnessConstants";
+import { EXERCISE_GROUPS, getGroupPastelKey, labelToId } from "@/lib/fitnessConstants";
 import { cn } from "@/lib/utils";
 import type { Exercise, FitnessState } from "@/types/fitness";
 
@@ -103,9 +103,9 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
       </div>
 
       <div className="grid grid-cols-1 gap-tight sm:grid-cols-2 sm:gap-inline lg:grid-cols-3">
-        {EXERCISE_GROUPS.map((group, idx) => {
+        {EXERCISE_GROUPS.map((group) => {
           const items = exercises.filter((e) => e.group === group);
-          const accent = getPastelAccentVar(idx);
+          const accent = getPastelAccentVar(getGroupPastelKey(group));
           const isAdding = addingToGroup === group;
           return (
             <div
