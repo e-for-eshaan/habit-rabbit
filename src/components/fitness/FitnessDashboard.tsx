@@ -12,6 +12,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
   XAxis,
@@ -44,6 +45,13 @@ const PASTEL_VARS = [
 ] as const;
 
 const HEATMAP_DAYS = 84;
+
+const WORKOUT_DAYS_PER_WEEK_GOAL = 4;
+
+const CARDIO_DAYS_PER_WEEK_GOAL = 3;
+
+const WORKOUT_CARDIO_GOAL_LINE_GREEN = "rgba(163, 230, 53, 0.45)";
+const WORKOUT_CARDIO_GOAL_LINE_PURPLE = "rgba(139, 92, 246, 0.45)";
 
 const CHART_TOOLTIP = {
   contentStyle: {
@@ -92,6 +100,24 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
     const maxLeast = Math.max(0, ...leastHit.map((h) => h.days));
     return Math.max(1, maxGroup, maxLeast);
   }, [groupFreq, leastHit]);
+
+  const workoutCardioYAxisMax = useMemo(() => {
+    let peak = 0;
+    for (const w of weeklyActivityDays) {
+      peak = Math.max(peak, w.workoutDays, w.cardioDays, w.runDays, w.swimDays);
+    }
+    const fromData = peak + 1;
+    const fromGoals = Math.max(WORKOUT_DAYS_PER_WEEK_GOAL, CARDIO_DAYS_PER_WEEK_GOAL) + 1;
+    return Math.min(7, Math.max(fromData, fromGoals));
+  }, [weeklyActivityDays]);
+
+  const workoutDaysPerWeekYAxisMax = useMemo(() => {
+    const peak =
+      workoutDaysPerWeek.length === 0 ? 0 : Math.max(0, ...workoutDaysPerWeek.map((w) => w.days));
+    const fromData = peak + 1;
+    const fromGoals = WORKOUT_DAYS_PER_WEEK_GOAL + 1;
+    return Math.min(7, Math.max(fromData, fromGoals));
+  }, [workoutDaysPerWeek]);
 
   useEffect(() => {
     setData(dashboard);
@@ -155,7 +181,11 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                   { label: "Combined", value: "combined" },
                   { label: "Split", value: "split" },
                 ]}
-                className="[&_.ant-segmented-item-label]:text-caption sm:[&_.ant-segmented-item-label]:text-body-sm"
+                className={cn(
+                  "shrink-0 [&]:rounded-md [&]:!p-px",
+                  "[&_.ant-segmented-item]:!h-7 [&_.ant-segmented-item]:!min-h-0 [&_.ant-segmented-item]:!px-2 [&_.ant-segmented-item]:!py-0",
+                  "[&_.ant-segmented-item-label]:!text-[11px] [&_.ant-segmented-item-label]:!leading-7 sm:[&_.ant-segmented-item-label]:!text-xs"
+                )}
               />
             }
           >
@@ -163,7 +193,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
               <p className="text-body-sm text-muted-fg sm:text-body">No weekly data yet.</p>
             ) : (
               <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col">
-                <div className="h-[120px] w-full min-h-0 sm:h-[140px] md:h-[160px] lg:min-h-[220px] lg:basis-0 lg:flex-1">
+                <div className="h-[148px] w-full min-h-0 sm:h-[168px] md:h-[192px] lg:min-h-[260px] lg:basis-0 lg:flex-1">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={weeklyActivityDays}
@@ -178,7 +208,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                         tickLine={false}
                         axisLine={false}
                       />
-                      <YAxis hide domain={[0, 7]} />
+                      <YAxis hide domain={[0, workoutCardioYAxisMax]} />
                       <RechartsTooltip
                         {...CHART_TOOLTIP}
                         formatter={(value: number, name: string) => [
@@ -217,6 +247,32 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                           name="swim"
                         />
                       ) : null}
+                      <ReferenceLine
+                        y={WORKOUT_DAYS_PER_WEEK_GOAL}
+                        stroke={WORKOUT_CARDIO_GOAL_LINE_GREEN}
+                        strokeDasharray="6 4"
+                        strokeWidth={1}
+                        isFront
+                        label={{
+                          value: `${WORKOUT_DAYS_PER_WEEK_GOAL}× workout`,
+                          position: "left",
+                          fill: "rgba(163, 230, 53, 0.85)",
+                          fontSize: 10,
+                        }}
+                      />
+                      <ReferenceLine
+                        y={CARDIO_DAYS_PER_WEEK_GOAL}
+                        stroke={WORKOUT_CARDIO_GOAL_LINE_PURPLE}
+                        strokeDasharray="6 4"
+                        strokeWidth={1}
+                        isFront
+                        label={{
+                          value: `${CARDIO_DAYS_PER_WEEK_GOAL}× cardio`,
+                          position: "right",
+                          fill: "rgba(139, 92, 246, 0.9)",
+                          fontSize: 10,
+                        }}
+                      />
                       <Legend
                         formatter={(value) =>
                           isString(value) ? chartSeriesSentenceCase(value) : value
@@ -231,86 +287,114 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
           </ChartCard>
         </div>
 
-        <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
-          <ChartCard title="Swim vs run (last 12 weeks)" pastelKey={3}>
+        <div className="flex min-h-0 h-full flex-col sm:col-span-1 md:col-span-2 lg:col-span-3">
+          <ChartCard
+            title="Swim vs run"
+            pastelKey={3}
+            className="flex h-full min-h-0 flex-1 flex-col"
+          >
             {weeklyVolume.length === 0 ? (
               <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
-              <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weeklyVolume} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis hide domain={[0, "auto"]} />
-                    <RechartsTooltip
-                      {...CHART_TOOLTIP}
-                      formatter={(value: number, name: string) => [`${name}: ${value}`, null]}
-                      labelFormatter={(label) => label}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="swimming"
-                      stroke={CARDIO_SWIM_COLOR}
-                      strokeWidth={2}
-                      dot={{ r: 3, fill: CARDIO_SWIM_COLOR }}
-                      name="Swim"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="running"
-                      stroke={CARDIO_RUN_COLOR}
-                      strokeWidth={2}
-                      dot={{ r: 3, fill: CARDIO_RUN_COLOR }}
-                      name="Run"
-                    />
-                    <Legend
-                      wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col">
+                <div className="h-[148px] w-full min-h-0 sm:h-[168px] md:h-[192px] lg:min-h-[260px] lg:basis-0 lg:flex-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={weeklyVolume}
+                      margin={{ top: 4, right: 4, bottom: 4, left: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                      <XAxis
+                        dataKey="label"
+                        tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis hide domain={[0, "auto"]} />
+                      <RechartsTooltip
+                        {...CHART_TOOLTIP}
+                        formatter={(value: number, name: string) => [`${name}: ${value}`, null]}
+                        labelFormatter={(label) => label}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="swimming"
+                        stroke={CARDIO_SWIM_COLOR}
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: CARDIO_SWIM_COLOR }}
+                        name="Swim"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="running"
+                        stroke={CARDIO_RUN_COLOR}
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: CARDIO_RUN_COLOR }}
+                        name="Run"
+                      />
+                      <Legend
+                        wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             )}
           </ChartCard>
         </div>
 
-        <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
-          <ChartCard title="Workout days per week" pastelKey={4}>
+        <div className="flex min-h-0 h-full flex-col sm:col-span-1 md:col-span-2 lg:col-span-3">
+          <ChartCard
+            title="Workout days per week"
+            pastelKey={4}
+            className="flex h-full min-h-0 flex-1 flex-col"
+          >
             {workoutDaysPerWeek.length === 0 ? (
               <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
-              <div className="h-[100px] w-full min-w-0 sm:h-[120px] md:h-[140px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={workoutDaysPerWeek}
-                    margin={{ top: 4, right: 4, bottom: 4, left: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis hide domain={[0, 7]} />
-                    <RechartsTooltip
-                      {...CHART_TOOLTIP}
-                      formatter={(value: number) => [`${value} days`, null]}
-                      labelFormatter={(label) => label}
-                    />
-                    <Bar
-                      dataKey="days"
-                      fill={PASTEL_VARS[4]}
-                      radius={[2, 2, 0, 0]}
-                      maxBarSize={24}
-                      name="Days active"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col">
+                <div className="h-[148px] w-full min-h-0 sm:h-[168px] md:h-[192px] lg:min-h-[260px] lg:basis-0 lg:flex-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={workoutDaysPerWeek}
+                      margin={{ top: 4, right: 4, bottom: 4, left: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                      <XAxis
+                        dataKey="label"
+                        tick={{ fontSize: "var(--chart-tick)", fill: "var(--chart-axis)" }}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis hide domain={[0, workoutDaysPerWeekYAxisMax]} />
+                      <RechartsTooltip
+                        {...CHART_TOOLTIP}
+                        formatter={(value: number) => [`${value} days`, null]}
+                        labelFormatter={(label) => label}
+                      />
+                      <Bar
+                        dataKey="days"
+                        fill={PASTEL_VARS[4]}
+                        radius={[2, 2, 0, 0]}
+                        maxBarSize={24}
+                        name="Days active"
+                      />
+                      <ReferenceLine
+                        y={WORKOUT_DAYS_PER_WEEK_GOAL}
+                        stroke="var(--muted-fg)"
+                        strokeDasharray="6 4"
+                        strokeWidth={1}
+                        isFront
+                        label={{
+                          value: `${WORKOUT_DAYS_PER_WEEK_GOAL}×/wk goal`,
+                          position: "right",
+                          fill: "var(--muted-fg)",
+                          fontSize: 11,
+                        }}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             )}
           </ChartCard>
@@ -321,7 +405,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
             {groupFreq.every((g) => g.count === 0) ? (
               <p className="text-body-sm text-muted-fg sm:text-body">No data yet.</p>
             ) : (
-              <div className="h-[152px] w-full min-w-0 sm:h-[144px] md:h-[168px]">
+              <div className="h-[176px] w-full min-w-0 sm:h-[168px] md:h-[192px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={groupFreq}
@@ -363,7 +447,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                 Complete exercises on a day to see stats.
               </p>
             ) : (
-              <div className="h-[152px] w-full min-w-0 sm:h-[144px] md:h-[168px]">
+              <div className="h-[176px] w-full min-w-0 sm:h-[168px] md:h-[192px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={leastHit}
@@ -692,7 +776,7 @@ function ChartCard({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 p-card",
+        "min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 px-card pb-5 pt-card sm:pb-6 sm:pt-5",
         className
       )}
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
@@ -702,7 +786,7 @@ function ChartCard({
         <h3 className="text-body-sm font-medium text-muted sm:text-body">{title}</h3>
         {trailing}
       </div>
-      {children}
+      <div className="min-h-0 w-full min-w-0 flex-1">{children}</div>
     </div>
   );
 }
