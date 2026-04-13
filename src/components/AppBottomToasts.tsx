@@ -13,7 +13,7 @@ export function AppBottomToasts() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-fab left-1/2 z-50 flex max-w-[min(100vw-2rem,420px)] -translate-x-1/2 flex-col-reverse gap-inline px-page">
+    <div className="fixed bottom-fab left-1/2 z-50 flex w-[min(100vw-12px,420px)] -translate-x-1/2 flex-col-reverse gap-inline px-2 sm:w-[min(100vw-2rem,420px)] sm:px-page">
       <StaleDataToast />
       {pathname === "/" ? <DeleteToast /> : null}
     </div>
@@ -40,11 +40,11 @@ function StaleDataToast() {
       className="flex w-full flex-col gap-inline rounded-2xl border border-border-subtle bg-surface-elevated px-4 py-3 shadow-xl shadow-black/40 sm:flex-row sm:items-center"
       role="status"
     >
-      <div className="flex min-w-0 flex-1 items-center gap-inline">
+      <div className="flex min-w-0 flex-1 flex-col items-center gap-inline sm:flex-row sm:items-center">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/30">
           <AlertTriangle className="size-5" aria-hidden />
         </div>
-        <span className="min-w-0 flex-1 text-body-sm text-muted">
+        <span className="min-w-0 w-full flex-1 text-center text-body-sm text-muted sm:text-left">
           Your data may be outdated (not refreshed in {staleHours}+ hours). Pull fresh data?
         </span>
       </div>
