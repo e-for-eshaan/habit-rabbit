@@ -170,7 +170,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                       <YAxis hide domain={[0, 7]} />
                       <RechartsTooltip
                         {...CHART_TOOLTIP}
-                        formatter={(value: number, name: string) => [`${name}: ${value}`, ""]}
+                        formatter={(value: number, name: string) => [`${name}: ${value}`, null]}
                         labelFormatter={(label) => label}
                       />
                       <Bar
@@ -235,7 +235,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis hide domain={[0, "auto"]} />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number, name: string) => [`${name}: ${value}`, ""]}
+                      formatter={(value: number, name: string) => [`${name}: ${value}`, null]}
                       labelFormatter={(label) => label}
                     />
                     <Line
@@ -285,7 +285,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis hide domain={[0, 7]} />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [`${value} days`, ""]}
+                      formatter={(value: number) => [`${value} days`, null]}
                       labelFormatter={(label) => label}
                     />
                     <Bar
@@ -326,7 +326,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [`${value} completions`, ""]}
+                      formatter={(value: number) => [`${value} completions`, null]}
                       labelFormatter={(label) => label}
                     />
                     <Bar
@@ -368,7 +368,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [`${value} days`, ""]}
+                      formatter={(value: number) => [`${value} days`, null]}
                       labelFormatter={(label) => label}
                     />
                     <Bar
