@@ -1,6 +1,7 @@
+import { millisecondsInHour } from "date-fns/constants";
 import { create } from "zustand";
 
-export const STALE_DATA_AFTER_MS = 0;
+export const STALE_DATA_AFTER_MS = 1.5 * millisecondsInHour;
 
 type AppDataSyncState = {
   lastSyncedAt: number | null;
