@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { RECHARTS_BAR_TOOLTIP_CURSOR } from "@/constants/colors";
 import type { GroupFreqItem } from "@/types/fitnessDashboard";
 
 import { ChartCard } from "./ChartCard";
@@ -47,10 +48,17 @@ export function MuscleGroupCompletionsChart({
               />
               <RechartsTooltip
                 {...CHART_TOOLTIP}
+                cursor={RECHARTS_BAR_TOOLTIP_CURSOR}
                 formatter={(value: number) => [`${value} completions`, null]}
                 labelFormatter={(label) => label}
               />
-              <Bar dataKey="count" fill={PASTEL_VARS[1]} radius={[0, 2, 2, 0]} maxBarSize={20} />
+              <Bar
+                dataKey="count"
+                fill={PASTEL_VARS[1]}
+                radius={[0, 2, 2, 0]}
+                maxBarSize={20}
+                activeBar={false}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

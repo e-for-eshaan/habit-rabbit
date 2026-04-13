@@ -30,3 +30,9 @@ export function getPastelStyle(colorKey: number) {
 export function getPastelAccentVar(colorKey: number) {
   return PASTEL_ACCENT_VARS[colorKey % PASTEL_ACCENT_VARS.length];
 }
+
+export const RECHARTS_BAR_TOOLTIP_CURSOR = {
+  fill: "var(--foreground)",
+  fillOpacity: 0.06,
+  stroke: "none",
+} as const;

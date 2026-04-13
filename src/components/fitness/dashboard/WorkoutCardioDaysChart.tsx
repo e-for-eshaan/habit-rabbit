@@ -14,7 +14,12 @@ import {
   YAxis,
 } from "recharts";
 
-import { ACTION_GREEN, CARDIO_RUN_COLOR, CARDIO_SWIM_COLOR } from "@/constants/colors";
+import {
+  ACTION_GREEN,
+  CARDIO_RUN_COLOR,
+  CARDIO_SWIM_COLOR,
+  RECHARTS_BAR_TOOLTIP_CURSOR,
+} from "@/constants/colors";
 import { cn } from "@/lib/utils";
 import type { FitnessCardioDisplay } from "@/store/useSectionsStore";
 import { useSectionsStore } from "@/store/useSectionsStore";
@@ -89,6 +94,7 @@ export function WorkoutCardioDaysChart({
                 <YAxis hide domain={[0, yAxisMax]} />
                 <RechartsTooltip
                   {...CHART_TOOLTIP}
+                  cursor={RECHARTS_BAR_TOOLTIP_CURSOR}
                   formatter={(value: number, name: string) => [
                     `${chartSeriesSentenceCase(name)}: ${value}`,
                     null,
@@ -100,6 +106,7 @@ export function WorkoutCardioDaysChart({
                   fill={ACTION_GREEN}
                   radius={[2, 2, 0, 0]}
                   name="workout"
+                  activeBar={false}
                 />
                 {cardioDisplay === "combined" ? (
                   <Bar
@@ -107,10 +114,17 @@ export function WorkoutCardioDaysChart({
                     fill={PASTEL_VARS[4]}
                     radius={[2, 2, 0, 0]}
                     name="cardio"
+                    activeBar={false}
                   />
                 ) : null}
                 {cardioDisplay === "split" ? (
-                  <Bar dataKey="runDays" fill={CARDIO_RUN_COLOR} radius={[2, 2, 0, 0]} name="run" />
+                  <Bar
+                    dataKey="runDays"
+                    fill={CARDIO_RUN_COLOR}
+                    radius={[2, 2, 0, 0]}
+                    name="run"
+                    activeBar={false}
+                  />
                 ) : null}
                 {cardioDisplay === "split" ? (
                   <Bar
@@ -118,6 +132,7 @@ export function WorkoutCardioDaysChart({
                     fill={CARDIO_SWIM_COLOR}
                     radius={[2, 2, 0, 0]}
                     name="swim"
+                    activeBar={false}
                   />
                 ) : null}
                 <ReferenceLine

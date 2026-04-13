@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { RECHARTS_BAR_TOOLTIP_CURSOR } from "@/constants/colors";
 import { cn } from "@/lib/utils";
 import type { WorkoutDaysPerWeekItem } from "@/types/fitnessDashboard";
 
@@ -51,6 +52,7 @@ export function WorkoutDaysPerWeekChart({
                 <YAxis hide domain={[0, yAxisMax]} />
                 <RechartsTooltip
                   {...CHART_TOOLTIP}
+                  cursor={RECHARTS_BAR_TOOLTIP_CURSOR}
                   formatter={(value: number) => [`${value} days`, null]}
                   labelFormatter={(label) => label}
                 />
@@ -60,6 +62,7 @@ export function WorkoutDaysPerWeekChart({
                   radius={[2, 2, 0, 0]}
                   maxBarSize={24}
                   name="Days active"
+                  activeBar={false}
                 />
                 <ReferenceLine
                   y={WORKOUT_DAYS_PER_WEEK_GOAL}

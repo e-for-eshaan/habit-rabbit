@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { RECHARTS_BAR_TOOLTIP_CURSOR } from "@/constants/colors";
 import type { LeastHitItem } from "@/types/fitnessDashboard";
 
 import { ChartCard } from "./ChartCard";
@@ -46,10 +47,17 @@ export function LeastHitExercisesChart({ leastHit, xAxisMax }: LeastHitExercises
               />
               <RechartsTooltip
                 {...CHART_TOOLTIP}
+                cursor={RECHARTS_BAR_TOOLTIP_CURSOR}
                 formatter={(value: number) => [`${value} days`, null]}
                 labelFormatter={(label) => label}
               />
-              <Bar dataKey="days" fill={PASTEL_VARS[0]} radius={[0, 2, 2, 0]} maxBarSize={20} />
+              <Bar
+                dataKey="days"
+                fill={PASTEL_VARS[0]}
+                radius={[0, 2, 2, 0]}
+                maxBarSize={20}
+                activeBar={false}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

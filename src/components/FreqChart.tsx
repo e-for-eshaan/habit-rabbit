@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { RECHARTS_BAR_TOOLTIP_CURSOR } from "@/constants/colors";
 import { getFreqCounts } from "@/lib/updatesPerDay";
 import { cn } from "@/lib/utils";
 import type { FreqRange } from "@/store/useSectionsStore";
@@ -46,6 +47,7 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
           />
           <YAxis hide domain={[0, "auto"]} />
           <RechartsTooltip
+            cursor={RECHARTS_BAR_TOOLTIP_CURSOR}
             contentStyle={{
               fontSize: "var(--chart-label)",
               borderRadius: 8,
@@ -60,7 +62,13 @@ export function FreqChart({ section, freqRange, className }: FreqChartProps) {
             ]}
             labelFormatter={(label) => label}
           />
-          <Bar dataKey="count" fill={fillColor} radius={[2, 2, 0, 0]} maxBarSize={24} />
+          <Bar
+            dataKey="count"
+            fill={fillColor}
+            radius={[2, 2, 0, 0]}
+            maxBarSize={24}
+            activeBar={false}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
