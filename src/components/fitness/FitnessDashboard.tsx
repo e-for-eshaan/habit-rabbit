@@ -19,7 +19,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { getPastelAccentVar } from "@/constants/colors";
+import { CARDIO_RUN_COLOR, CARDIO_SWIM_COLOR, getPastelAccentVar } from "@/constants/colors";
 import { getCalendarGrid, toDateKey } from "@/lib/dateRange";
 import { EXERCISE_GROUPS } from "@/lib/fitnessConstants";
 import { computeFitnessDashboard, getActivityHeatLevel } from "@/lib/fitnessDashboard";
@@ -166,16 +166,16 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                         type="monotone"
                         dataKey="swimming"
                         stackId="1"
-                        stroke={PASTEL_VARS[2]}
-                        fill={PASTEL_VARS[2]}
+                        stroke={CARDIO_SWIM_COLOR}
+                        fill={CARDIO_SWIM_COLOR}
                         name="Swim"
                       />
                       <Area
                         type="monotone"
                         dataKey="running"
                         stackId="1"
-                        stroke={PASTEL_VARS[3]}
-                        fill={PASTEL_VARS[3]}
+                        stroke={CARDIO_RUN_COLOR}
+                        fill={CARDIO_RUN_COLOR}
                         name="Run"
                       />
                       <Legend
@@ -213,17 +213,17 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <Line
                       type="monotone"
                       dataKey="swimming"
-                      stroke={PASTEL_VARS[2]}
+                      stroke={CARDIO_SWIM_COLOR}
                       strokeWidth={2}
-                      dot={{ r: 3 }}
+                      dot={{ r: 3, fill: CARDIO_SWIM_COLOR }}
                       name="Swim"
                     />
                     <Line
                       type="monotone"
                       dataKey="running"
-                      stroke={PASTEL_VARS[3]}
+                      stroke={CARDIO_RUN_COLOR}
                       strokeWidth={2}
-                      dot={{ r: 3 }}
+                      dot={{ r: 3, fill: CARDIO_RUN_COLOR }}
                       name="Run"
                     />
                     <Legend

@@ -1,5 +1,6 @@
 "use client";
 
+import { CARDIO_RUN_COLOR, CARDIO_SWIM_COLOR } from "@/constants/colors";
 import type { FitnessCalendarDaySummary } from "@/types/fitness";
 
 const HEART_PATH =
@@ -27,16 +28,16 @@ export function CalendarDayMarkers({ summary, markerId }: CalendarDayMarkersProp
             <>
               <defs>
                 <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ef4444" />
-                  <stop offset="50%" stopColor="#ef4444" />
-                  <stop offset="50%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#3b82f6" />
+                  <stop offset="0%" stopColor={CARDIO_RUN_COLOR} />
+                  <stop offset="50%" stopColor={CARDIO_RUN_COLOR} />
+                  <stop offset="50%" stopColor={CARDIO_SWIM_COLOR} />
+                  <stop offset="100%" stopColor={CARDIO_SWIM_COLOR} />
                 </linearGradient>
               </defs>
               <path fill={`url(#${gradId})`} d={HEART_PATH} />
             </>
           ) : (
-            <path fill={running ? "#ef4444" : "#3b82f6"} d={HEART_PATH} />
+            <path fill={running ? CARDIO_RUN_COLOR : CARDIO_SWIM_COLOR} d={HEART_PATH} />
           )}
         </svg>
       )}

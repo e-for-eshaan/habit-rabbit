@@ -1,3 +1,7 @@
+/** Swim / run — same hex as calendar heart markers */
+export const CARDIO_SWIM_COLOR = "#3b82f6";
+export const CARDIO_RUN_COLOR = "#ef4444";
+
 export const PASTEL_ACCENT_VARS = [
   "var(--pastel-1)",
   "var(--pastel-2)",
