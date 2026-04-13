@@ -47,7 +47,7 @@ export function ExerciseEditMode({ state, onSave, onClose, className }: Exercise
       ...log,
       exerciseIds: log.exerciseIds.filter((id) => nextExercises.some((e) => e.id === id)),
     }));
-    return { exercises: nextExercises, dayLogs };
+    return { ...state, exercises: nextExercises, dayLogs };
   }
 
   const persist = (nextExercises: Exercise[]) => {

@@ -28,7 +28,6 @@ export function formatDayLogAsUpdateText(log: DayLog, state: FitnessState): stri
   const run = log.runningSessions ?? 0;
   if (swim > 0) parts.push(`Swim ${swim}`);
   if (run > 0) parts.push(`Run ${run}`);
-  if (log.nfCompleted === true) parts.push("NF");
   if (log.exerciseIds.length > 0) {
     const byGroup = groupExerciseIdsByGroup(log.exerciseIds, state.exercises);
     const groupParts = Object.entries(byGroup).map(

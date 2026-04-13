@@ -17,6 +17,7 @@ export type DayLog = {
 export type FitnessState = {
   exercises: Exercise[];
   dayLogs: DayLog[];
+  nfStreakStartedAt?: string;
 };
 
 export type FitnessCalendarDaySummary = {

@@ -3,7 +3,7 @@
 import { isEqual, isNil } from "lodash";
 import { ArrowLeft, Check, Pencil, PenLine } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DaySelector } from "@/components/fitness/DaySelector";
 import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
@@ -15,7 +15,6 @@ import { WellBeingInput } from "@/components/fitness/WellBeingInput";
 import { FitnessPageSkeleton } from "@/components/skeletons";
 import { getFitness, updateFitness } from "@/lib/api";
 import { toDateKey } from "@/lib/dateRange";
-import { computeNfStreak } from "@/lib/fitnessNfStreak";
 import { cn } from "@/lib/utils";
 import type { DayLog, FitnessState } from "@/types/fitness";
 
@@ -161,27 +160,15 @@ function FitnessPage() {
     [ensureDayLogInState, selectedDateKey, pendingGroups, persistState]
   );
 
-  const handleNfChange = useCallback(
-    (checked: boolean) => {
-      const next = ensureDayLogInState();
-      if (!next) return;
-      const log = next.dayLogs.find((l) => l.dateKey === selectedDateKey);
-      const selectedWithPending = [...new Set([...(log?.selectedGroups ?? []), ...pendingGroups])];
-      const logs = next.dayLogs.map((l) =>
-        l.dateKey === selectedDateKey
-          ? { ...l, selectedGroups: selectedWithPending, nfCompleted: checked }
-          : l
-      );
-      setPendingGroups([]);
-      persistState({ ...next, dayLogs: logs });
-    },
-    [ensureDayLogInState, selectedDateKey, pendingGroups, persistState]
-  );
+  const handleNfStart = useCallback(() => {
+    if (!state || state.nfStreakStartedAt) return;
+    persistState({ ...state, nfStreakStartedAt: new Date().toISOString() });
+  }, [state, persistState]);
 
-  const nfStreak = useMemo(
-    () => (state ? computeNfStreak(state.dayLogs, selectedDateKey) : 0),
-    [state, selectedDateKey]
-  );
+  const handleNfFail = useCallback(() => {
+    if (!state) return;
+    persistState({ ...state, nfStreakStartedAt: undefined });
+  }, [state, persistState]);
 
   const handleSelectGroups = useCallback(
     (groups: string[]) => {
@@ -347,10 +334,10 @@ function FitnessPage() {
               locked={locked}
             />
             <WellBeingInput
-              dayLog={dayLog!}
-              nfStreak={nfStreak}
-              onNfChange={handleNfChange}
-              locked={locked}
+              nfStreakStartedAt={state.nfStreakStartedAt}
+              onStartStreak={handleNfStart}
+              onFailStreak={handleNfFail}
+              canMutateNf={!locked}
             />
             <FitnessDashboard state={state} />
           </>

@@ -3,6 +3,7 @@ import { isNil } from "lodash";
 import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
 import { readFitnessStore, writeFitnessStore } from "@/lib/db/fitness";
 import { getAuthUserId } from "@/lib/firebase/admin";
+import { isValidOptionalNfStreakStartedAt } from "@/lib/fitnessStore";
 import type { DayLog, FitnessState } from "@/types/fitness";
 
 function isValidDateKey(s: unknown): boolean {
@@ -33,6 +34,7 @@ function validateDayLog(log: unknown): log is DayLog {
 function validateState(body: unknown): body is FitnessState {
   if (isNil(body) || typeof body !== "object") return false;
   const o = body as Record<string, unknown>;
+  if (!isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt)) return false;
   if (!Array.isArray(o.exercises) || !Array.isArray(o.dayLogs)) return false;
   for (const ex of o.exercises as unknown[]) {
     const e = ex as Record<string, unknown>;

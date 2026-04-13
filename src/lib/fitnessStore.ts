@@ -72,6 +72,12 @@ function isValidDateKey(s: unknown): s is string {
   return !Number.isNaN(d.getTime());
 }
 
+export function isValidOptionalNfStreakStartedAt(value: unknown): boolean {
+  if (value === undefined) return true;
+  if (typeof value !== "string") return false;
+  return !Number.isNaN(Date.parse(value));
+}
+
 function hasValidDayLog(log: unknown): log is DayLog {
   if (isNil(log) || typeof log !== "object") return false;
   const l = log as Record<string, unknown>;
@@ -97,6 +103,7 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
   if (!Array.isArray(o.exercises)) return false;
   const hasDayLogs = Array.isArray(o.dayLogs) && (o.dayLogs as unknown[]).every(hasValidDayLog);
   if (hasDayLogs) {
+    if (!isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt)) return false;
     for (const ex of o.exercises as unknown[]) {
       if (
         isNil(ex) ||
@@ -130,7 +137,7 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
     )
       return false;
   }
-  return true;
+  return isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt);
 }
 
 export function migrateWeekLogsToDayLogs(data: Record<string, unknown>): FitnessState {
