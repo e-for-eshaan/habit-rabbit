@@ -1,7 +1,7 @@
 import { eachDayOfInterval, format, startOfWeek, subDays } from "date-fns";
 
 import { getHeatLevel } from "@/lib/calendarHeatmap";
-import { toDateKey } from "@/lib/dateRange";
+import { formatChartDateLabel, toDateKey } from "@/lib/dateRange";
 import type { DayLog, Exercise, FitnessState } from "@/types/fitness";
 import type {
   ActivityDayBreakdown,
@@ -10,6 +10,7 @@ import type {
   GroupFreqItem,
   LeastHitItem,
   MissedExerciseItem,
+  WeeklyActivityDaysItem,
   WeeklyVolumeItem,
   WorkoutDaysPerWeekItem,
 } from "@/types/fitnessDashboard";
@@ -100,7 +101,7 @@ function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
     } else {
       byWeek.set(weekStart, {
         weekStart,
-        label: weekStart.slice(5, 10),
+        label: formatChartDateLabel(weekStart),
         exercises: log.exerciseIds.length,
         swimming: log.swimmingSessions ?? 0,
         running: log.runningSessions ?? 0,
@@ -109,6 +110,52 @@ function computeWeeklyVolume(state: FitnessState): WeeklyVolumeItem[] {
   }
   return Array.from(byWeek.values())
     .map((w) => ({ ...w, total: w.exercises + w.swimming + w.running }))
+    .sort((a, b) => a.weekStart.localeCompare(b.weekStart))
+    .slice(-WEEK_COUNT);
+}
+
+function computeWeeklyActivityDays(state: FitnessState): WeeklyActivityDaysItem[] {
+  const byWeek = new Map<
+    string,
+    {
+      weekStart: string;
+      label: string;
+      workout: Set<string>;
+      run: Set<string>;
+      swim: Set<string>;
+    }
+  >();
+  for (const log of state.dayLogs) {
+    const weekStart = getWeekStartFromDateKey(log.dateKey);
+    let entry = byWeek.get(weekStart);
+    if (!entry) {
+      entry = {
+        weekStart,
+        label: formatChartDateLabel(weekStart),
+        workout: new Set(),
+        run: new Set(),
+        swim: new Set(),
+      };
+      byWeek.set(weekStart, entry);
+    }
+    const dk = log.dateKey;
+    if (log.exerciseIds.length > 0) entry.workout.add(dk);
+    if ((log.runningSessions ?? 0) > 0) entry.run.add(dk);
+    if ((log.swimmingSessions ?? 0) > 0) entry.swim.add(dk);
+  }
+  return Array.from(byWeek.values())
+    .map((w) => {
+      const runDays = w.run.size;
+      const swimDays = w.swim.size;
+      return {
+        weekStart: w.weekStart,
+        label: w.label,
+        workoutDays: w.workout.size,
+        runDays,
+        swimDays,
+        cardioDays: Math.max(runDays, swimDays),
+      };
+    })
     .sort((a, b) => a.weekStart.localeCompare(b.weekStart))
     .slice(-WEEK_COUNT);
 }
@@ -151,7 +198,7 @@ function computeWorkoutDaysPerWeek(state: FitnessState): WorkoutDaysPerWeekItem[
   return Array.from(byWeek.entries())
     .map(([weekStart, set]) => ({
       weekStart,
-      label: weekStart.slice(5, 10),
+      label: formatChartDateLabel(weekStart),
       days: set.size,
     }))
     .sort((a, b) => a.weekStart.localeCompare(b.weekStart))
@@ -230,6 +277,7 @@ export function computeFitnessDashboard(state: FitnessState): FitnessDashboardDa
   return {
     kpis: computeKPIs(state),
     weeklyVolume: computeWeeklyVolume(state),
+    weeklyActivityDays: computeWeeklyActivityDays(state),
     activityByDay,
     activityBreakdownByDay,
     workoutDaysPerWeek: computeWorkoutDaysPerWeek(state),

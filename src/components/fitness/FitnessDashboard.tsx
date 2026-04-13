@@ -1,12 +1,11 @@
 "use client";
 
+import { Segmented } from "antd";
 import { eachDayOfInterval, format, subDays } from "date-fns";
 import { isNil } from "lodash";
 import { Check, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -67,6 +66,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
   const dashboard = useMemo(() => computeFitnessDashboard(state), [state]);
   const kpis = dashboard.kpis;
   const weeklyVolume = dashboard.weeklyVolume;
+  const weeklyActivityDays = dashboard.weeklyActivityDays;
   const activityByDay = dashboard.activityByDay;
   const activityBreakdownByDay = dashboard.activityBreakdownByDay;
   const workoutDaysPerWeek = dashboard.workoutDaysPerWeek;
@@ -85,6 +85,8 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
   }, [dashboard, setData]);
 
   const heatmapGrid = useMemo(() => getHeatmapGrid(), []);
+
+  const [cardioDisplay, setCardioDisplay] = useState<"combined" | "split">("combined");
 
   return (
     <div className={cn("min-w-0 overflow-x-hidden", className)}>
@@ -127,19 +129,33 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
 
         <div className="flex min-h-0 flex-col sm:col-span-1 md:col-span-3 lg:col-span-4">
           <ChartCard
-            title="Weekly volume (last 12 weeks)"
+            title="Workout & cardio days (last 12 weeks)"
             pastelKey={2}
             className="flex h-full min-h-0 flex-1 flex-col"
+            leading={
+              <Segmented
+                size="small"
+                value={cardioDisplay}
+                onChange={(v) => setCardioDisplay(v as "combined" | "split")}
+                options={[
+                  { label: "Combined", value: "combined" },
+                  { label: "Split", value: "split" },
+                ]}
+                className="[&_.ant-segmented-item-label]:text-caption sm:[&_.ant-segmented-item-label]:text-body-sm"
+              />
+            }
           >
-            {weeklyVolume.length === 0 ? (
+            {weeklyActivityDays.length === 0 ? (
               <p className="text-body-sm text-muted-fg sm:text-body">No weekly data yet.</p>
             ) : (
               <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col">
                 <div className="h-[120px] w-full min-h-0 sm:h-[140px] md:h-[160px] lg:min-h-[220px] lg:basis-0 lg:flex-1">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={weeklyVolume}
+                    <BarChart
+                      data={weeklyActivityDays}
                       margin={{ top: 4, right: 4, bottom: 4, left: 0 }}
+                      barCategoryGap="25%"
+                      barGap={0}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                       <XAxis
@@ -148,40 +164,46 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                         tickLine={false}
                         axisLine={false}
                       />
-                      <YAxis hide domain={[0, "auto"]} />
+                      <YAxis hide domain={[0, 7]} />
                       <RechartsTooltip
                         {...CHART_TOOLTIP}
-                        formatter={(value: number) => [value, ""]}
-                        labelFormatter={(label) => `Week ${label}`}
+                        formatter={(value: number, name: string) => [`${name}: ${value} days`, ""]}
+                        labelFormatter={(label) => label}
                       />
-                      <Area
-                        type="monotone"
-                        dataKey="exercises"
-                        stackId="1"
-                        stroke={PASTEL_VARS[0]}
+                      <Bar
+                        dataKey="workoutDays"
                         fill={PASTEL_VARS[0]}
-                        name="Exercises"
+                        radius={[2, 2, 0, 0]}
+                        name="Workout"
                       />
-                      <Area
-                        type="monotone"
-                        dataKey="swimming"
-                        stackId="1"
-                        stroke={CARDIO_SWIM_COLOR}
-                        fill={CARDIO_SWIM_COLOR}
-                        name="Swim"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="running"
-                        stackId="1"
-                        stroke={CARDIO_RUN_COLOR}
-                        fill={CARDIO_RUN_COLOR}
-                        name="Run"
-                      />
+                      {cardioDisplay === "combined" ? (
+                        <Bar
+                          dataKey="cardioDays"
+                          fill={PASTEL_VARS[2]}
+                          radius={[2, 2, 0, 0]}
+                          name="Cardio"
+                        />
+                      ) : null}
+                      {cardioDisplay === "split" ? (
+                        <Bar
+                          dataKey="runDays"
+                          fill={CARDIO_RUN_COLOR}
+                          radius={[2, 2, 0, 0]}
+                          name="Cardio"
+                        />
+                      ) : null}
+                      {cardioDisplay === "split" ? (
+                        <Bar
+                          dataKey="swimDays"
+                          fill={CARDIO_SWIM_COLOR}
+                          radius={[2, 2, 0, 0]}
+                          name="Swim"
+                        />
+                      ) : null}
                       <Legend
                         wrapperStyle={{ fontSize: "var(--chart-legend)", color: "var(--muted)" }}
                       />
-                    </AreaChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -207,8 +229,8 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis hide domain={[0, "auto"]} />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [value, ""]}
-                      labelFormatter={(label) => `Week ${label}`}
+                      formatter={(value: number, name: string) => [`${name}: ${value}`, ""]}
+                      labelFormatter={(label) => label}
                     />
                     <Line
                       type="monotone"
@@ -257,15 +279,15 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     <YAxis hide domain={[0, 7]} />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [value, "Days"]}
-                      labelFormatter={(label) => `Week ${label}`}
+                      formatter={(value: number) => [`${value} days`, ""]}
+                      labelFormatter={(label) => label}
                     />
                     <Bar
                       dataKey="days"
                       fill={PASTEL_VARS[4]}
                       radius={[2, 2, 0, 0]}
                       maxBarSize={24}
-                      name="Days"
+                      name="Days active"
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -298,7 +320,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [value, "Completions"]}
+                      formatter={(value: number) => [`${value} completions`, ""]}
                       labelFormatter={(label) => label}
                     />
                     <Bar
@@ -340,7 +362,7 @@ export function FitnessDashboard({ state, className }: FitnessDashboardProps) {
                     />
                     <RechartsTooltip
                       {...CHART_TOOLTIP}
-                      formatter={(value: number) => [value, "Days"]}
+                      formatter={(value: number) => [`${value} days`, ""]}
                       labelFormatter={(label) => label}
                     />
                     <Bar
@@ -639,11 +661,13 @@ function ChartCard({
   pastelKey,
   children,
   className,
+  leading,
 }: {
   title: string;
   pastelKey: number;
   children: React.ReactNode;
   className?: string;
+  leading?: ReactNode;
 }) {
   const accent = getPastelAccentVar(pastelKey);
   return (
@@ -654,9 +678,10 @@ function ChartCard({
       )}
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}
     >
-      <h3 className="mb-tight shrink-0 text-body-sm font-medium text-muted sm:mb-inline sm:text-body">
-        {title}
-      </h3>
+      <div className="mb-tight flex min-w-0 shrink-0 flex-wrap items-center gap-x-3 gap-y-2 sm:mb-inline">
+        {leading}
+        <h3 className="text-body-sm font-medium text-muted sm:text-body">{title}</h3>
+      </div>
       {children}
     </div>
   );

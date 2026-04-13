@@ -3,7 +3,7 @@ import { eachDayOfInterval, subDays } from "date-fns";
 import type { FreqRange } from "@/store/useSectionsStore";
 import type { Update } from "@/types";
 
-import { toDateKey } from "./dateRange";
+import { formatChartDateLabel, toDateKey } from "./dateRange";
 
 const FREQ_DAYS: Record<FreqRange, number> = {
   "1m": 30,
@@ -11,11 +11,6 @@ const FREQ_DAYS: Record<FreqRange, number> = {
   "6m": 180,
   "1y": 365,
 };
-
-function formatShortLabel(dateKey: string): string {
-  const d = new Date(dateKey + "T12:00:00");
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
 
 export function getFreqCounts(
   updates: Update[],
@@ -40,7 +35,7 @@ export function getFreqCounts(
     const dateKey = toDateKey(d);
     return {
       dateKey,
-      label: formatShortLabel(dateKey),
+      label: formatChartDateLabel(dateKey),
       count: byDay[dateKey] ?? 0,
     };
   });

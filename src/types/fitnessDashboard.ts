@@ -21,6 +21,15 @@ export type WorkoutDaysPerWeekItem = {
   days: number;
 };
 
+export type WeeklyActivityDaysItem = {
+  weekStart: string;
+  label: string;
+  workoutDays: number;
+  cardioDays: number;
+  runDays: number;
+  swimDays: number;
+};
+
 export type GroupFreqItem = {
   group: string;
   count: number;
@@ -49,6 +58,7 @@ export type ActivityDayBreakdown = {
 export type FitnessDashboardData = {
   kpis: DashboardKPIs;
   weeklyVolume: WeeklyVolumeItem[];
+  weeklyActivityDays: WeeklyActivityDaysItem[];
   activityByDay: Record<string, number>;
   activityBreakdownByDay: Record<string, ActivityDayBreakdown>;
   workoutDaysPerWeek: WorkoutDaysPerWeekItem[];

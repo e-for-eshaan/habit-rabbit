@@ -2,11 +2,13 @@ import {
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
+  format,
   getDay,
   startOfMonth,
   startOfWeek,
   subDays,
 } from "date-fns";
+import { enUS } from "date-fns/locale";
 
 export type CalendarRange = "week" | "month" | "last7" | "last30";
 
@@ -77,4 +79,10 @@ export function toDateKey(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+export function formatChartDateLabel(dateKey: string): string {
+  const d = new Date(`${dateKey}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return dateKey;
+  return format(d, "MMM d", { locale: enUS });
 }

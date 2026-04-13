@@ -1,7 +1,13 @@
 import { differenceInCalendarDays } from "date-fns";
 import { describe, expect, it } from "vitest";
 
-import { getCalendarGrid, getDateRange, getDaysInRange, toDateKey } from "./dateRange";
+import {
+  formatChartDateLabel,
+  getCalendarGrid,
+  getDateRange,
+  getDaysInRange,
+  toDateKey,
+} from "./dateRange";
 
 describe("getDateRange", () => {
   const ref = new Date("2025-01-15T12:00:00Z");
@@ -40,5 +46,11 @@ describe("getCalendarGrid", () => {
 describe("toDateKey", () => {
   it("formats date as YYYY-MM-DD", () => {
     expect(toDateKey(new Date("2025-01-05"))).toBe("2025-01-05");
+  });
+});
+
+describe("formatChartDateLabel", () => {
+  it("formats as abbreviated month and day", () => {
+    expect(formatChartDateLabel("2025-04-01")).toBe("Apr 1");
   });
 });
