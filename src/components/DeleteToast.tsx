@@ -88,7 +88,7 @@ export function DeleteToast() {
   if (pendingDeletes.length === 0) return null;
 
   return (
-    <div className="fixed bottom-fab left-1/2 z-50 flex max-w-[min(100vw-2rem,420px)] -translate-x-1/2 flex-col items-stretch gap-inline px-page">
+    <div className="flex w-full flex-col items-stretch gap-inline">
       {pendingDeletes.map((pending) => (
         <SingleDeleteToast
           key={`${pending.sectionId}-${pending.updateId}`}

@@ -5,7 +5,6 @@ import { useEffect, useMemo } from "react";
 
 import { AddHabitFab } from "@/components/AddHabitFab";
 import { CalendarGrid } from "@/components/CalendarGrid";
-import { DeleteToast } from "@/components/DeleteToast";
 import { FreqChart } from "@/components/FreqChart";
 import { Navbar } from "@/components/Navbar";
 import { SectionCard } from "@/components/SectionCard";
@@ -140,7 +139,6 @@ export default function Home() {
           </div>
         )}
       </main>
-      <DeleteToast />
       <AddHabitFab />
     </div>
   );

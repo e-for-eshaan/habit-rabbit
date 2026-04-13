@@ -13,6 +13,7 @@ import {
 } from "@/lib/api";
 import { SECTION_UPDATES_PAGE_SIZE } from "@/lib/sectionUpdates";
 import { parseViewSettingsFromRecord, setStoredViewSettings } from "@/lib/viewSettingsStorage";
+import { useAppDataStore } from "@/store/useAppDataStore";
 import type { Section, Update } from "@/types";
 
 export type LayoutMode = "horizontal" | "grid";
@@ -179,6 +180,7 @@ export const useSectionsStore = create<SectionsState>((set, get) => ({
       const { sections, viewSettings } = await getBootstrap();
       set({ sections, loading: false });
       get().hydrateViewSettings(parseViewSettingsFromRecord(viewSettings));
+      useAppDataStore.getState().markSynced();
     } catch (e) {
       set({
         error: e instanceof Error ? e.message : "Failed to load sections",

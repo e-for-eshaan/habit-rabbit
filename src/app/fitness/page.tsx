@@ -16,6 +16,7 @@ import { FitnessPageSkeleton } from "@/components/skeletons";
 import { getFitness, updateFitness } from "@/lib/api";
 import { toDateKey } from "@/lib/dateRange";
 import { cn } from "@/lib/utils";
+import { useAppDataStore } from "@/store/useAppDataStore";
 import type { DayLog, FitnessState } from "@/types/fitness";
 
 function getOrCreateDayLog(dayLogs: DayLog[], dateKey: string): DayLog {
@@ -52,22 +53,29 @@ function FitnessPage() {
   const hasNoSelectedGroups = !dayLog?.selectedGroups?.length;
   const showExerciseWelcome = isCurrentDay && hasNoSelectedGroups;
 
-  const fetchState = useCallback(async () => {
-    setLoading(true);
+  const loadFitness = useCallback(async () => {
     setError(null);
     try {
       const data = await getFitness();
       setState(data);
       lastPersistedFitnessRef.current = data;
+      useAppDataStore.getState().markSynced();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load fitness data");
-    } finally {
-      setLoading(false);
     }
   }, []);
 
+  const fetchState = useCallback(async () => {
+    setLoading(true);
+    try {
+      await loadFitness();
+    } finally {
+      setLoading(false);
+    }
+  }, [loadFitness]);
+
   useEffect(() => {
-    fetchState();
+    void fetchState();
   }, [fetchState]);
 
   const persistState = useCallback(async (next: FitnessState) => {

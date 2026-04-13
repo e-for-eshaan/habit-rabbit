@@ -24,7 +24,7 @@ export function ChartCard({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 px-card pb-5 pt-card sm:pb-6 sm:pt-5",
+        "min-w-0 rounded-xl border border-border-subtle bg-surface-elevated/30 px-card pb-0 pt-card sm:pt-5",
         className
       )}
       style={{ borderLeftWidth: 3, borderLeftColor: accent }}

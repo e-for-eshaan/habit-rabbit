@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { AppBottomToasts } from "@/components/AppBottomToasts";
 import { AuthShellSkeleton } from "@/components/skeletons";
 import { ViewSettingsPersistence } from "@/components/ViewSettingsPersistence";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,6 +50,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   return (
     <>
       {user ? <ViewSettingsPersistence /> : null}
+      {user ? <AppBottomToasts /> : null}
       {children}
     </>
   );
