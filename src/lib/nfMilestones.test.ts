@@ -124,6 +124,18 @@ describe("milestone progress bar", () => {
     }
   });
 
+  it("first bar mark label is 0s when segment starts at zero", () => {
+    const marks = getMilestoneBarMarks(0, DAY, 4);
+    expect(marks[0]!.totalSeconds).toBe(0);
+    expect(marks[0]!.label).toBe("0s");
+  });
+
+  it("first bar mark label is the previous milestone name when segment starts after zero", () => {
+    const marks = getMilestoneBarMarks(DAY, 3 * DAY, 4);
+    expect(marks[0]!.totalSeconds).toBe(DAY);
+    expect(marks[0]!.label).toBe("1 day");
+  });
+
   it("buildNfMilestoneBar progress reflects elapsed within segment", () => {
     const next = getNextNfMilestone(0)!;
     const atStart = buildNfMilestoneBar(0, next);

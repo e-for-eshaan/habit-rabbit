@@ -89,6 +89,24 @@ export type MilestoneBarMark = {
   totalSeconds: number;
 };
 
+function milestoneBarMarkAbsoluteLabel(
+  clampedTotalSeconds: number,
+  segmentStartSeconds: number,
+  segmentEndSeconds: number
+): string {
+  if (clampedTotalSeconds !== segmentStartSeconds) {
+    return formatNfElapsedSingleUnitForBarLabel(clampedTotalSeconds);
+  }
+  if (segmentStartSeconds === 0) {
+    return "0s";
+  }
+  const nextIdx = NF_MILESTONES.findIndex((m) => m.totalSeconds === segmentEndSeconds);
+  if (nextIdx > 0) {
+    return NF_MILESTONES[nextIdx - 1]!.label;
+  }
+  return "0s";
+}
+
 export function getMilestoneBarMarks(
   segmentStartSeconds: number,
   segmentEndSeconds: number,
@@ -104,7 +122,7 @@ export function getMilestoneBarMarks(
     raw.push({
       position01,
       totalSeconds: clamped,
-      label: formatNfElapsedSingleUnitForBarLabel(clamped),
+      label: milestoneBarMarkAbsoluteLabel(clamped, segmentStartSeconds, segmentEndSeconds),
     });
   }
   const seenSec = new Set<number>();
