@@ -1,10 +1,11 @@
 import { secondsInDay, secondsInHour, secondsInMinute } from "date-fns/constants";
 
+import { formatNfElapsedSingleUnitForBarLabel } from "@/lib/nfElapsed";
+
 const DISPLAY_DAYS_PER_MONTH = 30;
 const daySeconds = secondsInDay;
 
 const NF_MILESTONE_THRESHOLDS_SECONDS = [
-  33 * secondsInMinute,
   1 * daySeconds,
   3 * daySeconds,
   7 * daySeconds,
@@ -21,7 +22,6 @@ const NF_MILESTONE_THRESHOLDS_SECONDS = [
 ] as const;
 
 const NF_MILESTONE_LABELS = [
-  "33 min (test)",
   "1 day",
   "3 days",
   "7 days",
@@ -63,6 +63,84 @@ export function getNextNfMilestone(elapsedSeconds: number): NextNfMilestone | nu
     }
   }
   return null;
+}
+
+export function getMilestoneSegmentBoundsForNext(nextTotalSeconds: number): {
+  segmentStartSeconds: number;
+  segmentEndSeconds: number;
+} {
+  const idx = NF_MILESTONES.findIndex((m) => m.totalSeconds === nextTotalSeconds);
+  const segmentStartSeconds = idx <= 0 ? 0 : NF_MILESTONES[idx - 1]!.totalSeconds;
+  return { segmentStartSeconds, segmentEndSeconds: nextTotalSeconds };
+}
+
+export function pickMilestoneBarMarkCount(segmentDurationSeconds: number): number {
+  const span = Math.max(0, segmentDurationSeconds);
+  if (span <= 0) return 4;
+  const days = span / secondsInDay;
+  if (days <= 0.75) return 4;
+  if (days >= 120) return 8;
+  return Math.round(4 + ((days - 0.75) / (120 - 0.75)) * 4);
+}
+
+export type MilestoneBarMark = {
+  position01: number;
+  label: string;
+  totalSeconds: number;
+};
+
+export function getMilestoneBarMarks(
+  segmentStartSeconds: number,
+  segmentEndSeconds: number,
+  markCount: number
+): MilestoneBarMark[] {
+  const span = segmentEndSeconds - segmentStartSeconds;
+  if (span <= 0 || markCount < 2) return [];
+  const raw: MilestoneBarMark[] = [];
+  for (let i = 0; i < markCount; i += 1) {
+    const totalSeconds = Math.floor(segmentStartSeconds + (span * i) / (markCount - 1));
+    const clamped = Math.min(segmentEndSeconds, Math.max(segmentStartSeconds, totalSeconds));
+    const position01 = (clamped - segmentStartSeconds) / span;
+    raw.push({
+      position01,
+      totalSeconds: clamped,
+      label: formatNfElapsedSingleUnitForBarLabel(clamped),
+    });
+  }
+  const seenSec = new Set<number>();
+  const out: MilestoneBarMark[] = [];
+  for (const m of raw) {
+    if (seenSec.has(m.totalSeconds)) continue;
+    seenSec.add(m.totalSeconds);
+    out.push(m);
+  }
+  return out;
+}
+
+export type NfMilestoneBar = {
+  nextLabel: string;
+  segmentStartSeconds: number;
+  segmentEndSeconds: number;
+  progress01: number;
+  marks: MilestoneBarMark[];
+};
+
+export function buildNfMilestoneBar(elapsedSeconds: number, next: NextNfMilestone): NfMilestoneBar {
+  const { segmentStartSeconds, segmentEndSeconds } = getMilestoneSegmentBoundsForNext(
+    next.totalSeconds
+  );
+  const span = segmentEndSeconds - segmentStartSeconds;
+  const e = Math.max(0, Math.floor(elapsedSeconds));
+  const markCount = pickMilestoneBarMarkCount(span);
+  const marks = getMilestoneBarMarks(segmentStartSeconds, segmentEndSeconds, markCount);
+  const progress01 = Math.min(1, Math.max(0, span > 0 ? (e - segmentStartSeconds) / span : 0));
+  return {
+    nextLabel: next.label,
+    segmentStartSeconds,
+    segmentEndSeconds,
+    progress01,
+    marks,
+  };
 }
 
 export const NF_MILESTONE_CONGRATULATORY_MESSAGES: readonly string[] = [

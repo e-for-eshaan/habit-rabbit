@@ -1,3 +1,4 @@
+import { secondsInDay } from "date-fns/constants";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -5,6 +6,7 @@ import {
   formatNfElapsedDisplay,
   formatNfElapsedFromStart,
   formatNfElapsedFromTotalSeconds,
+  formatNfElapsedSingleUnitForBarLabel,
   nfElapsedSecondsFromStart,
 } from "@/lib/nfElapsed";
 
@@ -96,5 +98,17 @@ describe("nfElapsedSecondsFromStart", () => {
 describe("formatNfElapsedFromTotalSeconds", () => {
   it("formats total seconds with two-unit rules", () => {
     expect(formatNfElapsedFromTotalSeconds(90061)).toBe("1d 1h");
+  });
+});
+
+describe("formatNfElapsedSingleUnitForBarLabel", () => {
+  it("uses one unit per tier", () => {
+    expect(formatNfElapsedSingleUnitForBarLabel(7)).toBe("7s");
+    expect(formatNfElapsedSingleUnitForBarLabel(90)).toBe("1m");
+    expect(formatNfElapsedSingleUnitForBarLabel(3 * 3600)).toBe("3h");
+    expect(formatNfElapsedSingleUnitForBarLabel(2 * secondsInDay)).toBe("2d");
+    expect(formatNfElapsedSingleUnitForBarLabel(10 * secondsInDay)).toBe("1w");
+    expect(formatNfElapsedSingleUnitForBarLabel(45 * secondsInDay)).toBe("1mo");
+    expect(formatNfElapsedSingleUnitForBarLabel(60 * secondsInDay)).toBe("2mo");
   });
 });

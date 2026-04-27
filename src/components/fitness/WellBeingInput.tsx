@@ -4,6 +4,7 @@ import { Sparkles, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { NfMilestoneCongratulationsModal } from "@/components/fitness/NfMilestoneCongratulationsModal";
+import { NfMilestoneProgressBar } from "@/components/fitness/NfMilestoneProgressBar";
 import { useNfStreakMilestoneState } from "@/components/fitness/useNfStreakMilestoneState";
 import { formatNfElapsedFromTotalSeconds } from "@/lib/nfElapsed";
 import { cn } from "@/lib/utils";
@@ -134,24 +135,19 @@ export function WellBeingInput({
             </>
           )}
         </div>
-        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-body-xs tabular-nums text-muted-fg">
-          <span>
+        <div className="flex min-w-0 flex-col gap-2">
+          <p className="text-body-xs tabular-nums text-muted-fg">
             Personal best · <span className="text-muted">{pbLabel}</span>
-          </span>
+          </p>
           {milestoneStatus.kind === "next" && (
-            <span>
-              Milestone ·{" "}
-              <span className="text-muted">
-                {milestoneStatus.timeToGo} [{milestoneStatus.milestoneName}]
-              </span>
-            </span>
+            <NfMilestoneProgressBar milestoneBar={milestoneStatus.milestoneBar} />
           )}
           {milestoneStatus.kind === "all" && (
-            <span>
+            <p className="text-body-xs text-muted-fg">
               Milestone · <span className="text-muted">all milestones reached</span>
-            </span>
+            </p>
           )}
-        </p>
+        </div>
       </div>
     </div>
   );

@@ -94,3 +94,28 @@ export function nfElapsedSecondsFromStart(startedAtIso: string, nowMs: number): 
 export function formatNfElapsedFromTotalSeconds(totalSeconds: number): string {
   return formatElapsedTotalSeconds(totalSeconds);
 }
+
+export function formatNfElapsedSingleUnitForBarLabel(totalSeconds: number): string {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const totalDays = Math.floor(s / secondsInDay);
+  if (totalDays >= DISPLAY_DAYS_PER_MONTH) {
+    const months = Math.floor(totalDays / DISPLAY_DAYS_PER_MONTH);
+    return `${months}mo`;
+  }
+  if (totalDays >= daysInWeek) {
+    const weeks = Math.floor(totalDays / daysInWeek);
+    return `${weeks}w`;
+  }
+  if (totalDays >= 1) {
+    return `${totalDays}d`;
+  }
+  const totalHours = Math.floor(s / secondsInHour);
+  if (totalHours >= 1) {
+    return `${totalHours}h`;
+  }
+  const totalMinutes = Math.floor(s / secondsInMinute);
+  if (totalMinutes >= 1) {
+    return `${totalMinutes}m`;
+  }
+  return `${s}s`;
+}

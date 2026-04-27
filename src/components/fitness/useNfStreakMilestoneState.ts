@@ -2,15 +2,16 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 
 import { formatNfElapsedFromStart, nfElapsedSecondsFromStart } from "@/lib/nfElapsed";
 import {
-  formatNfTimeRemainingToMilestone,
+  buildNfMilestoneBar,
   getNextNfMilestone,
   listMilestonesPassedWithoutCongrat,
+  type NfMilestoneBar,
   pickRandomNfMilestoneMessage,
 } from "@/lib/nfMilestones";
 
 export type NfMilestoneStatus =
   | { kind: "idle" }
-  | { kind: "next"; timeToGo: string; milestoneName: string }
+  | { kind: "next"; milestoneBar: NfMilestoneBar }
   | { kind: "all" };
 
 export type NfMilestoneModalPayload = {
@@ -137,8 +138,7 @@ export function useNfStreakMilestoneState(
   const milestoneStatus: NfMilestoneStatus = nextM
     ? {
         kind: "next",
-        timeToGo: formatNfTimeRemainingToMilestone(nextM.remainingSeconds),
-        milestoneName: nextM.label,
+        milestoneBar: buildNfMilestoneBar(elapsed, nextM),
       }
     : { kind: "all" };
 

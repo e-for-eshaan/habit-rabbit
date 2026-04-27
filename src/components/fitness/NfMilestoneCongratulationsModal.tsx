@@ -57,7 +57,7 @@ export function NfMilestoneCongratulationsModal({
       footer={null}
       onCancel={onClose}
       closable
-      destroyOnClose
+      destroyOnHidden
       centered
       width="min(440px, calc(100vw - 24px))"
       classNames={{ content: styles.modalContent }}
@@ -118,6 +118,8 @@ function CelebrationCard({
           <Sparkles className="size-3 text-violet-200/90" aria-hidden />
           <span>Milestone</span>
         </div>
+        <br />
+        <br />
         <div className={styles.headerRow}>
           <div className={styles.iconWrap}>
             <span className={styles.iconOrbit} aria-hidden />
