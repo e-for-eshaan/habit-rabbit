@@ -1,8 +1,8 @@
 "use client";
 
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import confetti from "canvas-confetti";
-import { PartyPopper } from "lucide-react";
+import { PartyPopper, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import type { NfMilestoneModalPayload } from "@/components/fitness/useNfStreakMilestoneState";
@@ -53,27 +53,25 @@ export function NfMilestoneCongratulationsModal({
   return (
     <Modal
       open={Boolean(payload)}
-      title={
-        payload ? (
-          <div className={styles.popIn}>
-            <MilestoneHeader label={payload.label} />
-          </div>
-        ) : null
-      }
-      onOk={onClose}
+      title={null}
+      footer={null}
       onCancel={onClose}
-      okText="Thanks"
-      cancelButtonProps={{ style: { display: "none" } }}
+      closable
       destroyOnClose
       centered
-      classNames={{ body: "!pt-0", content: styles.modalContent }}
+      width="min(440px, calc(100vw - 24px))"
+      classNames={{ content: styles.modalContent }}
+      styles={{
+        mask: {
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          background: "rgba(0, 0, 0, 0.72)",
+        },
+      }}
     >
       {payload && (
-        <div className={styles.wrap}>
-          <SparkleLayer />
-          <div className={styles.content}>
-            <MilestoneBody message={payload.message} />
-          </div>
+        <div className={styles.popIn}>
+          <CelebrationCard label={payload.label} message={payload.message} onContinue={onClose} />
         </div>
       )}
     </Modal>
@@ -91,6 +89,7 @@ function SparkleLayer() {
             left: s.left,
             top: s.top,
             animationDelay: s.delay,
+            color: s.color,
             background: s.color,
           }}
         />
@@ -99,31 +98,48 @@ function SparkleLayer() {
   );
 }
 
-function MilestoneHeader({ label }: { label: string }) {
+function CelebrationCard({
+  label,
+  message,
+  onContinue,
+}: {
+  label: string;
+  message: string;
+  onContinue: () => void;
+}) {
   return (
-    <div className="flex items-start gap-3 pr-2">
-      <div
-        className={`mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/25 ring-1 ring-violet-400/40 ${styles.iconRing} ${styles.iconGlow}`}
-      >
-        <PartyPopper className="size-5 text-violet-100" aria-hidden />
-      </div>
-      <div className="min-w-0">
-        <p className={`m-0 text-body-sm text-muted ${styles.subLine}`}>Milestone</p>
-        <p
-          className={`m-0 text-display font-semibold tracking-tight text-foreground ${styles.titleLine}`}
-        >
-          {label}
-        </p>
+    <div className={styles.card}>
+      <div className={styles.topGlow} aria-hidden />
+      <div className={styles.mesh} aria-hidden />
+      <SparkleLayer />
+      <div className={styles.inner}>
+        <div className={styles.badge} aria-hidden>
+          <span className={styles.badgeDot} />
+          <Sparkles className="size-3 text-violet-200/90" aria-hidden />
+          <span>Milestone</span>
+        </div>
+        <div className={styles.headerRow}>
+          <div className={styles.iconWrap}>
+            <span className={styles.iconOrbit} aria-hidden />
+            <div className={`${styles.iconRing} ${styles.iconGlow}`}>
+              <PartyPopper className="size-7 text-white drop-shadow-sm" aria-hidden />
+            </div>
+          </div>
+          <div className={styles.titleBlock}>
+            <p className={styles.subLine}>You reached</p>
+            <h2 className={styles.titleLine}>{label}</h2>
+          </div>
+        </div>
+        <div className={styles.messageCard}>
+          <p className={styles.message}>{message}</p>
+        </div>
+        <div className={styles.footer}>
+          <Button type="primary" className={styles.celebrateOk} onClick={onContinue}>
+            Continue
+          </Button>
+        </div>
       </div>
     </div>
-  );
-}
-
-function MilestoneBody({ message }: { message: string }) {
-  return (
-    <p className={`m-0 text-body leading-relaxed text-foreground sm:text-body ${styles.message}`}>
-      {message}
-    </p>
   );
 }
 
