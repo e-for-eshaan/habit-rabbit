@@ -55,18 +55,18 @@ function MilestoneTick({
 }) {
   const alignStart = index === 0;
   const alignEnd = index === total - 1;
-  const transform = alignStart
-    ? "translateX(0)"
-    : alignEnd
-      ? "translateX(-100%)"
-      : "translateX(-50%)";
-
   const midLabel = !alignStart && !alignEnd;
+
+  const wrapStyle = alignStart
+    ? { left: 0 }
+    : alignEnd
+      ? { left: "calc(100% - 1px)" }
+      : { left: `calc(${mark.position01 * 100}% - 0.5px)` };
 
   return (
     <div
       className={`${styles.tickWrap}${alignStart ? ` ${styles.tickWrapAlignStart}` : ""}${alignEnd ? ` ${styles.tickWrapAlignEnd}` : ""}`}
-      style={{ left: `${mark.position01 * 100}%`, transform }}
+      style={wrapStyle}
     >
       <div className={styles.tick} aria-hidden />
       <span className={`${styles.tickLabel}${midLabel ? ` ${styles.tickLabelMid}` : ""}`}>
