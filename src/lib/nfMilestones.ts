@@ -4,6 +4,7 @@ const DISPLAY_DAYS_PER_MONTH = 30;
 const daySeconds = secondsInDay;
 
 const NF_MILESTONE_THRESHOLDS_SECONDS = [
+  33 * secondsInMinute,
   1 * daySeconds,
   3 * daySeconds,
   7 * daySeconds,
@@ -20,6 +21,7 @@ const NF_MILESTONE_THRESHOLDS_SECONDS = [
 ] as const;
 
 const NF_MILESTONE_LABELS = [
+  "33 min (test)",
   "1 day",
   "3 days",
   "7 days",
@@ -83,6 +85,21 @@ export function pickRandomNfMilestoneMessage(): string {
 
 export function nfMilestoneKey(totalSeconds: number): string {
   return `nfMilestone:${totalSeconds}`;
+}
+
+export function listMilestonesPassedWithoutCongrat(
+  elapsedSeconds: number,
+  congratulatedKeys: ReadonlySet<string>
+): Array<{ key: string; label: string; totalSeconds: number }> {
+  const e = Math.max(0, Math.floor(elapsedSeconds));
+  const out: Array<{ key: string; label: string; totalSeconds: number }> = [];
+  for (const m of NF_MILESTONES) {
+    const key = nfMilestoneKey(m.totalSeconds);
+    if (e >= m.totalSeconds && !congratulatedKeys.has(key)) {
+      out.push({ key, label: m.label, totalSeconds: m.totalSeconds });
+    }
+  }
+  return out;
 }
 
 export function getMilestonesCrossedInInterval(

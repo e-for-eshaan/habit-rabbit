@@ -142,7 +142,7 @@ export function WellBeingInput({
             <span>
               Milestone ·{" "}
               <span className="text-muted">
-                {milestoneStatus.timeToGo} to go ({milestoneStatus.milestoneName})
+                {milestoneStatus.timeToGo} [{milestoneStatus.milestoneName}]
               </span>
             </span>
           )}

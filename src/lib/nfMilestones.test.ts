@@ -1,37 +1,39 @@
-import { secondsInDay } from "date-fns/constants";
+import { secondsInDay, secondsInMinute } from "date-fns/constants";
 import { describe, expect, it } from "vitest";
 
 import {
   formatNfTimeRemainingToMilestone,
   getMilestonesCrossedInInterval,
   getNextNfMilestone,
+  listMilestonesPassedWithoutCongrat,
   NF_MILESTONES,
   nfMilestoneKey,
 } from "@/lib/nfMilestones";
 
 const DAY = secondsInDay;
+const MIN33 = 33 * secondsInMinute;
 
 describe("getNextNfMilestone", () => {
-  it("at 0s, next is 1 day", () => {
+  it("at 0s, next is 33 min test milestone", () => {
     const n = getNextNfMilestone(0);
     expect(n).not.toBeNull();
-    expect(n!.label).toBe("1 day");
-    expect(n!.totalSeconds).toBe(1 * DAY);
-    expect(n!.remainingSeconds).toBe(1 * DAY);
+    expect(n!.label).toBe("33 min (test)");
+    expect(n!.totalSeconds).toBe(MIN33);
+    expect(n!.remainingSeconds).toBe(MIN33);
   });
 
   it("1s before first milestone, remaining 1s", () => {
-    const n = getNextNfMilestone(1 * DAY - 1);
+    const n = getNextNfMilestone(MIN33 - 1);
     expect(n).not.toBeNull();
-    expect(n!.label).toBe("1 day");
+    expect(n!.label).toBe("33 min (test)");
     expect(n!.remainingSeconds).toBe(1);
   });
 
-  it("at exactly first milestone, next is 3 days", () => {
-    const n = getNextNfMilestone(1 * DAY);
+  it("at exactly 33 min milestone, next is 1 day", () => {
+    const n = getNextNfMilestone(MIN33);
     expect(n).not.toBeNull();
-    expect(n!.label).toBe("3 days");
-    expect(n!.totalSeconds).toBe(3 * DAY);
+    expect(n!.label).toBe("1 day");
+    expect(n!.totalSeconds).toBe(1 * DAY);
   });
 
   it("between 1d and 3d, next is 3 days with correct remainder", () => {
@@ -53,6 +55,23 @@ describe("getNextNfMilestone", () => {
   });
 });
 
+describe("listMilestonesPassedWithoutCongrat", () => {
+  it("lists passed milestones not in congratulated set", () => {
+    const empty = new Set<string>();
+    const at33 = listMilestonesPassedWithoutCongrat(MIN33 + 10, empty);
+    expect(at33.map((x) => x.label)).toEqual(["33 min (test)"]);
+
+    const at3d = listMilestonesPassedWithoutCongrat(3 * DAY + 1, empty);
+    expect(at3d.map((x) => x.label)).toEqual(["33 min (test)", "1 day", "3 days"]);
+  });
+
+  it("omits keys present in congratulated set", () => {
+    const s = new Set([nfMilestoneKey(MIN33)]);
+    const at3d = listMilestonesPassedWithoutCongrat(3 * DAY + 1, s);
+    expect(at3d.map((x) => x.label)).toEqual(["1 day", "3 days"]);
+  });
+});
+
 describe("getMilestonesCrossedInInterval", () => {
   it("is empty when next is not after prev", () => {
     expect(getMilestonesCrossedInInterval(5, 5).length).toBe(0);
@@ -68,7 +87,7 @@ describe("getMilestonesCrossedInInterval", () => {
 
   it("can return several when elapsed jumps a large gap", () => {
     const crossed = getMilestonesCrossedInInterval(0, 4 * DAY + 1);
-    expect(crossed.map((c) => c.label)).toEqual(["1 day", "3 days"]);
+    expect(crossed.map((c) => c.label)).toEqual(["33 min (test)", "1 day", "3 days"]);
   });
 });
 
