@@ -9,9 +9,9 @@
   },
   "scripts": {
     "deps": "pnpm install --no-frozen-lockfile",
-    "dev": "next dev --webpack",
+    "dev": "next dev --webpack -p 3008",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3008",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

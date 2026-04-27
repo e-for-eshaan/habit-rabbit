@@ -8,6 +8,7 @@ import {
   formatNfElapsedFromTotalSeconds,
   nfElapsedSecondsFromStart,
 } from "@/lib/nfElapsed";
+import { formatNfTimeRemainingToMilestone, getNextNfMilestone } from "@/lib/nfMilestones";
 import { cn } from "@/lib/utils";
 
 const WELLBEING_LEFT_ACCENT = "#a78bfa";
@@ -33,6 +34,7 @@ export function WellBeingInput({
   const [showFailConfirm, setShowFailConfirm] = useState(false);
   const pbSeconds = nfPersonalBestSeconds ?? 0;
   const pbLabel = pbSeconds > 0 ? formatNfElapsedFromTotalSeconds(pbSeconds) : "—";
+  const { liveLabel, isPr, milestoneStatus } = useNfStreakSession(nfStreakStartedAt, pbSeconds);
 
   return (
     <div
@@ -71,10 +73,7 @@ export function WellBeingInput({
           )}
           {streakActive && nfStreakStartedAt && (
             <>
-              <NfStreakElapsedLive
-                startedAtIso={nfStreakStartedAt}
-                personalBestSeconds={pbSeconds}
-              />
+              <NfStreakElapsedView liveLabel={liveLabel} isPr={isPr} />
               {showFailConfirm ? (
                 <div className="flex min-h-touch shrink-0 flex-nowrap items-stretch gap-2">
                   <button
@@ -120,43 +119,82 @@ export function WellBeingInput({
             </>
           )}
         </div>
-        <p className="text-body-xs tabular-nums text-muted-fg">
-          Personal best · <span className="text-muted">{pbLabel}</span>
+        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-body-xs tabular-nums text-muted-fg">
+          <span>
+            Personal best · <span className="text-muted">{pbLabel}</span>
+          </span>
+          {milestoneStatus.kind === "next" && (
+            <span>
+              Milestone ·{" "}
+              <span className="text-muted">
+                {milestoneStatus.timeToGo} to go ({milestoneStatus.milestoneName})
+              </span>
+            </span>
+          )}
+          {milestoneStatus.kind === "all" && (
+            <span>
+              Milestone · <span className="text-muted">all milestones reached</span>
+            </span>
+          )}
         </p>
       </div>
     </div>
   );
 }
 
-function NfStreakElapsedLive({
-  startedAtIso,
-  personalBestSeconds,
-}: {
-  startedAtIso: string;
-  personalBestSeconds: number;
-}) {
-  const [label, setLabel] = useState("");
-  const [isPr, setIsPr] = useState(false);
+type NfMilestoneStatus =
+  | { kind: "idle" }
+  | { kind: "next"; timeToGo: string; milestoneName: string }
+  | { kind: "all" };
+
+function useNfStreakSession(
+  startedAtIso: string | undefined,
+  personalBestSeconds: number
+): {
+  liveLabel: string;
+  isPr: boolean;
+  milestoneStatus: NfMilestoneStatus;
+} {
+  const [now, setNow] = useState(() => Date.now());
 
   useLayoutEffect(() => {
-    const tick = () => {
-      const now = Date.now();
-      setLabel(formatNfElapsedFromStart(startedAtIso, now));
-      const elapsed = nfElapsedSecondsFromStart(startedAtIso, now);
-      setIsPr(elapsed >= personalBestSeconds);
-    };
-    tick();
-    const id = window.setInterval(tick, 1000);
+    if (!startedAtIso) return;
+    queueMicrotask(() => {
+      setNow(Date.now());
+    });
+    const id = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
     return () => window.clearInterval(id);
   }, [startedAtIso, personalBestSeconds]);
 
+  if (!startedAtIso) {
+    return { liveLabel: "", isPr: false, milestoneStatus: { kind: "idle" } };
+  }
+
+  const liveLabel = formatNfElapsedFromStart(startedAtIso, now);
+  const elapsed = nfElapsedSecondsFromStart(startedAtIso, now);
+  const isPr = elapsed >= personalBestSeconds;
+  const next = getNextNfMilestone(elapsed);
+  const milestoneStatus: NfMilestoneStatus = next
+    ? {
+        kind: "next",
+        timeToGo: formatNfTimeRemainingToMilestone(next.remainingSeconds),
+        milestoneName: next.label,
+      }
+    : { kind: "all" };
+
+  return { liveLabel, isPr, milestoneStatus };
+}
+
+function NfStreakElapsedView({ liveLabel, isPr }: { liveLabel: string; isPr: boolean }) {
   return (
     <span
       className="flex min-h-touch min-w-0 flex-1 items-center justify-between gap-2 rounded-xl bg-orange-500/10 px-3 py-2.5 text-body font-medium tabular-nums text-orange-300 ring-1 ring-orange-400/30 sm:px-4 sm:py-2"
       aria-live="polite"
-      aria-label={`NF streak elapsed ${label}`}
+      aria-label={`NF streak elapsed ${liveLabel}`}
     >
-      <span className="min-w-0 truncate">{label}</span>
+      <span className="min-w-0 truncate">{liveLabel}</span>
       {isPr && (
         <span className="flex shrink-0 items-center gap-1 text-body-xs font-semibold uppercase tracking-wide text-amber-300">
           <Trophy className="size-4 shrink-0 text-amber-400" aria-hidden />
