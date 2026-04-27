@@ -4,6 +4,7 @@ import { apiError, apiErrorFromUnknown } from "@/lib/apiResponse";
 import { readFitnessStore, writeFitnessStore } from "@/lib/db/fitness";
 import { getAuthUserId } from "@/lib/firebase/admin";
 import {
+  isValidOptionalNfMilestoneCongratsShownKeys,
   isValidOptionalNfPersonalBestSeconds,
   isValidOptionalNfStreakStartedAt,
 } from "@/lib/fitnessStore";
@@ -39,6 +40,7 @@ function validateState(body: unknown): body is FitnessState {
   const o = body as Record<string, unknown>;
   if (!isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt)) return false;
   if (!isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds)) return false;
+  if (!isValidOptionalNfMilestoneCongratsShownKeys(o.nfMilestoneCongratsShownKeys)) return false;
   if (!Array.isArray(o.exercises) || !Array.isArray(o.dayLogs)) return false;
   for (const ex of o.exercises as unknown[]) {
     const e = ex as Record<string, unknown>;

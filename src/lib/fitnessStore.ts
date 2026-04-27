@@ -84,6 +84,12 @@ export function isValidOptionalNfPersonalBestSeconds(value: unknown): boolean {
   return Number.isInteger(value);
 }
 
+export function isValidOptionalNfMilestoneCongratsShownKeys(value: unknown): boolean {
+  if (value === undefined) return true;
+  if (!Array.isArray(value)) return false;
+  return value.every((x) => typeof x === "string" && x.length > 0 && x.length < 200);
+}
+
 function hasValidDayLog(log: unknown): log is DayLog {
   if (isNil(log) || typeof log !== "object") return false;
   const l = log as Record<string, unknown>;
@@ -111,6 +117,7 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
   if (hasDayLogs) {
     if (!isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt)) return false;
     if (!isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds)) return false;
+    if (!isValidOptionalNfMilestoneCongratsShownKeys(o.nfMilestoneCongratsShownKeys)) return false;
     for (const ex of o.exercises as unknown[]) {
       if (
         isNil(ex) ||
@@ -146,7 +153,8 @@ export function hasValidFitnessState(data: unknown): data is FitnessState {
   }
   return (
     isValidOptionalNfStreakStartedAt(o.nfStreakStartedAt) &&
-    isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds)
+    isValidOptionalNfPersonalBestSeconds(o.nfPersonalBestSeconds) &&
+    isValidOptionalNfMilestoneCongratsShownKeys(o.nfMilestoneCongratsShownKeys)
   );
 }
 

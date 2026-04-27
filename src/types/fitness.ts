@@ -20,6 +20,8 @@ export type FitnessState = {
   nfStreakStartedAt?: string;
   /** Longest completed NF streak duration in whole seconds. */
   nfPersonalBestSeconds?: number;
+  /** `nfMilestoneKey(totalSeconds)` values; congrats modal already shown for this active streak. Cleared on new streak or fail. */
+  nfMilestoneCongratsShownKeys?: string[];
 };
 
 export type FitnessCalendarDaySummary = {

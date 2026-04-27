@@ -170,21 +170,43 @@ function FitnessPage() {
 
   const handleNfStart = useCallback(() => {
     if (!state || state.nfStreakStartedAt) return;
-    persistState({ ...state, nfStreakStartedAt: new Date().toISOString() });
+    persistState({
+      ...state,
+      nfStreakStartedAt: new Date().toISOString(),
+      nfMilestoneCongratsShownKeys: [],
+    });
   }, [state, persistState]);
 
   const handleNfFail = useCallback(() => {
     if (!state?.nfStreakStartedAt) return;
     const start = Date.parse(state.nfStreakStartedAt);
     if (Number.isNaN(start)) {
-      persistState({ ...state, nfStreakStartedAt: undefined });
+      persistState({ ...state, nfStreakStartedAt: undefined, nfMilestoneCongratsShownKeys: [] });
       return;
     }
     const endedSeconds = Math.floor((Date.now() - start) / 1000);
     const prevPb = state.nfPersonalBestSeconds ?? 0;
     const nfPersonalBestSeconds = Math.max(prevPb, endedSeconds);
-    persistState({ ...state, nfStreakStartedAt: undefined, nfPersonalBestSeconds });
+    persistState({
+      ...state,
+      nfStreakStartedAt: undefined,
+      nfPersonalBestSeconds,
+      nfMilestoneCongratsShownKeys: [],
+    });
   }, [state, persistState]);
+
+  const handleRecordMilestoneCongrat = useCallback(
+    (milestoneKey: string) => {
+      if (!state) return;
+      const prev = state.nfMilestoneCongratsShownKeys ?? [];
+      if (prev.includes(milestoneKey)) return;
+      void persistState({
+        ...state,
+        nfMilestoneCongratsShownKeys: [...new Set([...prev, milestoneKey])],
+      });
+    },
+    [state, persistState]
+  );
 
   const handleSelectGroups = useCallback(
     (groups: string[]) => {
@@ -353,8 +375,10 @@ function FitnessPage() {
               key={state.nfStreakStartedAt ?? "nf-idle"}
               nfStreakStartedAt={state.nfStreakStartedAt}
               nfPersonalBestSeconds={state.nfPersonalBestSeconds}
+              nfMilestoneCongratsShownKeys={state.nfMilestoneCongratsShownKeys}
               onStartStreak={handleNfStart}
               onFailStreak={handleNfFail}
+              onRecordMilestoneCongrat={handleRecordMilestoneCongrat}
               canMutateNf={!locked}
             />
             <FitnessDashboard state={state} />

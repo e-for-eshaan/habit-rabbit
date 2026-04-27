@@ -3,8 +3,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   formatNfTimeRemainingToMilestone,
+  getMilestonesCrossedInInterval,
   getNextNfMilestone,
   NF_MILESTONES,
+  nfMilestoneKey,
 } from "@/lib/nfMilestones";
 
 const DAY = secondsInDay;
@@ -48,6 +50,25 @@ describe("getNextNfMilestone", () => {
     expect(getNextNfMilestone(6 * 30 * DAY - 1)).not.toBeNull();
     expect(getNextNfMilestone(6 * 30 * DAY)).toBeNull();
     expect(getNextNfMilestone(6 * 30 * DAY + 1000)).toBeNull();
+  });
+});
+
+describe("getMilestonesCrossedInInterval", () => {
+  it("is empty when next is not after prev", () => {
+    expect(getMilestonesCrossedInInterval(5, 5).length).toBe(0);
+    expect(getMilestonesCrossedInInterval(10, 2).length).toBe(0);
+  });
+
+  it("returns one milestone at first 1d boundary", () => {
+    const crossed = getMilestonesCrossedInInterval(1 * DAY - 1, 1 * DAY);
+    expect(crossed).toHaveLength(1);
+    expect(crossed[0]!.key).toBe(nfMilestoneKey(1 * DAY));
+    expect(crossed[0]!.label).toBe("1 day");
+  });
+
+  it("can return several when elapsed jumps a large gap", () => {
+    const crossed = getMilestonesCrossedInInterval(0, 4 * DAY + 1);
+    expect(crossed.map((c) => c.label)).toEqual(["1 day", "3 days"]);
   });
 });
 

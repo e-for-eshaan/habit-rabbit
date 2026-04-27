@@ -1,14 +1,11 @@
 "use client";
 
 import { Sparkles, Trophy } from "lucide-react";
-import { useLayoutEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
-import {
-  formatNfElapsedFromStart,
-  formatNfElapsedFromTotalSeconds,
-  nfElapsedSecondsFromStart,
-} from "@/lib/nfElapsed";
-import { formatNfTimeRemainingToMilestone, getNextNfMilestone } from "@/lib/nfMilestones";
+import { NfMilestoneCongratulationsModal } from "@/components/fitness/NfMilestoneCongratulationsModal";
+import { useNfStreakMilestoneState } from "@/components/fitness/useNfStreakMilestoneState";
+import { formatNfElapsedFromTotalSeconds } from "@/lib/nfElapsed";
 import { cn } from "@/lib/utils";
 
 const WELLBEING_LEFT_ACCENT = "#a78bfa";
@@ -16,8 +13,10 @@ const WELLBEING_LEFT_ACCENT = "#a78bfa";
 type WellBeingInputProps = {
   nfStreakStartedAt: string | undefined;
   nfPersonalBestSeconds?: number;
+  nfMilestoneCongratsShownKeys?: string[];
   onStartStreak: () => void;
   onFailStreak: () => void;
+  onRecordMilestoneCongrat: (milestoneKey: string) => void;
   canMutateNf: boolean;
   className?: string;
 };
@@ -25,8 +24,10 @@ type WellBeingInputProps = {
 export function WellBeingInput({
   nfStreakStartedAt,
   nfPersonalBestSeconds,
+  nfMilestoneCongratsShownKeys,
   onStartStreak,
   onFailStreak,
+  onRecordMilestoneCongrat,
   canMutateNf,
   className,
 }: WellBeingInputProps) {
@@ -34,7 +35,20 @@ export function WellBeingInput({
   const [showFailConfirm, setShowFailConfirm] = useState(false);
   const pbSeconds = nfPersonalBestSeconds ?? 0;
   const pbLabel = pbSeconds > 0 ? formatNfElapsedFromTotalSeconds(pbSeconds) : "—";
-  const { liveLabel, isPr, milestoneStatus } = useNfStreakSession(nfStreakStartedAt, pbSeconds);
+
+  const congrats = useMemo(
+    () =>
+      streakActive
+        ? {
+            congratsShownKeys: nfMilestoneCongratsShownKeys,
+            onRecordCongrat: onRecordMilestoneCongrat,
+          }
+        : null,
+    [streakActive, nfMilestoneCongratsShownKeys, onRecordMilestoneCongrat]
+  );
+
+  const { liveLabel, isPr, milestoneStatus, milestoneModal, closeMilestoneModal } =
+    useNfStreakMilestoneState(nfStreakStartedAt, pbSeconds, congrats);
 
   return (
     <div
@@ -44,6 +58,7 @@ export function WellBeingInput({
       )}
       style={{ borderLeftWidth: 3, borderLeftColor: WELLBEING_LEFT_ACCENT }}
     >
+      <NfMilestoneCongratulationsModal payload={milestoneModal} onClose={closeMilestoneModal} />
       <h2 className="flex w-full items-center gap-inline text-title font-semibold tracking-tight text-foreground sm:text-display">
         <Sparkles size={22} className="shrink-0 text-violet-300/90" aria-hidden />
         Well-being
@@ -140,51 +155,6 @@ export function WellBeingInput({
       </div>
     </div>
   );
-}
-
-type NfMilestoneStatus =
-  | { kind: "idle" }
-  | { kind: "next"; timeToGo: string; milestoneName: string }
-  | { kind: "all" };
-
-function useNfStreakSession(
-  startedAtIso: string | undefined,
-  personalBestSeconds: number
-): {
-  liveLabel: string;
-  isPr: boolean;
-  milestoneStatus: NfMilestoneStatus;
-} {
-  const [now, setNow] = useState(() => Date.now());
-
-  useLayoutEffect(() => {
-    if (!startedAtIso) return;
-    queueMicrotask(() => {
-      setNow(Date.now());
-    });
-    const id = window.setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-    return () => window.clearInterval(id);
-  }, [startedAtIso, personalBestSeconds]);
-
-  if (!startedAtIso) {
-    return { liveLabel: "", isPr: false, milestoneStatus: { kind: "idle" } };
-  }
-
-  const liveLabel = formatNfElapsedFromStart(startedAtIso, now);
-  const elapsed = nfElapsedSecondsFromStart(startedAtIso, now);
-  const isPr = elapsed >= personalBestSeconds;
-  const next = getNextNfMilestone(elapsed);
-  const milestoneStatus: NfMilestoneStatus = next
-    ? {
-        kind: "next",
-        timeToGo: formatNfTimeRemainingToMilestone(next.remainingSeconds),
-        milestoneName: next.label,
-      }
-    : { kind: "all" };
-
-  return { liveLabel, isPr, milestoneStatus };
 }
 
 function NfStreakElapsedView({ liveLabel, isPr }: { liveLabel: string; isPr: boolean }) {

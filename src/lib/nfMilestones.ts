@@ -63,6 +63,48 @@ export function getNextNfMilestone(elapsedSeconds: number): NextNfMilestone | nu
   return null;
 }
 
+export const NF_MILESTONE_CONGRATULATORY_MESSAGES: readonly string[] = [
+  "What you are building is quiet strength. The kind that compounds. Keep it moving.",
+  "A milestone is proof you showed up, even when it was not glamorous. That counts for more than motivation.",
+  "The gap between you and a stronger version of yourself is mostly consistency. You just proved you have it today.",
+  "Respect. Most people do not do hard things in small rooms of their own mind. You did.",
+  "This is the kind of win nobody posts, but the kind that reshapes a life. Protect it with calm discipline.",
+  "One clean habit at a time, you are teaching your nervous system a new default. This milestone is a receipt.",
+  "The longer you go, the more your identity changes from trying to being. Stay gentle with the pressure.",
+  "You did the boring part that matters. Consistency is not a vibe; it is a stack of days like this one.",
+  "Progress here is not loud. It is a quiet bet on yourself, repaid a little at a time. This was a real payment.",
+  "This streak is a promise you kept with yourself. Keep the promise simple, and the results get surprising.",
+] as const;
+
+export function pickRandomNfMilestoneMessage(): string {
+  const a = NF_MILESTONE_CONGRATULATORY_MESSAGES;
+  return a[Math.floor(Math.random() * a.length)]!;
+}
+
+export function nfMilestoneKey(totalSeconds: number): string {
+  return `nfMilestone:${totalSeconds}`;
+}
+
+export function getMilestonesCrossedInInterval(
+  prevElapsedSeconds: number,
+  nextElapsedSeconds: number
+): Array<{ key: string; label: string; totalSeconds: number }> {
+  const p = Math.max(0, Math.floor(prevElapsedSeconds));
+  const n = Math.max(0, Math.floor(nextElapsedSeconds));
+  if (n <= p) return [];
+  const out: Array<{ key: string; label: string; totalSeconds: number }> = [];
+  for (const m of NF_MILESTONES) {
+    if (p < m.totalSeconds && n >= m.totalSeconds) {
+      out.push({
+        key: nfMilestoneKey(m.totalSeconds),
+        label: m.label,
+        totalSeconds: m.totalSeconds,
+      });
+    }
+  }
+  return out;
+}
+
 export function formatNfTimeRemainingToMilestone(remainingSeconds: number): string {
   const r = Math.max(0, Math.floor(remainingSeconds));
 
