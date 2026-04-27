@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { DaySelector } from "@/components/fitness/DaySelector";
 import { ExerciseEditMode } from "@/components/fitness/ExerciseEditMode";
 import { FitnessDashboard } from "@/components/fitness/FitnessDashboard";
+import { NfMilestoneProgressBarTestSection } from "@/components/fitness/NfMilestoneProgressBarTestSection";
 import { SwimRunInput } from "@/components/fitness/SwimRunInput";
 import { DayTemplate } from "@/components/fitness/WeeklyTemplate";
 import { WelcomeScreen } from "@/components/fitness/WelcomeScreen";
@@ -381,6 +382,7 @@ function FitnessPage() {
               onRecordMilestoneCongrat={handleRecordMilestoneCongrat}
               canMutateNf={!locked}
             />
+            <NfMilestoneProgressBarTestSection />
             <FitnessDashboard state={state} />
           </>
         )}

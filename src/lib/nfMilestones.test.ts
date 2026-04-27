@@ -130,10 +130,23 @@ describe("milestone progress bar", () => {
     expect(marks[0]!.label).toBe("0s");
   });
 
-  it("first bar mark label is the previous milestone name when segment starts after zero", () => {
+  it("first bar mark uses compact single-unit label when segment starts after zero", () => {
     const marks = getMilestoneBarMarks(DAY, 3 * DAY, 4);
     expect(marks[0]!.totalSeconds).toBe(DAY);
-    expect(marks[0]!.label).toBe("1 day");
+    expect(marks[0]!.label).toBe("1d");
+  });
+
+  it("uses day-only labels between month-scale milestones to avoid repeated mo ticks", () => {
+    const marks = getMilestoneBarMarks(60 * DAY, 90 * DAY, 5);
+    expect(marks[0]!.label).toBe("60d");
+    expect(marks[marks.length - 1]!.label).toBe("90d");
+    expect(marks.every((m) => /^\d+d$/.test(m.label))).toBe(true);
+  });
+
+  it("uses day-only labels in the week band to avoid repeated week ticks", () => {
+    const marks = getMilestoneBarMarks(7 * DAY, 14 * DAY, 4);
+    expect(marks[0]!.label).toBe("7d");
+    expect(marks.every((m) => /^\d+d$/.test(m.label))).toBe(true);
   });
 
   it("buildNfMilestoneBar progress reflects elapsed within segment", () => {

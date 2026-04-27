@@ -1,4 +1,4 @@
-import { secondsInDay, secondsInHour, secondsInMinute } from "date-fns/constants";
+import { daysInWeek, secondsInDay, secondsInHour, secondsInMinute } from "date-fns/constants";
 
 import { formatNfElapsedSingleUnitForBarLabel } from "@/lib/nfElapsed";
 
@@ -89,22 +89,44 @@ export type MilestoneBarMark = {
   totalSeconds: number;
 };
 
-function milestoneBarMarkAbsoluteLabel(
+function shouldUseDayOnlyBarTickLabels(
+  segmentStartSeconds: number,
+  segmentEndSeconds: number
+): boolean {
+  const startDays = segmentStartSeconds / secondsInDay;
+  const endDays = segmentEndSeconds / secondsInDay;
+  if (startDays >= DISPLAY_DAYS_PER_MONTH) {
+    return true;
+  }
+  if (startDays >= daysInWeek && endDays < DISPLAY_DAYS_PER_MONTH) {
+    return true;
+  }
+  return false;
+}
+
+function formatMilestoneBarDayCountLabel(totalSeconds: number): string {
+  const d = Math.max(0, Math.floor(totalSeconds / secondsInDay));
+  return `${d}d`;
+}
+
+function milestoneBarMarkLabel(
   clampedTotalSeconds: number,
   segmentStartSeconds: number,
   segmentEndSeconds: number
 ): string {
+  if (shouldUseDayOnlyBarTickLabels(segmentStartSeconds, segmentEndSeconds)) {
+    if (clampedTotalSeconds === segmentStartSeconds && segmentStartSeconds === 0) {
+      return "0s";
+    }
+    return formatMilestoneBarDayCountLabel(clampedTotalSeconds);
+  }
   if (clampedTotalSeconds !== segmentStartSeconds) {
     return formatNfElapsedSingleUnitForBarLabel(clampedTotalSeconds);
   }
   if (segmentStartSeconds === 0) {
     return "0s";
   }
-  const nextIdx = NF_MILESTONES.findIndex((m) => m.totalSeconds === segmentEndSeconds);
-  if (nextIdx > 0) {
-    return NF_MILESTONES[nextIdx - 1]!.label;
-  }
-  return "0s";
+  return formatNfElapsedSingleUnitForBarLabel(segmentStartSeconds);
 }
 
 export function getMilestoneBarMarks(
@@ -122,7 +144,7 @@ export function getMilestoneBarMarks(
     raw.push({
       position01,
       totalSeconds: clamped,
-      label: milestoneBarMarkAbsoluteLabel(clamped, segmentStartSeconds, segmentEndSeconds),
+      label: milestoneBarMarkLabel(clamped, segmentStartSeconds, segmentEndSeconds),
     });
   }
   const seenSec = new Set<number>();
